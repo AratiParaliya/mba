@@ -1,9 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:mba/Screens/create_new_pass.dart';
+import 'package:mba/Screens/signup.dart';
 
-
-class VerificationEmail extends StatelessWidget {
+class CreateNewPass extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
@@ -38,7 +37,7 @@ class VerificationEmail extends StatelessWidget {
                   SizedBox(height: 10), // Add space between logo and text
                   Center(
                     child: Text(
-                      "Verify Your Email",
+                      "Create New Password",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 30,
@@ -49,16 +48,16 @@ class VerificationEmail extends StatelessWidget {
               ),
               SizedBox(height: 20), // Add some space after the logo and text
               Container(
-                height: MediaQuery.of(context).size.height / 2.5,
+                height: MediaQuery.of(context).size.height / 3,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/email.png"),
+                    image: AssetImage("assets/code.png"),
                   ),
                 ),
               ),
               SizedBox(height: 5),
               Text(
-                "Please Enter The 6 Digit Code Sent To Your Email Address",
+                "All Set For Creating New Password",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -68,38 +67,61 @@ class VerificationEmail extends StatelessWidget {
               ),
               SizedBox(height: 20),
 
-              // OTP input fields
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) {
-                  return Container(
-                    width: 50,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24),
-                      maxLength: 1,
-                      decoration: InputDecoration(
-                        counterText: '', // Removes the counter below the text field
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
+              // New Password TextField with shadow
+              Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8, // Adjust width if needed
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
                       ),
+                    ],
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "New Password",
+                      labelText: 'New Password',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
                     ),
-                  );
-                }),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // Confirm Password TextField with shadow
+              Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Confirm Password",
+                      labelText: 'Confirm Password',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                    ),
+                  ),
+                ),
               ),
 
               SizedBox(height: 30),
@@ -113,7 +135,7 @@ class VerificationEmail extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CreateNewPass()),
+                        MaterialPageRoute(builder: (context) => Signup()),
                       );
                     },
                     color: Color.fromARGB(255, 110, 102, 188),
@@ -124,7 +146,7 @@ class VerificationEmail extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Text(
-                      "Verify",
+                      "Save",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -141,4 +163,3 @@ class VerificationEmail extends StatelessWidget {
     );
   }
 }
-
