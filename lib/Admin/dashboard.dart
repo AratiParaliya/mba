@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mba/Admin/delete_medicine.dart';
 import 'package:mba/Admin/invoice_download.dart';
 import 'package:mba/Admin/order_approvel.dart';
 import 'package:mba/Admin/orderlist.dart';
@@ -82,7 +83,7 @@ class _DashboardState extends State<Dashboard> {
                     padding: const EdgeInsets.all(20.0),
                     child: ListView(
                       children: [
-                        buildCard(Icons.shopping_cart, 'Orders'),
+                        buildCard(Icons.shopping_cart, 'Add Product'),
                         buildCard(Icons.list, 'Order List'),
                         buildCard(Icons.approval, 'Order Approval'),
                         buildCard(Icons.download, 'Download Invoice'),
@@ -153,9 +154,9 @@ class _DashboardState extends State<Dashboard> {
 
     // Define the navigation based on the card title
     switch (title) {
-      // case 'Orders':
-      //   destinationScreen = ;
-        // break;
+      case 'Add Product':
+        destinationScreen = DeleteMedicine();
+        break;
       case 'Order List':
         destinationScreen = Orderlist();
         break;

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:mba/Admin/dashboard.dart';
 import 'package:mba/Screens/login.dart';
 import 'package:mba/Screens/signup.dart';
 // Make sure you have this package
@@ -8,7 +9,7 @@ import 'package:mba/Screens/signup.dart';
 void main() async{ 
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home:HomePage(),
+    home:Dashboard(),
   ));
 }
 
