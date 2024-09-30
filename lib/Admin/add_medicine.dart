@@ -108,10 +108,7 @@ class _AddMedicineState extends State<AddMedicine> {
                               child: ElevatedButton(
                                 onPressed: () {
 
-                                  Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => OrderApprovel()),);
+                                  
                                   // Handle Add to Cart functionality
                                 },
                                 style: ElevatedButton.styleFrom(

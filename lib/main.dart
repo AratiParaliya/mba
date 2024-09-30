@@ -10,7 +10,7 @@ import 'package:mba/Screens/signup.dart';
 void main() async{ 
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home:EditMedicineDetails(),
+    home:Dashboard(),
   ));
 }
 

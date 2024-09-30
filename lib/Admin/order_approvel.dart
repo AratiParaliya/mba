@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mba/Admin/orderlist.dart';
 
 class OrderApprovel extends StatelessWidget {
-  const OrderApprovel({super.key});
+  const OrderApprovel({super.key, required Order order});
 
   @override
   Widget build(BuildContext context) {

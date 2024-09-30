@@ -84,7 +84,7 @@ class _ApprovalListState extends State<ApprovalList> {
                       children: [
                         // Title
                         const Text(
-                          'Order List',
+                          'Order Approval list',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
