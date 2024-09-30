@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                           isLoading = false;
                         });
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
+                            MaterialPageRoute(builder: (context) => LoginPage()));
                       });
                     },
                     color: Color.fromARGB(255, 110, 102, 188),
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Signup()));
+                              builder: (context) => SignupPage()));
                     },
                     color: Color.fromARGB(255, 255, 255, 255),
                     shape: RoundedRectangleBorder(

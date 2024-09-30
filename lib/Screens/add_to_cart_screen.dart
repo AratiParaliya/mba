@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mba/Screens/cart.dart';
 import 'package:mba/Screens/contactdetail_screen.dart';
 
 class AddToCartScreen extends StatelessWidget {
@@ -110,7 +111,7 @@ class AddToCartScreen extends StatelessWidget {
                                   Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ContactdetailScreen()),);
+                                builder: (context) => Cart()),);
                                   // Handle Add to Cart functionality
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -139,6 +140,10 @@ class AddToCartScreen extends StatelessWidget {
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
+                                  Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ContactdetailScreen()),);
                                   // Handle Buy Now functionality
                                 },
                                 style: ElevatedButton.styleFrom(

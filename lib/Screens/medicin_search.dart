@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mba/Screens/add_to_cart_screen.dart';
+import 'package:mba/Screens/cart.dart';
 
 class MedicinSearch extends StatefulWidget {
   const MedicinSearch({super.key});
@@ -181,6 +182,10 @@ class _MedicinSearchState extends State<MedicinSearch> {
             right: 20,
             child: FloatingActionButton(
               onPressed: () {
+                Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Cart()),);
                 // Cart button logic
               },
               backgroundColor: const Color.fromARGB(255, 239, 236, 236),

@@ -135,7 +135,7 @@ class CreateNewPass extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Signup()),
+                        MaterialPageRoute(builder: (context) => SignupPage()),
                       );
                     },
                     color: Color.fromARGB(255, 110, 102, 188),
