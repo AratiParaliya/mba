@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 
 class BillNumber extends StatelessWidget {
-  const BillNumber({super.key});
+  const BillNumber({super.key, required String billNo});
 
   @override
   Widget build(BuildContext context) {

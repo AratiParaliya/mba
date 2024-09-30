@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:mba/Admin/bill_number.dart';
 
 class PandingBills extends StatelessWidget {
   const PandingBills({super.key});
@@ -114,20 +114,38 @@ class PandingBills extends StatelessWidget {
                           child: ListView.builder(
                             itemCount: 8, // Number of rows
                             itemBuilder: (context, index) {
+                              String billNo = '1111'; // You can dynamically change this as per your logic
                               return Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 8.0), // Add vertical padding between rows
                                 child: Row(
                                   children: [
                                     Expanded(flex: 2, child: tableCell('03/08/2024')),
                                      const SizedBox(width: 10), // Date
-                                    Expanded(flex: 2, child: tableCell('1111')),
+                                    
+                                    // Bill No with InkWell for Navigation
+                                    Expanded(
+                                      flex: 2,
+                                      child: InkWell(
+                                        onTap: () {
+                                          // Navigate to BillDetailsPage with the bill number
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => BillNumber(billNo: billNo),
+                                            ),
+                                          );
+                                        },
+                                        child: tableCell(billNo),
+                                      ),
+                                    ),
+                                    
                                      const SizedBox(width: 10), // Bill No.
                                     Expanded(flex: 2, child: tableCell('123-456-7890')), 
                                      const SizedBox(width: 10),// Contact No.
                                     Expanded(
                                       flex: 1,
                                       child: IconButton(
-                                        icon: const Icon(Icons.delete, color: const Color.fromARGB(255, 110, 102, 188)),
+                                        icon: const Icon(Icons.delete, color: Color.fromARGB(255, 110, 102, 188)),
                                         onPressed: () {
                                           // Action to delete the item
                                         },
