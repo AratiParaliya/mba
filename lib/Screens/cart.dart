@@ -71,7 +71,7 @@ class _CartState extends State<Cart> {
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.1, 2.0], // Adjust stops to control color spread
+                   stops: [0.4, 1.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(

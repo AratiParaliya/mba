@@ -36,22 +36,7 @@ class SignupPage extends StatelessWidget {
                     'assets/logo.png', // Replace with your logo asset path
                     width: 50, // Adjust the size as needed
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Navigate to Login page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to the Login page
-                      );
-                    },
-                    child: const Text(
-                      "Sign In",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 110, 102, 188),
-                      ),
-                    ),
-                  ),
+                 
                 ],
               ),
               const SizedBox(height: 30),

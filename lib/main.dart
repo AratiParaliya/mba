@@ -129,14 +129,14 @@ class _HomePageState extends State<HomePage> {
                           MaterialPageRoute(
                               builder: (context) => SignupPage()));
                     },
-                    color: Color.fromARGB(255, 255, 255, 255),
+                    color: Colors.white,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(
                           color: Color.fromARGB(255, 133, 125, 213),
                         ),
                         borderRadius: BorderRadius.circular(50)),
                     child: Text(
-                      "Sign in",
+                      "Sign up",
                       style: TextStyle(
                           color: Color.fromARGB(255, 110, 102, 188),
                           fontWeight: FontWeight.w600,

@@ -65,7 +65,7 @@ class BillNumber extends StatelessWidget {
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.1, 2.0], // Adjust stops to control color spread
+                   stops: [0.4, 1.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -74,13 +74,13 @@ class BillNumber extends StatelessWidget {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Bill Number Container
                         Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 170.0),
+                          padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 120.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
