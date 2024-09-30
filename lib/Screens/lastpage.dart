@@ -59,14 +59,14 @@ class Lastpage extends StatelessWidget {
                       width: double.infinity, // Make it full width
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.white, // Light color
-                            Color.fromARGB(255, 143, 133, 230), // Darker purple
-                          ],
-                          stops: [0.6, 1.0], // Adjust stops to control color spread
-                          tileMode: TileMode.clamp,
+                           begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Colors.white,
+                        Color.fromARGB(255, 143, 133, 230),
+                      ],
+                      stops: [0.1, 2.0], // Adjust stops to control color spread
+                      tileMode: TileMode.clamp,
                         ),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(60),

@@ -59,13 +59,13 @@ class InvoiceDownload extends StatelessWidget {
                   width: double.infinity, // Full width
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                       begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
                       colors: [
-                        Colors.white, // Light color
-                        const Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        Colors.white,
+                        Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.6, 1.0], // Adjust stops to control color spread
+                      stops: [0.1, 2.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -133,7 +133,7 @@ class InvoiceDownload extends StatelessWidget {
                                             // Action for download
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: const Color.fromARGB(255, 199, 194, 246), // Updated button color
+                                            backgroundColor: Color.fromARGB(255, 143, 133, 230), 
                                             padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10.0),
@@ -141,7 +141,7 @@ class InvoiceDownload extends StatelessWidget {
                                           ),
                                           child: const Text(
                                             'Download',
-                                            style: TextStyle(color: Color.fromARGB(255, 110, 102, 188)),
+                                            style: TextStyle(color:  Color.fromARGB(255, 113, 101, 228)),
                                           ),
                                         ),
                                       ),

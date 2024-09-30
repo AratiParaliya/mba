@@ -57,15 +57,7 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
               // Add space between logo and text
-              const Center(
-                child: Text(
-                  "Sign in",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),
-                ),
-              ),
+             
               const Text(
                 "Enter your Details to proceed further",
                 style: TextStyle(

@@ -61,13 +61,13 @@ class AddToCartScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
                       colors: [
                         Colors.white,
-                        Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.6, 1.0],
+                      stops: [0.1, 2.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: BorderRadius.only(
@@ -116,7 +116,7 @@ class AddToCartScreen extends StatelessWidget {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor: const Color(0xFF6F48EB), // Purple color
+                                  backgroundColor:  Color.fromARGB(255, 113, 101, 228), // Purple color
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -148,7 +148,7 @@ class AddToCartScreen extends StatelessWidget {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor: const Color(0xFF6F48EB), // Purple color
+                                  backgroundColor:  Color.fromARGB(255, 113, 101, 228), // Purple color
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),

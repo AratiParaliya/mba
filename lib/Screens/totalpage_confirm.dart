@@ -66,13 +66,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                   padding: const EdgeInsets.all(20.0),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                       begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
                       colors: [
                         Colors.white,
-                        Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.6, 1.0],
+                      stops: [0.1, 2.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: BorderRadius.only(

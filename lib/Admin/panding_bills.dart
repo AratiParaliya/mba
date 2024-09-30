@@ -60,13 +60,13 @@ class PandingBills extends StatelessWidget {
                   width: double.infinity, // Full width
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
                       colors: [
-                        Colors.white, // Light color
-                        const Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        Colors.white,
+                        Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.6, 1.0], // Adjust stops to control color spread
+                      stops: [0.1, 2.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -145,7 +145,7 @@ class PandingBills extends StatelessWidget {
                                     Expanded(
                                       flex: 1,
                                       child: IconButton(
-                                        icon: const Icon(Icons.delete, color: Color.fromARGB(255, 110, 102, 188)),
+                                        icon: const Icon(Icons.delete, color: Color.fromARGB(255, 113, 101, 228)),
                                         onPressed: () {
                                           // Action to delete the item
                                         },
