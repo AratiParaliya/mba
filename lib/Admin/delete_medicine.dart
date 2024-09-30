@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mba/Admin/add_medicine.dart';
+import 'package:mba/Admin/edit_medicine_details.dart';
 
 class DeleteMedicine extends StatefulWidget {
   const DeleteMedicine({super.key});
@@ -148,6 +149,11 @@ class _DeleteMedicineState extends State<DeleteMedicine> {
                 IconButton(
                   icon: const Icon(Icons.edit, color: Color.fromARGB(255, 110, 102, 188)),
                   onPressed: () {
+                     Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditMedicineDetails()), // Corrected ForgotPassword
+                          );
                     // Handle edit functionality here
                     print('Edit button clicked');
                   },
