@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                   // Loading animation above the Get Started button
                  
                     LoadingAnimationWidget.horizontalRotatingDots(
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 110, 102, 188),
                       size: 50, // You can adjust the size as needed
                   ),
                     SizedBox(height: 20), // Space between loading animation and button
