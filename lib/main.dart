@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:mba/Screens/login.dart';
+import 'package:mba/Screens/signup.dart';
 // Make sure you have this package
 
 void main() async{ 
@@ -95,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                           isLoading = false;
                         });
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => LoginPage()));
+                            MaterialPageRoute(builder: (context) => Login()));
                       });
                     },
                     color: Color.fromARGB(255, 110, 102, 188),
@@ -121,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SignupPage()));
+                              builder: (context) => Signup()));
                     },
                     color: Color.fromARGB(255, 255, 255, 255),
                     shape: RoundedRectangleBorder(
