@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mba/Admin/approval_list.dart';
 import 'package:mba/Admin/delete_medicine.dart';
 import 'package:mba/Admin/invoice_download.dart';
 import 'package:mba/Admin/order_approvel.dart';
@@ -161,7 +162,7 @@ class _DashboardState extends State<Dashboard> {
         destinationScreen = Orderlist();
         break;
       case 'Order Approval':
-        destinationScreen = OrderApprovel();
+        destinationScreen = ApprovalList();
         break;
       case 'Download Invoice':
         destinationScreen = InvoiceDownload();
