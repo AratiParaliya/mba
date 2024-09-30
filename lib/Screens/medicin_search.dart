@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:mba/Screens/add_to_cart_screen.dart';
 import 'package:mba/Screens/cart.dart';
@@ -11,6 +10,16 @@ class MedicinSearch extends StatefulWidget {
 }
 
 class _MedicinSearchState extends State<MedicinSearch> {
+  // Example list of medicines with name, ID, and price
+  final List<Map<String, dynamic>> medicines = [
+    {"id": 1, "name": "Coreg (Carvedilol)", "description": "Beta-blocker", "price": 20.0},
+    {"id": 2, "name": "Lipitor (Atorvastatin)", "description": "Cholesterol medication", "price": 30.0},
+    {"id": 3, "name": "Plavix (Clopidogrel)", "description": "Blood thinner", "price": 25.0},
+    {"id": 4, "name": "Zestril (Lisinopril)", "description": "Blood pressure medication", "price": 18.0},
+    {"id": 5, "name": "Synthroid (Levothyroxine)", "description": "Thyroid medication", "price": 22.0},
+    {"id": 6, "name": "Ventolin (Albuterol)", "description": "Asthma inhaler", "price": 15.0},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +110,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
                           ),
                           child: const TextField(
                             decoration: InputDecoration(
-                              hintText: 'Search...',
+                              hintText: 'Search medicines...',
                               border: InputBorder.none,
                               icon: Icon(Icons.search),
                             ),
@@ -111,12 +120,13 @@ class _MedicinSearchState extends State<MedicinSearch> {
                         // Medicine list
                         Expanded(
                           child: ListView.builder(
-                            itemCount: 6, // Number of medicines to show
+                            itemCount: medicines.length, // Number of medicines
                             itemBuilder: (context, index) {
+                              final medicine = medicines[index];
                               return Align(
                                 alignment: Alignment.center, // Center-align cards
                                 child: Container(
-                                  width: MediaQuery.of(context).size.width * 0.90, // Reduce width to 85% of screen
+                                  width: MediaQuery.of(context).size.width * 0.90, // Reduce width to 90% of screen
                                   margin: const EdgeInsets.only(bottom: 16),
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
@@ -136,16 +146,16 @@ class _MedicinSearchState extends State<MedicinSearch> {
                                     children: [
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: const [
+                                        children: [
                                           Text(
-                                            'Coreg (Carvedilol)',
-                                            style: TextStyle(
+                                            medicine['name'],
+                                            style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          Text('SGRSG'),
-                                          Text('Price'),
+                                          Text(medicine['description']),
+                                          Text('Price: \$${medicine['price']}'),
                                         ],
                                       ),
                                       IconButton(
@@ -156,10 +166,15 @@ class _MedicinSearchState extends State<MedicinSearch> {
                                         ),
                                         onPressed: () {
                                           Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddToCartScreen()),);
-                                          // Add to cart logic
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => AddToCartScreen(
+                                                medicineId: medicine['id'],
+                                                medicineName: medicine['name'],
+                                                medicinePrice: medicine['price'],
+                                              ),
+                                            ),
+                                          );
                                         },
                                       ),
                                     ],
@@ -183,10 +198,9 @@ class _MedicinSearchState extends State<MedicinSearch> {
             child: FloatingActionButton(
               onPressed: () {
                 Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Cart()),);
-                // Cart button logic
+                  context,
+                  MaterialPageRoute(builder: (context) => Cart()),
+                );
               },
               backgroundColor: const Color.fromARGB(255, 239, 236, 236),
               child: const Icon(Icons.shopping_cart),

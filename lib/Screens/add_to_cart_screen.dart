@@ -4,7 +4,7 @@ import 'package:mba/Screens/cart.dart';
 import 'package:mba/Screens/contactdetail_screen.dart';
 
 class AddToCartScreen extends StatelessWidget {
-  const AddToCartScreen({super.key});
+  const AddToCartScreen({super.key, required medicineId, required medicineName, required medicinePrice});
 
   @override
   Widget build(BuildContext context) {

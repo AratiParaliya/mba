@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:mba/Admin/dashboard.dart';
 import 'package:mba/Screens/login.dart';
 
 class SignupPage extends StatelessWidget {
@@ -207,6 +208,26 @@ class SignupPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                 
+                  TextButton(
+                    onPressed: () {
+                      // Navigate to Login page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Dashboard()),
+                      );
+                    },
+                    child: const Text(
+                      "Admin",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  )
+                ],
+              ),
+               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
