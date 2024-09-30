@@ -1,5 +1,5 @@
-import 'package:a/totalpage_confirm.dart';
 import 'package:flutter/material.dart';
+import 'package:mba/Admin/order_approvel.dart';
 
 class AddMedicine extends StatefulWidget {
   const AddMedicine({super.key});
@@ -111,7 +111,7 @@ class _AddMedicineState extends State<AddMedicine> {
                                   Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ConfirmOrderPage()),);
+                                builder: (context) => OrderApprovel()),);
                                   // Handle Add to Cart functionality
                                 },
                                 style: ElevatedButton.styleFrom(

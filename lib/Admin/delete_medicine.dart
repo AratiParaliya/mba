@@ -1,5 +1,5 @@
-import 'package:a/add_medicine.dart';
 import 'package:flutter/material.dart';
+import 'package:mba/Admin/add_medicine.dart';
 
 class DeleteMedicine extends StatefulWidget {
   const DeleteMedicine({super.key});
