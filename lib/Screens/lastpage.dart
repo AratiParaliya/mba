@@ -84,9 +84,9 @@ class Lastpage extends StatelessWidget {
                             width: 300, // Set the size of the image
                             height: 300,
                           ),
-                          const SizedBox(height: 20), // Space between image and text
+                        // Space between image and text
                           const Text(
-                            'Thank you !!!',
+                            'Thank you !',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,

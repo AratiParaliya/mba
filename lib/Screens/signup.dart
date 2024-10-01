@@ -7,7 +7,9 @@ import 'package:mba/Screens/login.dart';
 class SignupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isKeyboard = MediaQuery.of(context).viewInsets.bottom !=0;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -33,7 +35,7 @@ class SignupPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Image.asset(
-                    'assets/logo.png', // Replace with your logo asset path
+                 'assets/logo.png', // Replace with your logo asset path
                     width: 50, // Adjust the size as needed
                   ),
                  

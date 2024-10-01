@@ -9,6 +9,7 @@ class ForgatePassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -50,11 +51,13 @@ class ForgatePassword extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20), // Add some space after the logo and text
-              Container(
-                height: MediaQuery.of(context).size.height / 2.5,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/forgetpassword.png"),
+              SingleChildScrollView(
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 2.5,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/forgetpassword.png"),
+                    ),
                   ),
                 ),
               ),

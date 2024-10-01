@@ -59,20 +59,10 @@ class _HomePageState extends State<HomePage> {
                     "Health Solution you can Trust",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 30,
+                      fontSize: 24,
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Enter your detail to proceed further",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 24, 22, 22),
-                      fontSize: 18,
-                    ),
-                  ),
+                  
                 ],
               ),
               Column(

@@ -9,7 +9,9 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
+        
         child: Container(
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
@@ -57,7 +59,14 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
               // Add space between logo and text
-             
+              const Text(
+                "Sign in ",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const Text(
                 "Enter your Details to proceed further",
                 style: TextStyle(

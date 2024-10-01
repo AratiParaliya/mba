@@ -85,7 +85,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                     children: [
                       // Medicine details with rounded border and shadow
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 130),
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 45),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                          border: Border.all(color: Colors.grey.shade300),
@@ -106,7 +106,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
 
                       // Quantity selector with rounded border and shadow
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 130),
+                        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 50),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade300),
@@ -178,7 +178,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: const Color(0xFF6F48EB),
+                            backgroundColor: const Color.fromARGB(255, 129, 93, 248),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),

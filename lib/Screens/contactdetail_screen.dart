@@ -156,7 +156,7 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F4FF),
         borderRadius: BorderRadius.circular(12),
@@ -177,7 +177,7 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
   // Helper method to build each TextField for user input
   Widget _buildTextField(String label, TextEditingController controller, String hintText) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 7.0),
       child: Row(
         children: [
           // Label (left side)

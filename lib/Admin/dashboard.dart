@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mba/Admin/approval_list.dart';
 import 'package:mba/Admin/delete_medicine.dart';
 import 'package:mba/Admin/invoice_download.dart';
+import 'package:mba/Admin/my_profile.dart';
 import 'package:mba/Admin/orderlist.dart';
 import 'package:mba/Admin/panding_bills.dart';
 
@@ -172,9 +173,9 @@ class _DashboardState extends State<Dashboard> {
       // case 'Ledger':
       //   destinationScreen = ;
       //   break;
-      // case 'My Profile':
-      //   destinationScreen =;
-      //   break;
+      case 'My Profile':
+        destinationScreen = Myprofile();
+        break;
       default:
         return; // If no match, do nothing
     }

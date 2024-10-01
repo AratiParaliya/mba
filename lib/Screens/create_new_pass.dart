@@ -1,12 +1,15 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:mba/Screens/login.dart';
 import 'package:mba/Screens/signup.dart';
 
 class CreateNewPass extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final isKeyboard = MediaQuery.of(context).viewInsets.bottom !=0;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -135,7 +138,7 @@ class CreateNewPass extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SignupPage()),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     },
                     color: Color.fromARGB(255, 110, 102, 188),
