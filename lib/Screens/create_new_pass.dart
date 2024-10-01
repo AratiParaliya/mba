@@ -50,22 +50,26 @@ class CreateNewPass extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20), // Add some space after the logo and text
-              Container(
-                height: MediaQuery.of(context).size.height / 3,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/code.png"),
+              SingleChildScrollView(
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 3,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/code.png"),
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 5),
-              Text(
-                "All Set For Creating New Password",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 22,
+              SingleChildScrollView(
+                child: Text(
+                  "All Set For Creating New Password",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 22,
+                  ),
                 ),
               ),
               SizedBox(height: 20),
