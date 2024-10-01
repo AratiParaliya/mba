@@ -62,13 +62,15 @@ class ForgatePassword extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 5),
-              Text(
-                "Please Enter Your Email Address To Receive a Verification Code",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 22,
+              SingleChildScrollView(
+                child: Text(
+                  "Please Enter Your Email Address To Receive a Verification Code",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 22,
+                  ),
                 ),
               ),
               SizedBox(height: 2),

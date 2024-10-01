@@ -7,7 +7,7 @@ class VerificationEmail extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-     final isKeyboard = MediaQuery.of(context).viewInsets.bottom !=0;
+     
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -52,22 +52,26 @@ class VerificationEmail extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 20), // Add some space after the logo and text
-                Container(
-                  height: MediaQuery.of(context).size.height / 2.5,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/email.png"),
+                SingleChildScrollView(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 2.5,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/email.png"),
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(height: 5),
-                Text(
-                  "Please Enter The 6 Digit Code Sent To Your Email Address",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 22,
+                SingleChildScrollView(
+                  child: Text(
+                    "Please Enter The 6 Digit Code Sent To Your Email Address",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 22,
+                    ),
                   ),
                 ),
                 SizedBox(height: 20),
