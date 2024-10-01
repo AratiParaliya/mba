@@ -51,13 +51,11 @@ class ForgatePassword extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20), // Add some space after the logo and text
-              SingleChildScrollView(
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 2.5,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/forgetpassword.png"),
-                    ),
+              Container(
+                height: MediaQuery.of(context).size.height / 2.5,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/forgetpassword.png"),
                   ),
                 ),
               ),
