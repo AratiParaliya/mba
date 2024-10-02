@@ -1,44 +1,28 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:mba/Screens/verification_email.dart';
 
-
 class ForgatePassword extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true, // Allows the body to adjust when keyboard or clipboard is shown
       body: SafeArea(
-        child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: const RadialGradient(
-              colors: [
-                Color.fromARGB(255, 110, 102, 188), // Darker purple
-                Colors.white, // Light center
-              ],
-              radius: 2,
-              center: Alignment(2.8, -1.0),
-              tileMode: TileMode.clamp,
-            ),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              // Column for logo and "Forget Password" text
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Aligns to the left
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            // Logo and "Forget Password" text at the top
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Image.asset(
                     'assets/logo.png', // Replace with your logo asset path
                     width: 50, // Adjust the size as needed
                   ),
-                  SizedBox(height: 10), // Add space between logo and text
+                  SizedBox(height: 10), // Space between logo and text
                   Center(
                     child: Text(
                       "Forget Password",
@@ -50,60 +34,68 @@ class ForgatePassword extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 20), // Add some space after the logo and text
-              SingleChildScrollView(
+            ),
+
+            // Scrollable Image section
+            Expanded(
+              child: SingleChildScrollView(
                 child: Container(
-                  height: MediaQuery.of(context).size.height / 2.5,
+                  height: MediaQuery.of(context).size.height / 2.5, // Dynamically adjust height
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/forgetpassword.png"),
+                      fit: BoxFit.cover, // Make sure image covers the area
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 5),
-              SingleChildScrollView(
-                child: Text(
-                  "Please Enter Your Email Address To Receive a Verification Code",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              SizedBox(height: 2),
-              Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8, 
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),// Adjust width if needed
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Email Address",
-                      labelText: 'Email Address',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
-                  ),
-                ),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min, // Minimize the size to fit content
-                children: <Widget>[
+            ),
+
+            // Static Text and Input Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Column(
+                children: [
                   SizedBox(height: 5),
+                  Text(
+                    "Please Enter Your Email Address To Receive a Verification Code",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 22,
+                    ),
+                  ),
+                  SizedBox(height: 40),
+
+                  // Email Input Field
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Email Address",
+                        labelText: 'Email Address',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+
+                  // Send Button
                   MaterialButton(
                     minWidth: double.infinity,
                     height: 60,
@@ -131,8 +123,9 @@ class ForgatePassword extends StatelessWidget {
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 30),
+          ],
         ),
       ),
     );
