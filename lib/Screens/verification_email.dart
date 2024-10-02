@@ -5,6 +5,9 @@ import 'package:mba/Screens/create_new_pass.dart';
 class VerificationEmail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Check if the keyboard is visible (viewInsets will be non-zero when the keyboard is up)
+    bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return Scaffold(
       resizeToAvoidBottomInset: true, // Allows the layout to adjust when the keyboard appears
       body: SafeArea(
@@ -45,17 +48,18 @@ class VerificationEmail extends StatelessWidget {
                     ),
                     SizedBox(height: 20),
 
-                    // Image section
-                    Container(
-                      height: MediaQuery.of(context).size.height / 2.6, // Adjust height dynamically
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/email.png"),
-                          fit: BoxFit.cover, // Ensure the image fits nicely
+                    // Conditionally display the image only if the keyboard is not visible
+                    if (!isKeyboardVisible)
+                      Container(
+                        height: MediaQuery.of(context).size.height / 2.6, // Adjust height dynamically
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/email.png"),
+                            fit: BoxFit.cover, // Ensure the image fits nicely
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 5),
+                    if (!isKeyboardVisible) SizedBox(height: 5),
 
                     // Instruction text
                     Text(

@@ -5,6 +5,9 @@ import 'package:mba/Screens/login.dart'; // Ensure this import points to the cor
 class CreateNewPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Check if the keyboard is visible (viewInsets will be non-zero when the keyboard is up)
+    bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
+
     return Scaffold(
       resizeToAvoidBottomInset: true, // Allow resizing when the keyboard appears
       body: SafeArea(
@@ -48,17 +51,19 @@ class CreateNewPass extends StatelessWidget {
                       ),
                       SizedBox(height: 20), // Space after the logo and title
 
-                      // Image and Instruction Text (Scrollable)
-                      Container(
-                        height: MediaQuery.of(context).size.height / 3,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("assets/code.png"), // Replace with your image asset
-                            fit: BoxFit.cover, // Adjust how the image fits
+                      // Conditionally display the image only if the keyboard is not visible
+                      if (!isKeyboardVisible)
+                        Container(
+                          height: MediaQuery.of(context).size.height / 3,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/code.png"), // Replace with your image asset
+                              fit: BoxFit.cover, // Adjust how the image fits
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 5),
+                      if (!isKeyboardVisible) SizedBox(height: 5),
+
                       Text(
                         "All Set For Creating New Password",
                         textAlign: TextAlign.center,
