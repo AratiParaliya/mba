@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mba/Admin/delete_medicine.dart';
@@ -151,7 +150,8 @@ class _AddMedicineState extends State<AddMedicine> {
           Column(
             children: [
               const SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
+                height:
+                    100.0, // This height should be slightly less than the blue container's height
               ),
               Expanded(
                 child: Container(
@@ -178,12 +178,16 @@ class _AddMedicineState extends State<AddMedicine> {
                       children: [
                         const SizedBox(height: 20),
                         _buildSectionTitle('Product Details'),
-                        _buildTextField('Medicine Name', medicineNameController, 'Paracetamol 500mg'),
-                        _buildTextField('Generic Name', genericNameController, 'Paracetamol'),
-                        _buildTextField('Brand', brandController, 'XYZ Pharmaceuticals'),
+                        _buildTextField('Medicine Name', medicineNameController,
+                            'Paracetamol 500mg'),
+                        _buildTextField('Generic Name', genericNameController,
+                            'Paracetamol'),
+                        _buildTextField(
+                            'Brand', brandController, 'XYZ Pharmaceuticals'),
                         _buildTextField('Type', typeController, 'Tablet'),
                         _buildTextField('Size', sizeController, 'Enter size'),
-                        _buildTextField('Price', priceController, 'Enter price'),
+                        _buildTextField(
+                            'Price', priceController, 'Enter price'),
 
                         const SizedBox(height: 30),
 
@@ -192,10 +196,13 @@ class _AddMedicineState extends State<AddMedicine> {
                           children: [
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: _addMedicine, // Call add medicine function
+                                onPressed:
+                                    _addMedicine, // Call add medicine function
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor: const Color(0xFF6F48EB), // Purple color
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  backgroundColor:
+                                      const Color(0xFF6F48EB), // Purple color
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -248,7 +255,8 @@ class _AddMedicineState extends State<AddMedicine> {
   }
 
   // Helper method to build each TextField for user input
-  Widget _buildTextField(String label, TextEditingController controller, String hintText) {
+  Widget _buildTextField(
+      String label, TextEditingController controller, String hintText) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
