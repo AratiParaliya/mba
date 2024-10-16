@@ -1,18 +1,16 @@
-
+import 'package:b/Screens/profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mba/Screens/profile_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // For displaying notifications
 import 'cart.dart'; // Import your Cart screen
 import 'medicin_search.dart'; // Import your MedicinSearch screen
-import 'package:flutter/material.dart'; // Necessary import for the new screen
 
 class OrderScreen extends StatelessWidget {
   const OrderScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Get the current user's ID from FirebaseAuth
     final String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
 
     return Scaffold(
@@ -71,7 +69,7 @@ class OrderScreen extends StatelessWidget {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 3.0], // Adjust stops to control color spread
+                      stops: const [0.3, 1.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -84,7 +82,7 @@ class OrderScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         const Text(
-                          'Order List',
+                          'My Orders',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -94,11 +92,7 @@ class OrderScreen extends StatelessWidget {
                         const SizedBox(height: 20),
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(userId)
-                                .collection('order')
-                                .snapshots(),
+                            stream: FirebaseFirestore.instance.collection('users').doc(userId).collection('order').snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(child: CircularProgressIndicator());
@@ -115,11 +109,19 @@ class OrderScreen extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   final orderData = orders[index].data() as Map<String, dynamic>;
                                   final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
+                                  final createdAt = (orderData['createdAt'] as Timestamp?)?.toDate();
+
+                                  // Check if the order is within the cancelable timeframe (12 hours)
+                                  bool canCancel = createdAt != null && DateTime.now().difference(createdAt).inHours < 12;
+
                                   return Card(
                                     child: ListTile(
                                       title: Text('Order ID: ${orderData['orderId']}'),
-                                      subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
-                                      onTap: () => _showOrderDetails(context, orderData, cartItems, userId),
+                                      subtitle: Text('Status: ${orderData['status']}'),
+                                      trailing: orderData['status'] == 'approved'
+                                          ? const Icon(Icons.check, color: Colors.green)
+                                          : const Icon(Icons.close, color: Colors.red),
+                                      onTap: () => _showOrderDetails(context, orderData, cartItems, canCancel),
                                     ),
                                   );
                                 },
@@ -136,144 +138,87 @@ class OrderScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // Assuming this is the index for OrderScreen
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const MedicinSearch()),
-              );
-              break;
-            case 1:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Cart(cartItems: [])),
-              );
-              break;
-            case 2:
-              // Already on OrderScreen
-              break;
-            case 3:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => UserProfilePage(user: FirebaseAuth.instance.currentUser!)),
-              );
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.grey), // Gray icon
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.grey), // Gray icon
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.border_outer_outlined, color: Colors.grey), // Gray icon
-            label: 'Order',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.grey), // Gray icon
-            label: 'Profile',
-          ),
-        ],
-      ),
     );
   }
-
-  void _showOrderDetails(
-    BuildContext context,
-    Map<String, dynamic> orderData,
-    List<Map<String, dynamic>> cartItems,
-    String userId,
-  ) {
-    try {
-      final Timestamp? createdAt = orderData['createdAt'] as Timestamp?;
-
-      if (createdAt == null) {
-        throw 'Order created time is missing.';
-      }
-
-      final DateTime orderTime = createdAt.toDate();
-      final DateTime currentTime = DateTime.now();
-      final Duration difference = currentTime.difference(orderTime);
-
-      final bool canCancel = difference.inHours < 12;
-
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Order ID: ${orderData['orderId']}'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('User: ${orderData['fullName']}'),
-                Text('Total Price: \$${orderData['totalPrice']}'),
-                const SizedBox(height: 10),
-                Text('Delivery Address: ${orderData['address']}'),
-                const SizedBox(height: 10),
-                Text('Contact: ${orderData['contactNumber']}'),
-                const SizedBox(height: 10),
-                const Text('Cart Items:'),
-                ...cartItems.map((item) => ListTile(
-                      title: Text(item['medicineName'] ?? 'Unknown'),
-                      subtitle: Text(
-                        "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                      ),
-                    )),
-              ],
-            ),
-            actions: [
-              if (canCancel)
-                ElevatedButton(
-                  onPressed: () => _cancelOrder(context, orderData['orderId'], userId),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white, // Button color
-                  ),
-                  child: const Text('Cancel Order'),
-                ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
+void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems, bool canCancel) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Order ID: ${orderData['orderId']}'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Status: ${orderData['status']}'),
+            Text('Total Price: \$${orderData['totalPrice']}'),
+            const SizedBox(height: 10),
+            Text('Delivery Address: ${orderData['address']}'),
+            const SizedBox(height: 10),
+            Text('Contact: ${orderData['contactNumber']}'),
+            const SizedBox(height: 10),
+            const Text('Cart Items:'),
+            ...cartItems.map((item) => ListTile(
+              title: Text(item['medicineName'] ?? 'Unknown'),
+              subtitle: Text(
+                "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
               ),
+            )),
+            
+          ],
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (canCancel) // Only show cancel button if within 12 hours
+              ElevatedButton(
+                onPressed: () {
+                  _cancelOrder(orderData['orderId'], orderData); // Pass order data for cancellation
+                  Navigator.pop(context); // Close the dialog
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.red, // Text color
+                ),
+                child: const Text('Cancel Order'),
+              ),
+              if (canCancel) // Show close button only if cancel option is available
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+             
             ],
-          );
-        },
+          ),
+        ],
       );
-    } catch (e) {
-      print('Error showing order details: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load order details: $e')),
-      );
-    }
-  }
+    },
+  );
+}
 
-  void _cancelOrder(BuildContext context, String orderId, String userId) {
-    final batch = FirebaseFirestore.instance.batch();
+  Future<void> _cancelOrder(String orderId, Map<String, dynamic> orderData) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
 
-    final userOrderRef = FirebaseFirestore.instance.collection('users').doc(userId).collection('order').doc(orderId);
-    final ordersRef = FirebaseFirestore.instance.collection('orders').doc(orderId);
-    final pendingBillRef = FirebaseFirestore.instance.collection('pendingbill').doc(orderId);
+    // Delete the order from the 'orders' collection
+    await FirebaseFirestore.instance
+        .collection('orders') // Change to your orders collection name
+        .doc(orderId)
+        .delete();
 
-    batch.delete(userOrderRef);
-    batch.delete(ordersRef);
-    batch.delete(pendingBillRef);
+    // Delete the order from the 'users/order' subcollection
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('order')
+        .doc(orderId)
+        .delete();
 
-    batch.commit().then((_) {
-      Navigator.pop(context); // Close the dialog
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Order cancelled successfully.')),
-      );
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to cancel order: $error')),
-      );
-    });
+    // Show notification
+    Fluttertoast.showToast(
+      msg: "Order canceled successfully!",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
   }
 }
