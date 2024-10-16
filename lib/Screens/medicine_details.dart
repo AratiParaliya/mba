@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mba/Screens/medicin_search.dart';
 
 class MedicineDetails extends StatefulWidget {
-  final String documentId; // Document ID passed dynamically
+  final String documentId;
 
   const MedicineDetails({
     super.key,
-    required this.documentId, required String genericName, required String medicineName, required double price, required void Function() addToCart,
+    required this.documentId,
+    required String genericName,
+    required String medicineName,
+    required double price,
+    required void Function() addToCart,
   });
 
   @override
@@ -14,38 +19,42 @@ class MedicineDetails extends StatefulWidget {
 }
 
 class _MedicineDetailsState extends State<MedicineDetails> {
-  // Firestore reference
   final CollectionReference medicinesCollection =
       FirebaseFirestore.instance.collection('product');
-
   final CollectionReference cartCollection =
       FirebaseFirestore.instance.collection('cart');
 
-  int _quantity = 1; // Default quantity is 1
+  int _quantity = 1;
 
-  // Function to fetch medicine details from Firestore
   Future<DocumentSnapshot> _fetchMedicineDetails(String documentId) async {
     return await medicinesCollection.doc(documentId).get();
   }
 
-  // Method to add item to the cart
   Future<void> _addToCart(Map<String, dynamic> medicineData) async {
+    // Adding the selected quantity of the medicine to the cart
     await cartCollection.add({
       'medicineName': medicineData['medicineName'],
       'genericName': medicineData['genericName'],
       'price': medicineData['price'],
-      'quantity': _quantity, // Adding selected quantity
+      'quantity': _quantity, // Include the selected quantity
     });
+
+    // Show a confirmation message
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Added to Cart')),
     );
+
+    // Navigate to the MedicineSearchScreen after adding to the cart
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MedicinSearch()),
+    );
   }
 
-  // Function to manage quantity state
   void _updateQuantity(int change) {
     setState(() {
       _quantity += change;
-      if (_quantity < 1) _quantity = 1; // Ensure quantity doesn't go below 1
+      if (_quantity < 1) _quantity = 1; // Prevent quantity from being less than 1
     });
   }
 
@@ -56,15 +65,14 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188),
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -78,7 +86,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
@@ -96,7 +104,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           ),
           Column(
             children: [
-              const SizedBox(height: 100.0), // Adjust to match the blue container
+              const SizedBox(height: 100.0),
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -107,7 +115,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.white,
-                        Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        Color.fromARGB(255, 143, 133, 230),
                       ],
                       stops: [0.6, 1.0],
                       tileMode: TileMode.clamp,
@@ -135,13 +143,17 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                               return const Text('No data available');
                             }
 
-                            // Extract data from the document
                             var medicineData = snapshot.data!.data() as Map<String, dynamic>;
                             String medicineName = medicineData['medicineName'] ?? 'Unknown';
                             String genericName = medicineData['genericName'] ?? 'Unknown';
                             String brand = medicineData['brand'] ?? 'Unknown';
                             String type = medicineData['type'] ?? 'Unknown';
-                            String size = medicineData['size'] ?? 'Unknown';
+                            double size = (medicineData['size'] is double)
+                                ? medicineData['size']
+                                : (medicineData['size'] is int)
+                                    ? (medicineData['size'] as int).toDouble()
+                                    : 0.0;
+
                             double price = (medicineData['price'] is double)
                                 ? medicineData['price']
                                 : (medicineData['price'] is int)
@@ -155,10 +167,8 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                 _buildDetailRow('Generic Name', genericName),
                                 _buildDetailRow('Brand', brand),
                                 _buildDetailRow('Type', type),
-                                _buildDetailRow('Size', size),
+                                _buildDetailRow('Size', '${size.toStringAsFixed(2)}'),
                                 _buildDetailRow('Price', '\$${price.toStringAsFixed(2)}'),
-
-                                // Quantity management
                                 const SizedBox(height: 20),
                                 Center(
                                   child: Row(
@@ -171,21 +181,19 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                           color: const Color(0xFF6F48EB),
                                         ),
                                       ),
-                                       _buildQuantityRow(),
+                                      _buildQuantityRow(),
                                     ],
                                   ),
                                 ),
-                                // Updated quantity row
-
-                                // Add to Cart Button
                                 const SizedBox(height: 20),
                                 Center(
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      _addToCart(medicineData); // Add to cart action
+                                      _addToCart(medicineData);
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal:80),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16, horizontal: 80),
                                       backgroundColor: const Color(0xFF6F48EB),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30),
@@ -218,7 +226,6 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     );
   }
 
-  // Helper method to build a section title (e.g., "Product Details")
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,
@@ -240,7 +247,6 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     );
   }
 
-  // Helper method to build a detail row
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -289,27 +295,27 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     );
   }
 
-  // Helper method to build the quantity row with increment and decrement buttons
   Widget _buildQuantityRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
           onPressed: () {
-            _updateQuantity(-1); // Decrease quantity
+            _updateQuantity(-1);
           },
           icon: const Icon(Icons.remove_circle_outline, color: Color(0xFF6F48EB)),
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16), // Add padding for spacing
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             '$_quantity',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF6F48EB)),
+            style: const TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF6F48EB)),
           ),
         ),
         IconButton(
           onPressed: () {
-            _updateQuantity(1); // Increase quantity
+            _updateQuantity(1);
           },
           icon: const Icon(Icons.add_circle_outline, color: Color(0xFF6F48EB)),
         ),

@@ -2,7 +2,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 
 import 'package:mba/Screens/contactdetail_screen.dart';
 import 'package:mba/Screens/medicin_search.dart';
@@ -141,73 +140,75 @@ class _CartState extends State<Cart> {
                         _buildPriceDetails(),
                         const SizedBox(height: 16),
                         _buildPlaceOrderButton(),
-                        const SizedBox(height: 16),
-                        DotNavigationBar(
-                          margin: const EdgeInsets.only(left: 5, right: 5),
-                          currentIndex: _currentIndex,
-                          dotIndicatorColor: const Color.fromARGB(255, 143, 133, 230),
-                          unselectedItemColor: Colors.grey[300],
-                          splashBorderRadius: 50,
-                          onTap: (index) {
-                            switch (index) {
-                              case 0:
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MedicinSearch(),
-                                  ),
-                                );
-                                break;
-                              case 1:
-                                break;
-                              case 2:
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>  OrderScreen(),
-                                  ),
-                                );
-                                break;
-                              case 3:
-                                if (user != null) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => UserProfilePage(user: user!),
-                                    ),
-                                  );
-                                } else {
-                                  // Handle case when user is null
-                                  print("User is not logged in.");
-                                }
-                                break;
-                            }
-                          },
-                          items: [
-                            DotNavigationBarItem(
-                              icon: const Icon(Icons.home),
-                              selectedColor: const Color(0xff73544C),
-                            ),
-                            DotNavigationBarItem(
-                              icon: const Icon(Icons.add_shopping_cart_rounded),
-                              selectedColor: const Color(0xff73544C),
-                            ),
-                            DotNavigationBarItem(
-                              icon: const Icon(Icons.list_alt),
-                              selectedColor: const Color(0xff73544C),
-                            ),
-                            DotNavigationBarItem(
-                              icon: const Icon(Icons.person),
-                              selectedColor: const Color(0xff73544C),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: const Color(0xff73544C),
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MedicinSearch(),
+                ),
+              );
+              break;
+            case 1:
+              // Stay on the current page
+              break;
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const OrderScreen(),
+                ),
+              );
+              break;
+            case 3:
+              if (user != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserProfilePage(user: user!),
+                  ),
+                );
+              } else {
+                // Handle case when user is null
+                print("User is not logged in.");
+              }
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_shopping_cart_rounded),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list_alt),
+            label: 'Orders',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
@@ -325,7 +326,7 @@ class _CartState extends State<Cart> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ContactDetailScreen(cartItems: cartItems, ),
+            builder: (context) => ContactDetailScreen(cartItems: cartItems),
           ),
         );
       },

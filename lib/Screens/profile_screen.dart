@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'cart.dart'; // Import your Cart screen
 import 'medicin_search.dart'; // Import your MedicinSearch screen
-import 'order_screen.dart'; // Import your Order screen
 
 class UserProfilePage extends StatefulWidget {
   final User user; // Firebase User object
@@ -156,70 +154,58 @@ class _UserProfilePageState extends State<UserProfilePage> {
               }
             },
           ),
-          // DotNavigationBar for bottom navigation
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-              ),
-              child: DotNavigationBar(
-                margin: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
-                currentIndex: _currentIndex,
-                dotIndicatorColor: const Color(0xff73544C),
-                unselectedItemColor: Colors.grey[300],
-                splashBorderRadius: 50,
-                onTap: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
 
-                  switch (index) {
-                    case 0:
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MedicinSearch()),
-                      );
-                      break;
-                    case 1:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Cart(cartItems: [],)),
-                      );
-                      break;
-                    case 2:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => OrderScreen( )),
-                      );
-                      break;
-                    case 3:
-                      // Already on Profile Page
-                      break;
-                  }
-                },
-                items: [
-                  DotNavigationBarItem(
-                    icon: const Icon(Icons.home),
-                    selectedColor: const Color(0xff73544C),
-                  ),
-                  DotNavigationBarItem(
-                    icon: const Icon(Icons.add_shopping_cart_rounded),
-                    selectedColor: const Color(0xff73544C),
-                  ),
-                  DotNavigationBarItem(
-                    icon: const Icon(Icons.border_outer_outlined),
-                    selectedColor: const Color(0xff73544C),
-                  ),
-                  DotNavigationBarItem(
-                    icon: const Icon(Icons.person),
-                    selectedColor: const Color(0xff73544C),
-                  ),
-                ],
-              ),
-            ),
+          // Orederscreen Section
+          if (_currentIndex == 2) _buildOrdersScreen(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MedicinSearch()),
+              );
+              break;
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Cart(cartItems: [])),
+              );
+              break;
+            case 2:
+              setState(() {
+                // Show orders screen without navigating away
+                _currentIndex = 2;
+              });
+              break;
+            case 3:
+              // Already on Profile Page
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Colors.grey), // Gray icon
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.grey), // Gray icon
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.border_outer_outlined, color: Colors.grey), // Gray icon
+            label: 'Orders',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, color: Colors.grey), // Gray icon
+            label: 'Profile',
           ),
         ],
       ),
@@ -255,6 +241,40 @@ class _UserProfilePageState extends State<UserProfilePage> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Method to build Orederscreen
+  Widget _buildOrdersScreen() {
+    return Positioned.fill(
+      child: Column(
+        children: [
+          SizedBox(height: 100.0), // Space for the header
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white, // Light color
+                    Color.fromARGB(255, 143, 133, 230), // Darker purple
+                  ],
+                  stops: [0.3, 1.0], // Adjust stops to control color spread
+                  tileMode: TileMode.clamp,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'Orders Screen', // Placeholder for orders content
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ),
         ],

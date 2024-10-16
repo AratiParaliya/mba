@@ -1,6 +1,11 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mba/Screens/profile_screen.dart';
+import 'cart.dart'; // Import your Cart screen
+import 'medicin_search.dart'; // Import your MedicinSearch screen
+import 'package:flutter/material.dart'; // Necessary import for the new screen
 
 class OrderScreen extends StatelessWidget {
   const OrderScreen({Key? key}) : super(key: key);
@@ -66,7 +71,7 @@ class OrderScreen extends StatelessWidget {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [0.3, 3.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -131,98 +136,135 @@ class OrderScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 2, // Assuming this is the index for OrderScreen
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MedicinSearch()),
+              );
+              break;
+            case 1:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Cart(cartItems: [])),
+              );
+              break;
+            case 2:
+              // Already on OrderScreen
+              break;
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => UserProfilePage(user: FirebaseAuth.instance.currentUser!)),
+              );
+              break;
+          }
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Colors.grey), // Gray icon
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.grey), // Gray icon
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.border_outer_outlined, color: Colors.grey), // Gray icon
+            label: 'Order',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, color: Colors.grey), // Gray icon
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
 
   void _showOrderDetails(
-  BuildContext context,
-  Map<String, dynamic> orderData,
-  List<Map<String, dynamic>> cartItems,
-  String userId) {
-  try {
-    // Extract the order placement time from 'createdAt' (assuming it's stored as a Timestamp in Firestore)
-    final Timestamp? createdAt = orderData['createdAt'] as Timestamp?;
+    BuildContext context,
+    Map<String, dynamic> orderData,
+    List<Map<String, dynamic>> cartItems,
+    String userId,
+  ) {
+    try {
+      final Timestamp? createdAt = orderData['createdAt'] as Timestamp?;
 
-    // Check for null and proceed if it's valid
-    if (createdAt == null) {
-      throw 'Order created time is missing.';
-    }
+      if (createdAt == null) {
+        throw 'Order created time is missing.';
+      }
 
-    // Convert the Timestamp to DateTime
-    final DateTime orderTime = createdAt.toDate();
-    final DateTime currentTime = DateTime.now();
-    final Duration difference = currentTime.difference(orderTime);
+      final DateTime orderTime = createdAt.toDate();
+      final DateTime currentTime = DateTime.now();
+      final Duration difference = currentTime.difference(orderTime);
 
-    // Check if the order was placed less than 12 hours ago
-    final bool canCancel = difference.inHours < 12;
+      final bool canCancel = difference.inHours < 12;
 
-    // Show the dialog with order details
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Order ID: ${orderData['orderId']}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('User: ${orderData['fullName']}'),
-              Text('Total Price: \$${orderData['totalPrice']}'),
-              const SizedBox(height: 10),
-              Text('Delivery Address: ${orderData['address']}'),
-              const SizedBox(height: 10),
-              Text('Contact: ${orderData['contactNumber']}'),
-              const SizedBox(height: 10),
-              const Text('Cart Items:'),
-              ...cartItems.map((item) => ListTile(
-                title: Text(item['medicineName'] ?? 'Unknown'),
-                subtitle: Text(
-                  "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                ),
-              )),
-            ],
-          ),
-          actions: [
-            if (canCancel)
-              ElevatedButton(
-                onPressed: () => _cancelOrder(context, orderData['orderId'], userId),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white, // Button color
-                ),
-                child: const Text('Cancel Order'),
-              ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Order ID: ${orderData['orderId']}'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('User: ${orderData['fullName']}'),
+                Text('Total Price: \$${orderData['totalPrice']}'),
+                const SizedBox(height: 10),
+                Text('Delivery Address: ${orderData['address']}'),
+                const SizedBox(height: 10),
+                Text('Contact: ${orderData['contactNumber']}'),
+                const SizedBox(height: 10),
+                const Text('Cart Items:'),
+                ...cartItems.map((item) => ListTile(
+                      title: Text(item['medicineName'] ?? 'Unknown'),
+                      subtitle: Text(
+                        "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                      ),
+                    )),
+              ],
             ),
-          ],
-        );
-      },
-    );
-  } catch (e) {
-    print('Error showing order details: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to load order details: $e')),
-    );
+            actions: [
+              if (canCancel)
+                ElevatedButton(
+                  onPressed: () => _cancelOrder(context, orderData['orderId'], userId),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white, // Button color
+                  ),
+                  child: const Text('Cancel Order'),
+                ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print('Error showing order details: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load order details: $e')),
+      );
+    }
   }
-}
-
 
   void _cancelOrder(BuildContext context, String orderId, String userId) {
-    // Create a batch for atomic delete operations
     final batch = FirebaseFirestore.instance.batch();
 
-    // References to the documents to delete
-    final userOrderRef = FirebaseFirestore.instance.collection('users').doc(userId).collection('orders').doc(orderId);
+    final userOrderRef = FirebaseFirestore.instance.collection('users').doc(userId).collection('order').doc(orderId);
     final ordersRef = FirebaseFirestore.instance.collection('orders').doc(orderId);
     final pendingBillRef = FirebaseFirestore.instance.collection('pendingbill').doc(orderId);
 
-    // Add deletions to the batch
     batch.delete(userOrderRef);
     batch.delete(ordersRef);
     batch.delete(pendingBillRef);
 
-    // Commit the batch
     batch.commit().then((_) {
       Navigator.pop(context); // Close the dialog
       ScaffoldMessenger.of(context).showSnackBar(
