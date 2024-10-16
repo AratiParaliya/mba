@@ -7,6 +7,7 @@ import 'package:mba/Admin/my_profile.dart';
 import 'package:mba/Admin/orderlist.dart';
 import 'package:mba/Admin/panding_bills.dart';
 
+
 // Main entry point of the application
 
 
@@ -156,10 +157,10 @@ class _DashboardState extends State<Dashboard> {
     // Define the navigation based on the card title
     switch (title) {
       case 'Add Product':
-        destinationScreen = DeleteMedicine();
+        destinationScreen = FetchMedicines();
         break;
       case 'Order List':
-        destinationScreen = Orderlist();
+        destinationScreen = AdminOrderScreen();
         break;
       case 'Order Approval':
         destinationScreen = ApprovalList();

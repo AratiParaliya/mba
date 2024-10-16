@@ -1,39 +1,154 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mba/Screens/totalpage_confirm.dart';
+import 'package:mba/Screens/orderconfirmation_page.dart';
 
-class ContactdetailScreen extends StatefulWidget {
-  const ContactdetailScreen({super.key});
+class ContactDetailScreen extends StatefulWidget {
+  final List<Map<String, dynamic>> cartItems;
+
+  const ContactDetailScreen({Key? key, required this.cartItems}) : super(key: key);
 
   @override
-  State<ContactdetailScreen> createState() => _ContactdetailScreenState();
+  State<ContactDetailScreen> createState() => _ContactDetailScreenState();
 }
 
-class _ContactdetailScreenState extends State<ContactdetailScreen> {
-  // Controllers for TextFields
+class _ContactDetailScreenState extends State<ContactDetailScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController contactNameController = TextEditingController();
-  final TextEditingController atternatenumberController = TextEditingController();
-  final TextEditingController emailaddressController = TextEditingController();
+  final TextEditingController alternateNumberController = TextEditingController();
+  final TextEditingController emailAddressController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController pincodeController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
 
+  bool isSaving = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkForExistingOrder();
+  }
+
+  Future<void> _checkForExistingOrder() async {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
+
+    // Check if the user has any orders
+    QuerySnapshot ordersSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('order')
+        .get();
+
+    if (ordersSnapshot.docs.isNotEmpty) {
+      // If orders exist, fetch the latest order details (or adjust as needed)
+      DocumentSnapshot orderDoc = ordersSnapshot.docs.last;
+      final orderData = orderDoc.data() as Map<String, dynamic>;
+
+      // Populate text controllers with order's user data
+      fullNameController.text = orderData['fullName'] ?? '';
+      contactNameController.text = orderData['contactNumber'] ?? '';
+      alternateNumberController.text = orderData['alternateNumber'] ?? '';
+      emailAddressController.text = orderData['emailAddress'] ?? '';
+      addressController.text = orderData['address'] ?? '';
+      pincodeController.text = orderData['pinCode'] ?? '';
+      cityController.text = orderData['city'] ?? '';
+      stateController.text = orderData['state'] ?? '';
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  double _calculateTotalPrice() {
+    double totalPrice = 0.0;
+    for (var item in widget.cartItems) {
+      final price = item['price'] ?? 0.0;
+      final quantity = item['quantity'] ?? 1;
+      totalPrice += price * quantity;
+    }
+    return totalPrice;
+  }
+
+  Future<void> _saveOrderDetails() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      isSaving = true;
+    });
+
+    try {
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
+      String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final orderData = {
+        'userId': userId,
+        'orderId': orderId,
+        'fullName': fullNameController.text,
+        'contactNumber': contactNameController.text,
+        'alternateNumber': alternateNumberController.text,
+        'emailAddress': emailAddressController.text,
+        'address': addressController.text,
+        'pinCode': pincodeController.text,
+        'city': cityController.text,
+        'state': stateController.text,
+        'cartItems': widget.cartItems,
+        'totalPrice': _calculateTotalPrice(),
+        'createdAt': FieldValue.serverTimestamp(),
+        'status': 'pending',
+      };
+
+      // Save the order in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('order')
+          .doc(orderId)
+          .set(orderData);
+      await FirebaseFirestore.instance.collection('orders').doc(orderId).set(orderData);
+      await FirebaseFirestore.instance.collection('pending_bills').doc(orderId).set(orderData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Order saved successfully!")),
+      );
+
+      // Navigate to the final confirmation page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const OrderConfirmationPage()),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to save order. Please try again.")),
+      );
+    } finally {
+      setState(() {
+        isSaving = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188),
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -47,7 +162,7 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
@@ -63,84 +178,117 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
               ],
             ),
           ),
-          // Grey container with rounded corners at the top
           Column(
             children: [
-              const SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
-              ),
+              const SizedBox(height: 100.0),
               Expanded(
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: [
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                stops: [0.4, 1.0], // Adjust stops to control color spread
+                      stops: [0.3, 1.0],
                       tileMode: TileMode.clamp,
                     ),
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(60),
                       topRight: Radius.circular(60),
                     ),
                   ),
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        _buildSectionTitle('Contact Details'),
-                        _buildTextField('Full Name', fullNameController, 'ab'),
-                        _buildTextField('Contact Name', contactNameController, '1234'),
-                        _buildTextField('Atternate Number', atternatenumberController, '12345'),
-                        _buildTextField('Email Address',emailaddressController, 'ab@gmail.com'),
-                        _buildTextField('Address', addressController, 'adgdfbgfn'),
-                        _buildTextField('PinCode', pincodeController, '360370'),
-                         _buildTextField('City', cityController, 'Rajkot'),
-                          _buildTextField('State',stateController, 'gujarat'),
-                        const SizedBox(height: 30),
-
-                        // Add to Cart button
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-
-                                  Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ConfirmOrderPage()),);
-                                  // Handle Add to Cart functionality
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor:  Color.fromARGB(255, 113, 101, 228),// Purple color
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          _buildSectionTitle('Your Cart Items'),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: widget.cartItems.length,
+                            itemBuilder: (context, index) {
+                              final item = widget.cartItems[index];
+                              final medicineName = item['medicineName'] ?? 'Unknown';
+                              final price = item['price'] ?? 0.0;
+                              final quantity = item['quantity'] ?? 1;
+                              return ListTile(
+                                title: Text(medicineName),
+                                subtitle: Text(
+                                  "Price: \$${price.toStringAsFixed(2)} x $quantity = \$${(price * quantity).toStringAsFixed(2)}",
                                 ),
-                                child: const Text(
-                                  'Save & Continue',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          _buildSectionTitle('Total Price'),
+                          Text(
+                            "\$${_calculateTotalPrice().toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF6F48EB),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        // Buy Now button
-                       
-                        const SizedBox(height: 20),
-                      ],
+                          ),
+                          const SizedBox(height: 20),
+                          _buildSectionTitle('Contact Details'),
+                          _buildTextFormField('Full Name', fullNameController, 'John Doe'),
+                          _buildTextFormField(
+                            'Contact Number',
+                            contactNameController,
+                            '1234567890',
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.isEmpty || value.length != 10) {
+                                return 'Enter a valid 10-digit contact number';
+                              }
+                              return null;
+                            },
+                          ),
+                          _buildTextFormField(
+                            'Alternate Number',
+                            alternateNumberController,
+                            '0987654321',
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.length != 10) {
+                                return 'Enter a valid 10-digit alternate number';
+                              }
+                              return null;
+                            },
+                          ),
+                          _buildTextFormField(
+                            'Email Address',
+                            emailAddressController,
+                            'email@example.com',
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.isEmpty || !RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                                return 'Enter a valid email address';
+                              }
+                              return null;
+                            },
+                          ),
+                          _buildTextFormField('Address', addressController, '123 Main St'),
+                          _buildTextFormField('Pincode', pincodeController, '123456',
+                              keyboardType: TextInputType.number),
+                          _buildTextFormField('City', cityController, 'Your City'),
+                          _buildTextFormField('State', stateController, 'Your State'),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: isSaving ? null : _saveOrderDetails,
+                            child: isSaving
+                                ? const CircularProgressIndicator()
+                                : const Text('Proceed to Confirm Order'),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -152,11 +300,10 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
     );
   }
 
-  // Helper method to build a section title (e.g., "Product Details")
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F4FF),
         borderRadius: BorderRadius.circular(12),
@@ -164,69 +311,36 @@ class _ContactdetailScreenState extends State<ContactdetailScreen> {
       ),
       child: Text(
         title,
-        textAlign: TextAlign.center,
         style: const TextStyle(
+          fontSize: 18,
           fontWeight: FontWeight.bold,
-          fontSize: 16,
           color: Color(0xFF6F48EB),
         ),
       ),
     );
   }
 
-  // Helper method to build each TextField for user input
-  Widget _buildTextField(String label, TextEditingController controller, String hintText) {
+  Widget _buildTextFormField(
+      String labelText, TextEditingController controller, String hintText,
+      {TextInputType keyboardType = TextInputType.text, String? Function(String?)? validator}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7.0),
-      child: Row(
-        children: [
-          // Label (left side)
-          Expanded(
-            flex: 3,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF6F48EB),
-                ),
-              ),
-            ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: labelText,
+          hintText: hintText,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300),
           ),
-          const SizedBox(width: 10),
-          // TextField (right side)
-          Expanded(
-            flex: 4,
-            child: Container(
-              padding: const EdgeInsets.all(1),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                
-                  border: InputBorder.none,
-                  hintText: hintText,
-                ),
-                style: const TextStyle(
-                  
-                  fontSize: 16,
-                  color: Color(0xFF6F48EB),
-                ),
-              ),
-            ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF6F48EB)),
           ),
-        ],
+        ),
+        validator: validator,
       ),
     );
   }

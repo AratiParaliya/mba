@@ -1,7 +1,9 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:mba/Screens/cart.dart';
 import 'package:mba/Screens/contactdetail_screen.dart';
+
 
 class AddToCartScreen extends StatelessWidget {
   const AddToCartScreen({super.key, required medicineId, required medicineName, required medicinePrice});
@@ -111,7 +113,7 @@ class AddToCartScreen extends StatelessWidget {
                                   Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Cart()),);
+                                builder: (context) => Cart(cartItems: [],)),);
                                   // Handle Add to Cart functionality
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -143,7 +145,7 @@ class AddToCartScreen extends StatelessWidget {
                                   Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ContactdetailScreen()),);
+                                builder: (context) => ContactDetailScreen(cartItems: [], )),);
                                   // Handle Buy Now functionality
                                 },
                                 style: ElevatedButton.styleFrom(

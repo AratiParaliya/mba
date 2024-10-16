@@ -1,8 +1,10 @@
 import 'dart:ui';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:mba/Admin/dashboard.dart';
+
 import 'package:mba/Screens/login.dart';
+import 'package:mba/Screens/medicin_search.dart';
 
 import 'package:mba/Screens/signup.dart';
 // Make sure you have this package
@@ -10,6 +12,8 @@ import 'package:mba/Screens/signup.dart';
 
 
 void main() async{ 
+  WidgetsFlutterBinding.ensureInitialized();
+     await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home:HomePage(),

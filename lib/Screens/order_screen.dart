@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class PandingBills extends StatelessWidget {
-  const PandingBills({Key? key}) : super(key: key);
+class OrderScreen extends StatelessWidget {
+  const OrderScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Get the current user's ID from FirebaseAuth
+    final String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
+
     return Scaffold(
       body: Stack(
         children: [
@@ -75,7 +79,7 @@ class PandingBills extends StatelessWidget {
                     child: Column(
                       children: [
                         const Text(
-                          'Panding bills',
+                          'Order List',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -85,7 +89,11 @@ class PandingBills extends StatelessWidget {
                         const SizedBox(height: 20),
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance.collection('pending_bills').snapshots(),
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(userId)
+                                .collection('order')
+                                .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(child: CircularProgressIndicator());
@@ -106,13 +114,7 @@ class PandingBills extends StatelessWidget {
                                     child: ListTile(
                                       title: Text('Order ID: ${orderData['orderId']}'),
                                       subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.delete, color: Colors.red),
-                                        onPressed: () {
-                                          _showDeleteConfirmationDialog(context, orders[index].id); // Use the document ID
-                                        },
-                                      ),
-                                      onTap: () => _showOrderDetails(context, orderData, cartItems),
+                                      onTap: () => _showOrderDetails(context, orderData, cartItems, userId),
                                     ),
                                   );
                                 },
@@ -132,7 +134,29 @@ class PandingBills extends StatelessWidget {
     );
   }
 
-  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
+  void _showOrderDetails(
+  BuildContext context,
+  Map<String, dynamic> orderData,
+  List<Map<String, dynamic>> cartItems,
+  String userId) {
+  try {
+    // Extract the order placement time from 'createdAt' (assuming it's stored as a Timestamp in Firestore)
+    final Timestamp? createdAt = orderData['createdAt'] as Timestamp?;
+
+    // Check for null and proceed if it's valid
+    if (createdAt == null) {
+      throw 'Order created time is missing.';
+    }
+
+    // Convert the Timestamp to DateTime
+    final DateTime orderTime = createdAt.toDate();
+    final DateTime currentTime = DateTime.now();
+    final Duration difference = currentTime.difference(orderTime);
+
+    // Check if the order was placed less than 12 hours ago
+    final bool canCancel = difference.inHours < 12;
+
+    // Show the dialog with order details
     showDialog(
       context: context,
       builder: (context) {
@@ -158,6 +182,15 @@ class PandingBills extends StatelessWidget {
             ],
           ),
           actions: [
+            if (canCancel)
+              ElevatedButton(
+                onPressed: () => _cancelOrder(context, orderData['orderId'], userId),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white, // Button color
+                ),
+                child: const Text('Cancel Order'),
+              ),
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Close'),
@@ -166,43 +199,39 @@ class PandingBills extends StatelessWidget {
         );
       },
     );
-  }
-
-  void _showDeleteConfirmationDialog(BuildContext context, String orderId) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Confirm Deletion'),
-          content: const Text('Are you sure you want to delete this order?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                _deleteOrder(orderId);
-                Navigator.pop(context); // Close the confirmation dialog
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context), // Close the dialog
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
+  } catch (e) {
+    print('Error showing order details: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to load order details: $e')),
     );
   }
+}
 
-  void _deleteOrder(String orderId) {
-    // Reference to the pending bill document to delete
-    final pendingBillRef = FirebaseFirestore.instance.collection('pending_bills').doc(orderId); // Correct collection name
 
-    // Delete the order from the pending bill
-    pendingBillRef.delete().then((_) {
-      // Show a confirmation message
-      print('Order deleted successfully.');
+  void _cancelOrder(BuildContext context, String orderId, String userId) {
+    // Create a batch for atomic delete operations
+    final batch = FirebaseFirestore.instance.batch();
+
+    // References to the documents to delete
+    final userOrderRef = FirebaseFirestore.instance.collection('users').doc(userId).collection('orders').doc(orderId);
+    final ordersRef = FirebaseFirestore.instance.collection('orders').doc(orderId);
+    final pendingBillRef = FirebaseFirestore.instance.collection('pendingbill').doc(orderId);
+
+    // Add deletions to the batch
+    batch.delete(userOrderRef);
+    batch.delete(ordersRef);
+    batch.delete(pendingBillRef);
+
+    // Commit the batch
+    batch.commit().then((_) {
+      Navigator.pop(context); // Close the dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Order cancelled successfully.')),
+      );
     }).catchError((error) {
-      print('Failed to delete order: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to cancel order: $error')),
+      );
     });
   }
 }

@@ -1,6 +1,12 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mba/Screens/add_to_cart_screen.dart';
-import 'package:mba/Screens/cart.dart';
+import 'package:dot_navigation_bar/dot_navigation_bar.dart';
+import 'package:mba/Screens/order_screen.dart';
+import 'cart.dart';
+import 'medicine_details.dart';
+import 'profile_screen.dart';
 
 class MedicinSearch extends StatefulWidget {
   const MedicinSearch({super.key});
@@ -10,204 +16,360 @@ class MedicinSearch extends StatefulWidget {
 }
 
 class _MedicinSearchState extends State<MedicinSearch> {
-  // Example list of medicines with name, ID, and price
-  final List<Map<String, dynamic>> medicines = [
-    {"id": 1, "name": "Coreg (Carvedilol)", "description": "Beta-blocker", "price": 20.0},
-    {"id": 2, "name": "Lipitor (Atorvastatin)", "description": "Cholesterol medication", "price": 30.0},
-    {"id": 3, "name": "Plavix (Clopidogrel)", "description": "Blood thinner", "price": 25.0},
-    {"id": 4, "name": "Zestril (Lisinopril)", "description": "Blood pressure medication", "price": 18.0},
-    {"id": 5, "name": "Synthroid (Levothyroxine)", "description": "Thyroid medication", "price": 22.0},
-    {"id": 6, "name": "Ventolin (Albuterol)", "description": "Asthma inhaler", "price": 15.0},
-  ];
+  final TextEditingController _searchController = TextEditingController();
+  String searchQuery = '';
+  List<Map<String, dynamic>> cartItems = []; // Local cart items
+
+  // Update search query
+  void _updateSearchQuery(String query) {
+    setState(() {
+      searchQuery = query.toLowerCase();
+    });
+  }
+
+  // Add item to Firestore cart for the current user
+  void _addToCart(String documentId, String medicineName, String genericName, double price) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      String uid = user.uid;
+
+      try {
+        // Add item to Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('cart')
+            .doc(documentId)
+            .set({
+          'medicineName': medicineName,
+          'genericName': genericName,
+          'price': price,
+          'quantity': 1, // Add quantity handling
+        });
+
+        // Add item to local cart list
+        setState(() {
+          cartItems.add({
+            'documentId': documentId,
+            'medicineName': medicineName,
+            'genericName': genericName,
+            'price': price,
+          });
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$medicineName added to cart!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add $medicineName to cart.')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in to add items to your cart.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Blue background container
-          Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
-                ],
-                radius: 2,
-                center: Alignment(2.8, -1.0),
-                tileMode: TileMode.clamp,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Blue background container
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    Color.fromARGB(255, 110, 102, 188),
+                    Colors.white,
+                  ],
+                  radius: 2,
+                  center: Alignment(2.8, -1.0),
+                  tileMode: TileMode.clamp,
+                ),
               ),
             ),
-          ),
-          // Positioned logo and text
-          Positioned(
-            top: 30,
-            left: 20,
-            child: Row(
+            // Positioned logo and text
+            Positioned(
+              top: 30,
+              left: 20,
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/logo.png', // Replace with your logo asset path
+                    width: 60,
+                    height: 60,
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'MBA International Pharma',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 110, 102, 188),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Grey container with rounded corners at the top
+            Column(
               children: [
-                Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
-                  width: 60,
-                  height: 60,
+                const SizedBox(height: 100.0), // Adjust to match the blue container
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white,
+                          Color.fromARGB(255, 143, 133, 230),
+                        ],
+                        stops: [0.6, 1.0],
+                        tileMode: TileMode.clamp,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _buildSearchPage(), // Always show the search page
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 10),
-                const Text(
-                  'MBA International Pharma',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 110, 102, 188),
+                // DotNavigationBar for bottom navigation
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 143, 133, 230),
+                  ),
+                  child: DotNavigationBar(
+                    margin: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+                    currentIndex: 0,
+                    dotIndicatorColor: const Color(0xff73544C),
+                    unselectedItemColor: Colors.grey[300],
+                    splashBorderRadius: 50,
+                    onTap: (index) async {
+                      switch (index) {
+                        case 0:
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MedicinSearch()),
+                          );
+                          break;
+                        case 1:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Cart(cartItems: cartItems)),
+                          );
+                          break;
+                          case 2:
+                          Navigator.push(
+                            context,
+                          MaterialPageRoute(builder: (context) => OrderScreen( )),
+                          );
+                          break;
+                        case 3:
+                          // Fetch the current user
+                          User? user = FirebaseAuth.instance.currentUser;
+                          if (user != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Please log in to view your profile.')),
+                            );
+                          }
+                          break;
+                      }
+                    },
+                    items: [
+                      DotNavigationBarItem(
+                        icon: const Icon(Icons.home),
+                        selectedColor: const Color(0xff73544C),
+                      ),
+                      DotNavigationBarItem(
+                        icon: const Icon(Icons.add_shopping_cart_rounded),
+                        selectedColor: const Color(0xff73544C),
+                      ),
+                       DotNavigationBarItem(
+                        icon: const Icon(Icons.border_outer_outlined),
+                        selectedColor: const Color(0xff73544C),
+                      ),
+                      DotNavigationBarItem(
+                        icon: const Icon(Icons.person),
+                        selectedColor: const Color(0xff73544C),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-          // Grey container with rounded corners at the top
-          Column(
-            children: [
-              const SizedBox(
-                height: 100.0,
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity, // Make it full width
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Colors.white,
-                        Color.fromARGB(255, 143, 133, 230),
-                      ],
-                     stops: [0.4, 1.0], // Adjust stops to control color spread
-                      tileMode: TileMode.clamp,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      topRight: Radius.circular(50),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        // Search bar
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.7),
-                                spreadRadius: 3,
-                                blurRadius: 7,
-                                offset: const Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: const TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Search medicines...',
-                              border: InputBorder.none,
-                              icon: Icon(Icons.search),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Medicine list
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: medicines.length, // Number of medicines
-                            itemBuilder: (context, index) {
-                              final medicine = medicines[index];
-                              return Align(
-                                alignment: Alignment.center, // Center-align cards
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width * 0.90, // Reduce width to 90% of screen
-                                  margin: const EdgeInsets.only(bottom: 16),
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        spreadRadius: 2,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            medicine['name'],
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(medicine['description']),
-                                          Text('Price: \$${medicine['price']}'),
-                                        ],
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.add_circle_outline,
-                                          color: Color.fromARGB(255, 143, 133, 230),
-                                          size: 45,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => AddToCartScreen(
-                                                medicineId: medicine['id'],
-                                                medicineName: medicine['name'],
-                                                medicinePrice: medicine['price'],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchPage() {
+    return Column(
+      children: [
+        // Search bar
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.7),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-          // Shopping cart floating button
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Cart()),
-                );
-              },
-              backgroundColor: const Color.fromARGB(255, 239, 236, 236),
-              child: const Icon(Icons.shopping_cart),
+          child: TextField(
+            controller: _searchController,
+            onChanged: _updateSearchQuery,
+            decoration: const InputDecoration(
+              hintText: 'Search...',
+              border: InputBorder.none,
+              icon: Icon(Icons.search),
             ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 20),
+        // Product list integrated with dynamic navigation
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('product').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No products found.'));
+              } else {
+                final medicines = snapshot.data!.docs.where((doc) {
+                  String medicineName = (doc['medicineName'] ?? '').toString().toLowerCase();
+                  return medicineName.contains(searchQuery);
+                }).toList();
+
+                return ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 80),
+                  itemCount: medicines.length,
+                  itemBuilder: (context, index) {
+                    final medicine = medicines[index];
+                    String medicineName = (medicine['medicineName'] ?? 'Unknown Medicine').toString();
+                    String genericName = (medicine['genericName'] ?? 'Unknown Generic Name').toString();
+
+                    // Ensure price is properly handled
+                    double price = (medicine['price'] is double)
+                        ? medicine['price']
+                        : (medicine['price'] is int) ? (medicine['price'] as int).toDouble() : 0.0;
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MedicineDetails(
+                              documentId: medicine.id,
+                              medicineName: medicineName,
+                              genericName: genericName,
+                              price: price, addToCart: () {  },
+                            ),
+                          ),
+                        );
+                      },
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.90,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 3,
+                                blurRadius: 7,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                medicineName,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 110, 102, 188),
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                genericName,
+                                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '\$${price.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Center(
+                                    child: SizedBox(
+                                      width: 60, // Set the size for the icon button
+                                      height: 40,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.add_shopping_cart,
+                                          color: Color.fromARGB(255, 110, 102, 188),
+                                          size: 30, // Adjust the icon size
+                                        ),
+                                        onPressed: () {
+                                          _addToCart(medicine.id, medicineName, genericName, price);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,16 +1,21 @@
+ // Import your add medicine screen
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:mba/Admin/add_medicine.dart';
 import 'package:mba/Admin/edit_medicine_details.dart';
 
-class DeleteMedicine extends StatefulWidget {
-  const DeleteMedicine({super.key});
+class FetchMedicines extends StatefulWidget {
+  const FetchMedicines({super.key});
 
   @override
-  State<DeleteMedicine> createState() => _DeleteMedicineState();
+  State<FetchMedicines> createState() => _FetchMedicinesState();
 }
 
-class _DeleteMedicineState extends State<DeleteMedicine> {
-  int itemCount = 5; // Example item count
+class _FetchMedicinesState extends State<FetchMedicines> {
+  final CollectionReference medicinesCollection =
+      FirebaseFirestore.instance.collection('product');
 
   @override
   Widget build(BuildContext context) {
@@ -58,21 +63,19 @@ class _DeleteMedicineState extends State<DeleteMedicine> {
           ),
           Column(
             children: [
-              const SizedBox(
-                height: 100.0, // Space for the header area
-              ),
+              const SizedBox(height: 100.0), // Space for the header area
               Expanded(
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: [
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                  stops: [0.4, 1.0], // Adjust stops to control color spread
+                      stops: [0.6, 1.0],
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -83,18 +86,50 @@ class _DeleteMedicineState extends State<DeleteMedicine> {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(
-                          child: ListView.builder(
-                            itemCount: itemCount,
-                            itemBuilder: (context, index) {
-                              return _buildDeleteMedicineItem();
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: medicinesCollection.snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(child: Text('Error: ${snapshot.error}'));
+                              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                return const Center(child: Text('No medicines found.'));
+                              } else {
+                                final medicines = snapshot.data!.docs;
+                                return ListView.builder(
+                                  itemCount: medicines.length,
+                                  itemBuilder: (context, index) {
+                                    return _buildMedicineItem(medicines[index]);
+                                  },
+                                );
+                              }
                             },
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        _buildPlaceOrderButton(),
+                        // Add Medicine Button
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0), // Add some top padding
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Navigate to Add Medicine screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const AddMedicine()),
+                              );
+                            },
+                            child: const Text('Add Medicine'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(255, 125, 113, 235), // Button color
+                              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30), // Rounded corners for the button
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -107,8 +142,20 @@ class _DeleteMedicineState extends State<DeleteMedicine> {
     );
   }
 
-  // Method to build each DeleteMedicine item with delete and edit functionality
-  Widget _buildDeleteMedicineItem() {
+  // Method to build each medicine item
+  Widget _buildMedicineItem(QueryDocumentSnapshot medicineDoc) {
+    final medicineData = medicineDoc.data() as Map<String, dynamic>;
+
+    // Debugging: Print the medicine data and its keys
+    print("Medicine Data: $medicineData");
+    print("Keys: ${medicineData.keys}");  // Log the keys to check available fields
+
+    String medicineName = medicineData['medicineName'] ?? 'Unknown Medicine';
+    String genericName = medicineData['genericName'] ?? 'Unknown Generic Name';
+    double price = (medicineData['price'] is double)
+        ? medicineData['price']
+        : (medicineData['price'] is int) ? (medicineData['price'] as int).toDouble() : 0.0;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(
@@ -117,29 +164,29 @@ class _DeleteMedicineState extends State<DeleteMedicine> {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between text and delete icon
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // Medicine details on the left
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  "Coreg (Carvedilol)",
-                  style: TextStyle(
+                  medicineName, // Medicine name
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 110, 102, 188), // Matching purple text
+                    color: Color.fromARGB(255, 110, 102, 188),
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  "SGRSG", // Replace with relevant product details
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  genericName, // Display generic name
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  "Price", // Replace with the actual price
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  '\$${price.toStringAsFixed(2)}', // Display price
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ],
             ),
@@ -147,26 +194,25 @@ class _DeleteMedicineState extends State<DeleteMedicine> {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.edit, color: Color.fromARGB(255, 110, 102, 188)),
-                  onPressed: () {
-                     Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditMedicineDetails()), // Corrected ForgotPassword
-                          );
-                    // Handle edit functionality here
-                    print('Edit button clicked');
-                  },
-                ),
+  icon: const Icon(Icons.edit, color: Color.fromARGB(255, 110, 102, 188)),
+  onPressed: () {
+    // Navigate to the EditMedicineDetails screen, passing the product ID
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditMedicineDetails(
+          productId: medicineDoc.id, // Pass the document ID (medicine ID) to the edit screen
+        ),
+      ),
+    );
+  },
+),
+
                 IconButton(
                   icon: const Icon(Icons.close, color: Color.fromARGB(255, 110, 102, 188)),
                   onPressed: () {
                     // Handle delete functionality here
-                    setState(() {
-                      if (itemCount > 0) {
-                        itemCount--; // Decrease item count when deleted
-                      }
-                    });
+                    _deleteMedicine(medicineDoc.id); // Call delete function
                   },
                 ),
               ],
@@ -177,32 +223,17 @@ class _DeleteMedicineState extends State<DeleteMedicine> {
     );
   }
 
-  // Method to build the Place Order button
-  Widget _buildPlaceOrderButton() {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddMedicine()), // Corrected ForgotPassword
-                          );
-        // Handle place order functionality
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        backgroundColor:  Color.fromARGB(255, 113, 101, 228), 
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-      child: const Text(
-        "Add",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
+  // Method to delete a medicine
+  Future<void> _deleteMedicine(String medicineId) async {
+    try {
+      await medicinesCollection.doc(medicineId).delete();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Medicine deleted successfully!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting medicine: $e')),
+      );
+    }
   }
 }

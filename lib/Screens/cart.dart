@@ -1,31 +1,76 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:dot_navigation_bar/dot_navigation_bar.dart';
+
 import 'package:mba/Screens/contactdetail_screen.dart';
+import 'package:mba/Screens/medicin_search.dart';
+import 'package:mba/Screens/order_screen.dart';
+import 'package:mba/Screens/profile_screen.dart';
 
 class Cart extends StatefulWidget {
-  const Cart({super.key});
+  final List<Map<String, dynamic>> cartItems;
+
+  const Cart({Key? key, required this.cartItems}) : super(key: key);
 
   @override
-  State<Cart> createState() => _CartState();
+  _CartState createState() => _CartState();
 }
 
 class _CartState extends State<Cart> {
-  int itemCount = 4; // Example item count
-  int totalPrice = 400; // Example total price
+  User? user = FirebaseAuth.instance.currentUser;
+  List<Map<String, dynamic>> cartItems = [];
+  int _currentIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartItems();
+  }
+
+  // Function to load cart items from Firestore
+  Future<void> _loadCartItems() async {
+    if (user != null) {
+      String uid = user!.uid;
+
+      try {
+        QuerySnapshot snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('cart')
+            .get();
+
+        setState(() {
+          cartItems = snapshot.docs.map((doc) {
+            return {
+              'documentId': doc.id,
+              'medicineName': doc['medicineName'],
+              'genericName': doc['genericName'],
+              'price': doc['price'],
+              'quantity': doc['quantity'],
+            };
+          }).toList();
+        });
+      } catch (e) {
+        print('Error loading cart items: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Purple gradient background
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 130, 122, 202),
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -39,7 +84,7 @@ class _CartState extends State<Cart> {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
@@ -57,24 +102,22 @@ class _CartState extends State<Cart> {
           ),
           Column(
             children: [
-              SizedBox(
-                height: 100.0, // Space for the header area
-              ),
+              const SizedBox(height: 100.0),
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
                       begin: Alignment.topRight,
                       end: Alignment.bottomLeft,
                       colors: [
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                   stops: [0.4, 1.0], // Adjust stops to control color spread
+                      stops: [0.4, 1.0],
                       tileMode: TileMode.clamp,
                     ),
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(60),
                       topRight: Radius.circular(60),
                     ),
@@ -85,17 +128,80 @@ class _CartState extends State<Cart> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Expanded(
-                          child: ListView.builder(
-                            itemCount: itemCount,
-                            itemBuilder: (context, index) {
-                              return _buildCartItem();
-                            },
-                          ),
+                          child: cartItems.isEmpty
+                              ? const Center(child: Text('Your cart is empty'))
+                              : ListView.builder(
+                                  itemCount: cartItems.length,
+                                  itemBuilder: (context, index) {
+                                    return _buildCartItem(cartItems[index], index);
+                                  },
+                                ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         _buildPriceDetails(),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         _buildPlaceOrderButton(),
+                        const SizedBox(height: 16),
+                        DotNavigationBar(
+                          margin: const EdgeInsets.only(left: 5, right: 5),
+                          currentIndex: _currentIndex,
+                          dotIndicatorColor: const Color.fromARGB(255, 143, 133, 230),
+                          unselectedItemColor: Colors.grey[300],
+                          splashBorderRadius: 50,
+                          onTap: (index) {
+                            switch (index) {
+                              case 0:
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const MedicinSearch(),
+                                  ),
+                                );
+                                break;
+                              case 1:
+                                break;
+                              case 2:
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>  OrderScreen(),
+                                  ),
+                                );
+                                break;
+                              case 3:
+                                if (user != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserProfilePage(user: user!),
+                                    ),
+                                  );
+                                } else {
+                                  // Handle case when user is null
+                                  print("User is not logged in.");
+                                }
+                                break;
+                            }
+                          },
+                          items: [
+                            DotNavigationBarItem(
+                              icon: const Icon(Icons.home),
+                              selectedColor: const Color(0xff73544C),
+                            ),
+                            DotNavigationBarItem(
+                              icon: const Icon(Icons.add_shopping_cart_rounded),
+                              selectedColor: const Color(0xff73544C),
+                            ),
+                            DotNavigationBarItem(
+                              icon: const Icon(Icons.list_alt),
+                              selectedColor: const Color(0xff73544C),
+                            ),
+                            DotNavigationBarItem(
+                              icon: const Icon(Icons.person),
+                              selectedColor: const Color(0xff73544C),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -108,7 +214,11 @@ class _CartState extends State<Cart> {
     );
   }
 
-  Widget _buildCartItem() {
+  Widget _buildCartItem(Map<String, dynamic> cartItem, int index) {
+    final medicineName = cartItem['medicineName'] ?? 'Unknown';
+    final price = cartItem['price'] ?? 0.0;
+    final quantity = cartItem['quantity'] ?? 1;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
@@ -116,33 +226,28 @@ class _CartState extends State<Cart> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Medicine details and quantity controller in the same row
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Medicine Name",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    medicineName,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Price: e.g 100 * 3 = 300",
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    "Price: \$${price.toStringAsFixed(2)} x $quantity = \$${(price * quantity).toStringAsFixed(2)}",
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
               ),
             ),
-            // Quantity controller
-            _buildQuantityController(),
-            // Delete button
+            _buildQuantityController(cartItem, index),
             IconButton(
-              icon: Icon(Icons.delete_outline, color: Color.fromARGB(255, 110, 102, 188)),
+              icon: const Icon(Icons.delete_outline, color: Color.fromARGB(255, 110, 102, 188)),
               onPressed: () {
-                // Handle delete functionality
                 setState(() {
-                  if (itemCount > 0) {
-                    itemCount--; // Decrease item count when deleted
-                  }
+                  _removeItemFromCart(cartItem['documentId']);
+                  cartItems.removeAt(index);
                 });
               },
             ),
@@ -152,23 +257,34 @@ class _CartState extends State<Cart> {
     );
   }
 
-  Widget _buildQuantityController() {
+  Widget _buildQuantityController(Map<String, dynamic> cartItem, int index) {
     return Row(
       children: [
         IconButton(
-          icon: Icon(Icons.remove_circle_outline, color: Color(0xFF8A7FDB)),
+          icon: const Icon(Icons.remove_circle_outline, color: Color(0xFF8A7FDB)),
           onPressed: () {
-            // Handle decrement functionality
+            setState(() {
+              if (cartItem['quantity'] != null && cartItem['quantity'] > 1) {
+                cartItem['quantity']--;
+                _updateCartItemQuantity(cartItem['documentId'], cartItem['quantity']);
+              } else {
+                _removeItemFromCart(cartItem['documentId']);
+                cartItems.removeAt(index);
+              }
+            });
           },
         ),
         Text(
-          "3", // Example quantity
-          style: TextStyle(fontSize: 16),
+          "${cartItem['quantity'] ?? 1}",
+          style: const TextStyle(fontSize: 16),
         ),
         IconButton(
-          icon: Icon(Icons.add_circle_outline, color: Color(0xFF8A7FDB)),
+          icon: const Icon(Icons.add_circle_outline, color: Color(0xFF8A7FDB)),
           onPressed: () {
-            // Handle increment functionality
+            setState(() {
+              cartItem['quantity'] = (cartItem['quantity'] ?? 0) + 1;
+              _updateCartItemQuantity(cartItem['documentId'], cartItem['quantity']);
+            });
           },
         ),
       ],
@@ -176,39 +292,30 @@ class _CartState extends State<Cart> {
   }
 
   Widget _buildPriceDetails() {
+    double total = 0;
+
+    for (var item in cartItems) {
+      final price = item['price'] ?? 0.0;
+      final quantity = item['quantity'] ?? 1;
+      total += price * quantity;
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Price Details ($itemCount Items)",
+            const Text(
+              "Price Details",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
-            _buildPriceRow("Total Product Price", "/400Rs."),
-            SizedBox(height: 4),
-            _buildPriceRow("Order Total", "/400Rs."),
+            const SizedBox(height: 8),
+            Text("Total Price: \$${total.toStringAsFixed(2)}"),
+            const SizedBox(height: 4),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildPriceRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 14),
-        ),
-        Text(
-          value,
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-      ],
     );
   }
 
@@ -216,20 +323,21 @@ class _CartState extends State<Cart> {
     return ElevatedButton(
       onPressed: () {
         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ContactdetailScreen()),);
-        // Handle place order functionality
+          context,
+          MaterialPageRoute(
+            builder: (context) => ContactDetailScreen(cartItems: cartItems, ),
+          ),
+        );
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        backgroundColor:  Color.fromARGB(255, 113, 101, 228),
+        backgroundColor: const Color.fromARGB(255, 113, 101, 228),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
       ),
-      child: Text(
-        "Place Order",
+      child: const Text(
+        "Continue",
         style: TextStyle(
           color: Colors.white,
           fontSize: 16,
@@ -238,6 +346,28 @@ class _CartState extends State<Cart> {
       ),
     );
   }
+
+  // Remove item from Firestore
+  Future<void> _removeItemFromCart(String documentId) async {
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .collection('cart')
+          .doc(documentId)
+          .delete();
+    }
+  }
+
+  // Update item quantity in Firestore
+  Future<void> _updateCartItemQuantity(String documentId, int newQuantity) async {
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .collection('cart')
+          .doc(documentId)
+          .update({'quantity': newQuantity});
+    }
+  }
 }
-
-

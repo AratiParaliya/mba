@@ -1,60 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mba/Admin/order_approvel.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Order List',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const Orderlist(),
-    );
-  }
-}
-
-// Order model
-class Order {
-  final String medicineName;
-  final String medicineId;
-
-  Order({required this.medicineName, required this.medicineId});
-}
-
-class Orderlist extends StatefulWidget {
-  const Orderlist({super.key});
-
-  @override
-  State<Orderlist> createState() => _OrderlistState();
-}
-
-class _OrderlistState extends State<Orderlist> {
-  // List of dynamic orders
-  List<Order> orders = [
-    Order(medicineName: "Paracetamol", medicineId: "P001"),
-    Order(medicineName: "Ibuprofen", medicineId: "I002"),
-    Order(medicineName: "Aspirin", medicineId: "A003"),
-    Order(medicineName: "Amoxicillin", medicineId: "A004"),
-    Order(medicineName: "Cetirizine", medicineId: "C005"),
-    Order(medicineName: "Azithromycin", medicineId: "A006"),
-  ];
-
-  void handleOrderClick(Order order) {
-    // Navigate to the details page when clicked
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrderApprovel(order: order),
-      ),
-    );
-  }
+class AdminOrderScreen extends StatelessWidget {
+  const AdminOrderScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +31,7 @@ class _OrderlistState extends State<Orderlist> {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Ensure this asset exists
+                  'assets/logo.png', // Replace with your logo asset path
                   width: 60,
                   height: 60,
                 ),
@@ -99,24 +47,22 @@ class _OrderlistState extends State<Orderlist> {
               ],
             ),
           ),
-          // Grey container with rounded corners at the top
+          // Main content
           Column(
             children: [
-              const SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
-              ),
+              const SizedBox(height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
-                  width: double.infinity, // Make it full width
+                  width: double.infinity, // Full width
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                       begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white,
-                        Color.fromARGB(255, 143, 133, 230),
+                        Colors.white, // Light color
+                        Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: [0.4, 1.0], // Adjust stops to control color spread
+                      stops: const [0.3, 1.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -125,28 +71,45 @@ class _OrderlistState extends State<Orderlist> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        // Title
-                        const Text(
+                         const Text(
                           'Order List',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF6F48EB), // Purple color
+                            color: Color(0xFF6F48EB),
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // List of Order Items
                         Expanded(
-                          child: ListView.builder(
-                            itemCount: orders.length,
-                            itemBuilder: (context, index) {
-                              final order = orders[index];
-                              return OrderItem(
-                                order: order,
-                                onTap: () => handleOrderClick(order),
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance.collectionGroup('orders').snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                          
+                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                return const Center(child: Text('No orders found.'));
+                              }
+                          
+                              final orders = snapshot.data!.docs;
+                          
+                              return ListView.builder(
+                                itemCount: orders.length,
+                                itemBuilder: (context, index) {
+                                  final orderData = orders[index].data() as Map<String, dynamic>;
+                                  final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
+                                  return Card(
+                                    child: ListTile(
+                                      title: Text('Order ID: ${orderData['orderId']}'),
+                                      subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                      onTap: () => _showOrderDetails(context, orderData, cartItems),
+                                    ),
+                                  );
+                                },
                               );
                             },
                           ),
@@ -162,81 +125,40 @@ class _OrderlistState extends State<Orderlist> {
       ),
     );
   }
-}
 
-class OrderItem extends StatelessWidget {
-  final Order order;
-  final VoidCallback onTap;
-
-  const OrderItem({super.key, required this.order, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16.0),
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color:  Colors.white, // Light purple color
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300, width: 1),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              order.medicineName,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF6F48EB), // Purple color
-              ),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              order.medicineId,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF6F48EB),
-              ),
+  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Order ID: ${orderData['orderId']}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('User: ${orderData['fullName']}'),
+              Text('Total Price: \$${orderData['totalPrice']}'),
+              const SizedBox(height: 10),
+              Text('Delivery Address: ${orderData['address']}'),
+              const SizedBox(height: 10),
+              Text('Contact: ${orderData['contactNumber']}'),
+              const SizedBox(height: 10),
+              const Text('Cart Items:'),
+              ...cartItems.map((item) => ListTile(
+                title: Text(item['medicineName'] ?? 'Unknown'),
+                subtitle: Text(
+                  "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                ),
+              )),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class OrderDetails extends StatelessWidget {
-  final Order order;
-
-  const OrderDetails({super.key, required this.order});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Order Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Medicine Name: ${order.medicineName}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Medicine Id: ${order.medicineId}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            // Add more details as needed
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

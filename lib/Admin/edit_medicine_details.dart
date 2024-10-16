@@ -1,8 +1,10 @@
-
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditMedicineDetails extends StatefulWidget {
-  const EditMedicineDetails({super.key});
+  final String productId; // Accept product ID as a parameter
+
+  const EditMedicineDetails({super.key, required this.productId});
 
   @override
   State<EditMedicineDetails> createState() => _EditMedicineDetailsState();
@@ -10,13 +12,45 @@ class EditMedicineDetails extends StatefulWidget {
 
 class _EditMedicineDetailsState extends State<EditMedicineDetails> {
   // Controllers for TextFields
-  final TextEditingController MedicineNameController = TextEditingController();
-  final TextEditingController GenericNameController = TextEditingController();
+  final TextEditingController medicineNameController = TextEditingController();
+  final TextEditingController genericNameController = TextEditingController();
   final TextEditingController brandController = TextEditingController();
   final TextEditingController typeController = TextEditingController();
   final TextEditingController sizeController = TextEditingController();
-  final TextEditingController  priceController = TextEditingController();
- 
+  final TextEditingController priceController = TextEditingController();
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProductData(); // Fetch product data on initialization
+  }
+
+  // Fetch data from Firestore using the product ID
+  Future<void> fetchProductData() async {
+    try {
+      DocumentSnapshot document = await FirebaseFirestore.instance
+          .collection('product')
+          .doc(widget.productId)
+          .get();
+
+      if (document.exists) {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+        setState(() {
+          medicineNameController.text = data['medicineName'] ?? '';
+          genericNameController.text = data['genericName'] ?? '';
+          brandController.text = data['brand'] ?? '';
+          typeController.text = data['type'] ?? '';
+          sizeController.text = data['size'] ?? '';
+          priceController.text = data['price'].toString() ?? '';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching product data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,17 +95,14 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
               ],
             ),
           ),
-          // Grey container with rounded corners at the top
           Column(
             children: [
-              const SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
-              ),
+              const SizedBox(height: 100.0), // Adjust height to fit below the logo
               Expanded(
                 child: Container(
-                  width: double.infinity,
+                  width: double.infinity, // Make it full width
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topRight,
                       end: Alignment.bottomLeft,
@@ -79,63 +110,60 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                     stops: [0.4, 1.0], // Adjust stops to control color spread
+                      stops: [0.3, 1.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(60),
                       topRight: Radius.circular(60),
                     ),
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        _buildSectionTitle('Product Details'),
-                        _buildTextField('Medicine Name', MedicineNameController, 'Paracetamol 500mg'),
-                        _buildTextField('Generic Name', GenericNameController, 'Paracetamol'),
-                        _buildTextField('Brand', brandController, 'XYZ Pharmaceuticals'),
-                        _buildTextField('Type',typeController, 'Tablet'),
-                        _buildTextField('Size', sizeController, 'Enter size'),
-                        _buildTextField('Price', priceController, 'enter price'),
-
-                        const SizedBox(height: 30),
-
-                        // Add to Cart button
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-
-                                  // Handle Add to Cart functionality
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor:   Color.fromARGB(255, 113, 101, 228), 
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
+                  child: isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              _buildSectionTitle('Product Details'),
+                              _buildTextField('Medicine Name', medicineNameController, 'Paracetamol 500mg'),
+                              _buildTextField('Generic Name', genericNameController, 'Paracetamol'),
+                              _buildTextField('Brand', brandController, 'XYZ Pharmaceuticals'),
+                              _buildTextField('Type', typeController, 'Tablet'),
+                              _buildTextField('Size', sizeController, 'Enter size'),
+                              _buildTextField('Price', priceController, 'Enter price'),
+                              const SizedBox(height: 30),
+                              // Save button to update the product
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        // Handle update logic
+                                        updateProductDetails();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(vertical: 16),
+                                        backgroundColor: const Color.fromARGB(255, 113, 101, 228),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Update Product',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                child: const Text(
-                                  'Edit Product',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                ],
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 20),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 20),
-                        // Buy Now button
-                       
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
                 ),
               ),
             ],
@@ -145,7 +173,7 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
     );
   }
 
-  // Helper method to build a section title (e.g., "Product Details")
+  // Helper method to build a section title
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,
@@ -198,7 +226,7 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
           Expanded(
             flex: 4,
             child: Container(
-              padding: const EdgeInsets.all(1),
+              padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -207,12 +235,10 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
               child: TextField(
                 controller: controller,
                 decoration: InputDecoration(
-                
                   border: InputBorder.none,
                   hintText: hintText,
                 ),
                 style: const TextStyle(
-                  
                   fontSize: 16,
                   color: Color(0xFF6F48EB),
                 ),
@@ -222,5 +248,31 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
         ],
       ),
     );
+  }
+
+  Future<void> updateProductDetails() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('product')
+          .doc(widget.productId)
+          .update({
+        'medicineName': medicineNameController.text,
+        'genericName': genericNameController.text,
+        'brand': brandController.text,
+        'type': typeController.text,
+        'size': sizeController.text,
+        'price': double.parse(priceController.text),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Product updated successfully')),
+      );
+
+      Navigator.pop(context); // Go back to the previous screen
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating product: $e')),
+      );
+    }
   }
 }
