@@ -3,8 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart'; // For displaying notifications
-import 'cart.dart'; // Import your Cart screen
-import 'medicin_search.dart'; // Import your MedicinSearch screen
+ // Import your MedicinSearch screen
 
 class OrderScreen extends StatelessWidget {
   const OrderScreen({Key? key}) : super(key: key);
