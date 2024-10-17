@@ -36,7 +36,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   Future<void> _checkForExistingOrder() async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
 
-    // Check if the user has any orders
+    
     QuerySnapshot ordersSnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -47,7 +47,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       DocumentSnapshot orderDoc = ordersSnapshot.docs.last;
       final orderData = orderDoc.data() as Map<String, dynamic>;
 
-      // Populate text controllers with order's user data
+     
       fullNameController.text = orderData['fullName'] ?? '';
       contactNameController.text = orderData['contactNumber'] ?? '';
       alternateNumberController.text = orderData['alternateNumber'] ?? '';

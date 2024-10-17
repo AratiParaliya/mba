@@ -28,7 +28,7 @@ class _CartState extends State<Cart> {
     _loadCartItems();
   }
 
-  // Function to load cart items from Firestore
+  
   Future<void> _loadCartItems() async {
     if (user != null) {
       String uid = user!.uid;
@@ -168,7 +168,7 @@ class _CartState extends State<Cart> {
               );
               break;
             case 1:
-              // Stay on the current page
+             
               break;
             case 2:
               Navigator.push(
@@ -187,7 +187,7 @@ class _CartState extends State<Cart> {
                   ),
                 );
               } else {
-                // Handle case when user is null
+                
                 print("User is not logged in.");
               }
               break;
@@ -348,7 +348,7 @@ class _CartState extends State<Cart> {
     );
   }
 
-  // Remove item from Firestore
+  
   Future<void> _removeItemFromCart(String documentId) async {
     if (user != null) {
       await FirebaseFirestore.instance

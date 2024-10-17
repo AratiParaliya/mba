@@ -31,20 +31,18 @@ class _MedicineDetailsState extends State<MedicineDetails> {
   }
 
   Future<void> _addToCart(Map<String, dynamic> medicineData) async {
-    // Adding the selected quantity of the medicine to the cart
+    
     await cartCollection.add({
       'medicineName': medicineData['medicineName'],
       'genericName': medicineData['genericName'],
       'price': medicineData['price'],
-      'quantity': _quantity, // Include the selected quantity
+      'quantity': _quantity, 
     });
 
-    // Show a confirmation message
+    
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Added to Cart')),
     );
-
-    // Navigate to the MedicineSearchScreen after adding to the cart
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const MedicinSearch()),
@@ -54,7 +52,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
   void _updateQuantity(int change) {
     setState(() {
       _quantity += change;
-      if (_quantity < 1) _quantity = 1; // Prevent quantity from being less than 1
+      if (_quantity < 1) _quantity = 1; 
     });
   }
 

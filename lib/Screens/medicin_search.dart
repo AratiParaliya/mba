@@ -17,17 +17,17 @@ class MedicinSearch extends StatefulWidget {
 class _MedicinSearchState extends State<MedicinSearch> {
   final TextEditingController _searchController = TextEditingController();
   String searchQuery = '';
-  List<Map<String, dynamic>> cartItems = []; // Local cart items
-  int _currentIndex = 0; // Keep track of current tab
+  List<Map<String, dynamic>> cartItems = []; 
+  int _currentIndex = 0; 
 
-  // Update search query
+  
   void _updateSearchQuery(String query) {
     setState(() {
       searchQuery = query.toLowerCase();
     });
   }
 
-  // Add item to Firestore cart for the current user
+ 
   void _addToCart(String documentId, String medicineName, String genericName, double price) async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -35,7 +35,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
       String uid = user.uid;
 
       try {
-        // Add item to Firestore
+        
         await FirebaseFirestore.instance
             .collection('users')
             .doc(uid)
@@ -45,10 +45,8 @@ class _MedicinSearchState extends State<MedicinSearch> {
           'medicineName': medicineName,
           'genericName': genericName,
           'price': price,
-          'quantity': 1, // Add quantity handling
+          'quantity': 1,
         });
-
-        // Add item to local cart list
         setState(() {
           cartItems.add({
             'documentId': documentId,
@@ -73,7 +71,6 @@ class _MedicinSearchState extends State<MedicinSearch> {
     }
   }
 
-  // Handle navigation
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -99,7 +96,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
         );
         break;
       case 3:
-        // Fetch the current user
+        
         User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           Navigator.push(
@@ -121,7 +118,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Blue background container
+           
             Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
@@ -137,14 +134,14 @@ class _MedicinSearchState extends State<MedicinSearch> {
                 ),
               ),
             ),
-            // Positioned logo and text
+           
             Positioned(
               top: 30,
               left: 20,
               child: Row(
                 children: [
                   Image.asset(
-                    'assets/logo.png', // Replace with your logo asset path
+                    'assets/logo.png',
                     width: 60,
                     height: 60,
                   ),
@@ -160,10 +157,10 @@ class _MedicinSearchState extends State<MedicinSearch> {
                 ],
               ),
             ),
-            // Grey container with rounded corners at the top
+            
             Column(
               children: [
-                const SizedBox(height: 100.0), // Adjust to match the blue container
+                const SizedBox(height: 100.0), 
                 Expanded(
                   child: Container(
                     width: double.infinity,
@@ -185,13 +182,13 @@ class _MedicinSearchState extends State<MedicinSearch> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: _buildSearchPage(), // Always show the search page
+                      child: _buildSearchPage(),
                     ),
                   ),
                 ),
               ],
             ),
-            // Bottom Navigation Bar
+           
             Positioned(
               bottom: 0,
               left: 0,
@@ -230,7 +227,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
   Widget _buildSearchPage() {
     return Column(
       children: [
-        // Search bar
+        
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
@@ -256,7 +253,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
           ),
         ),
         const SizedBox(height: 20),
-        // Product list integrated with dynamic navigation
+       
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('product').snapshots(),
@@ -281,7 +278,6 @@ class _MedicinSearchState extends State<MedicinSearch> {
                     String medicineName = (medicine['medicineName'] ?? 'Unknown Medicine').toString();
                     String genericName = (medicine['genericName'] ?? 'Unknown Generic Name').toString();
 
-                    // Ensure price is properly handled
                     double price = (medicine['price'] is double)
                         ? medicine['price']
                         : (medicine['price'] is int) ? (medicine['price'] as int).toDouble() : 0.0;
@@ -348,13 +344,13 @@ class _MedicinSearchState extends State<MedicinSearch> {
                                   ),
                                   Center(
                                     child: SizedBox(
-                                      width: 60, // Set the size for the icon button
+                                      width: 60, 
                                       height: 40,
                                       child: IconButton(
                                         icon: const Icon(
                                           Icons.add_shopping_cart,
                                           color: Color.fromARGB(255, 110, 102, 188),
-                                          size: 30, // Adjust the icon size
+                                          size: 30,
                                         ),
                                         onPressed: () {
                                           _addToCart(medicine.id, medicineName, genericName, price);

@@ -2,8 +2,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // For displaying notifications
- // Import your MedicinSearch screen
+import 'package:fluttertoast/fluttertoast.dart'; 
+ 
 
 class OrderScreen extends StatelessWidget {
   const OrderScreen({Key? key}) : super(key: key);
@@ -15,15 +15,15 @@ class OrderScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
+ 
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -37,7 +37,7 @@ class OrderScreen extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png', 
                   width: 60,
                   height: 60,
                 ),
@@ -53,22 +53,22 @@ class OrderScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Main content
+          
           Column(
             children: [
-              const SizedBox(height: 100.0), // Height for spacing below the header
+              const SizedBox(height: 100.0), 
               Expanded(
                 child: Container(
-                  width: double.infinity, // Full width
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white, // Light color
-                        Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        Colors.white, 
+                        Color.fromARGB(255, 143, 133, 230), 
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [0.3, 1.0], 
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -110,7 +110,7 @@ class OrderScreen extends StatelessWidget {
                                   final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
                                   final createdAt = (orderData['createdAt'] as Timestamp?)?.toDate();
 
-                                  // Check if the order is within the cancelable timeframe (12 hours)
+                                  
                                   bool canCancel = createdAt != null && DateTime.now().difference(createdAt).inHours < 12;
 
                                   return Card(
@@ -169,14 +169,14 @@ void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, Lis
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (canCancel) // Only show cancel button if within 12 hours
+              if (canCancel) 
               ElevatedButton(
                 onPressed: () {
-                  _cancelOrder(orderData['orderId'], orderData); // Pass order data for cancellation
-                  Navigator.pop(context); // Close the dialog
+                  _cancelOrder(orderData['orderId'], orderData); 
+                  Navigator.pop(context); 
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.red, // Text color
+                  foregroundColor: Colors.white, backgroundColor: Colors.red, 
                 ),
                 child: const Text('Cancel Order'),
               ),
@@ -197,13 +197,13 @@ void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, Lis
   Future<void> _cancelOrder(String orderId, Map<String, dynamic> orderData) async {
     final userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
 
-    // Delete the order from the 'orders' collection
+    
     await FirebaseFirestore.instance
-        .collection('orders') // Change to your orders collection name
+        .collection('orders')
         .doc(orderId)
         .delete();
 
-    // Delete the order from the 'users/order' subcollection
+   
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -211,7 +211,7 @@ void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, Lis
         .doc(orderId)
         .delete();
 
-    // Show notification
+   
     Fluttertoast.showToast(
       msg: "Order canceled successfully!",
       toastLength: Toast.LENGTH_SHORT,

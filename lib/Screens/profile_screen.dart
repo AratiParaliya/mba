@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'cart.dart'; // Import your Cart screen
-import 'medicin_search.dart'; // Import your MedicinSearch screen
+import 'cart.dart'; 
+import 'medicin_search.dart'; 
 
 class UserProfilePage extends StatefulWidget {
-  final User user; // Firebase User object
+  final User user; 
 
   UserProfilePage({required this.user});
 
@@ -14,7 +14,7 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  int _currentIndex = 3; // Assuming this is the index for UserProfilePage
+  int _currentIndex = 3; 
 
   Future<Map<String, dynamic>> _getUserData() async {
     DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
@@ -30,15 +30,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
+         
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -52,7 +52,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png', 
                   width: 60,
                   height: 60,
                 ),
@@ -69,7 +69,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
           ),
 
-          // Profile Content
+          
           FutureBuilder<Map<String, dynamic>>(
             future: _getUserData(),
             builder: (context, snapshot) {
@@ -82,7 +82,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
                 return Column(
                   children: [
-                    // Profile header section
+                    
                     Container(
                       color: Colors.transparent,
                       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 120),
@@ -104,8 +104,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20), // Add space between header and profile information
-                    // Profile information tiles
+                    const SizedBox(height: 20), 
+                    
                     Expanded(
                       child: ListView(
                         padding: const EdgeInsets.all(16.0),
@@ -134,11 +134,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             title: userData['notes'] ?? 'none',
                           ),
                           const SizedBox(height: 10),
-                          // Log out tile
+                          
                           GestureDetector(
                             onTap: () async {
                               await FirebaseAuth.instance.signOut();
-                              Navigator.of(context).pushReplacementNamed('/login'); // Update navigation
+                              Navigator.of(context).pushReplacementNamed('/login'); 
                             },
                             child: _buildProfileTile(
                               icon: Icons.logout,
@@ -155,7 +155,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             },
           ),
 
-          // Orederscreen Section
+          
           if (_currentIndex == 2) _buildOrdersScreen(),
         ],
       ),
@@ -181,30 +181,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
               break;
             case 2:
               setState(() {
-                // Show orders screen without navigating away
+               
                 _currentIndex = 2;
               });
               break;
             case 3:
-              // Already on Profile Page
+              
               break;
           }
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.home, color: Colors.grey),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.grey), 
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.border_outer_outlined, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.border_outer_outlined, color: Colors.grey), 
             label: 'Orders',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.person, color: Colors.grey), 
             label: 'Profile',
           ),
         ],
@@ -212,7 +212,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  // Method to build Profile Tile with icon and text
+ 
   Widget _buildProfileTile({
     required IconData icon,
     required Color iconColor,
@@ -248,12 +248,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  // Method to build Orederscreen
+  
   Widget _buildOrdersScreen() {
     return Positioned.fill(
       child: Column(
         children: [
-          SizedBox(height: 100.0), // Space for the header
+          SizedBox(height: 100.0), 
           Expanded(
             child: Container(
               width: double.infinity,
@@ -262,16 +262,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.white, // Light color
-                    Color.fromARGB(255, 143, 133, 230), // Darker purple
+                    Colors.white, 
+                    Color.fromARGB(255, 143, 133, 230), 
                   ],
-                  stops: [0.3, 1.0], // Adjust stops to control color spread
+                  stops: [0.3, 1.0], 
                   tileMode: TileMode.clamp,
                 ),
               ),
               child: Center(
                 child: Text(
-                  'Orders Screen', // Placeholder for orders content
+                  'Orders Screen', 
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),

@@ -7,7 +7,7 @@ import 'package:mba/Screens/auth_service.dart';
 import 'package:mba/Screens/forgate_password.dart';
 import 'package:mba/Screens/medicin_search.dart';
 import 'package:mba/Screens/signup.dart';
- // Ensure this path is correct
+ 
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,26 +15,26 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final AuthService _authService = AuthService(); // Create an instance of AuthService
+  final AuthService _authService = AuthService(); 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // Controllers for email and password input
+  
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   final String _adminEmail = 'admin@gmail.com';
   final String _adminPassword = 'admin123';
 
-  // Method to handle login
+ 
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text.trim();
       String password = _passwordController.text.trim();
 
       try {
-        // Check for static admin login
+        
         if (email == _adminEmail && password == _adminPassword) {
-          // Show a success message for admin login
+          
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Admin login successful!'),
@@ -43,13 +43,13 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
 
-          // Navigate to the Admin dashboard or page
+          
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Dashboard()), // Replace with your Admin page
           );
         } else {
-          // Proceed with dynamic user login using Firebase
+          
           User? user = await _authService.signInWithEmailAndPassword(email, password);
 
           if (user != null) {
@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
 
-            // Navigate to the user dashboard or page
+            
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => MedicinSearch()),
@@ -110,8 +110,8 @@ class _LoginPageState extends State<LoginPage> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188), // Darker purple
-                Colors.white, // Light center
+                Color.fromARGB(255, 110, 102, 188), 
+                Colors.white,
               ],
               radius: 2,
               center: Alignment(2.8, -1.0),
@@ -125,17 +125,17 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                // Row for logo and "Sign Up" button
+                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Image.asset(
-                      'assets/logo.png', // Replace with your logo asset path
-                      width: 50, // Adjust the size as needed
+                      'assets/logo.png', 
+                      width: 50, 
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to Sign Up page
+                        
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => SignupPage()),
@@ -169,17 +169,17 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Column(
   children: <Widget>[
-    // Email TextField with validation
+    
     Container(
      decoration: BoxDecoration(
-        color: Colors.white, // Background color of the container
-        borderRadius: BorderRadius.circular(15), // Rounded corners
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(15), 
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // Shadow color
-            spreadRadius: 2, // How much the shadow spreads
-            blurRadius: 5, // Blur radius of the shadow
-            offset: const Offset(0, 3), // Changes the position of the shadow
+            color: Colors.grey.withOpacity(0.5), 
+            spreadRadius: 2, 
+            blurRadius: 5, 
+            offset: const Offset(0, 3), 
           ),
         ],
       ),
@@ -190,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
           labelText: 'Email',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide.none, // Remove border line
+            borderSide: BorderSide.none, 
           ),
           fillColor: Colors.white,
           filled: true,
@@ -207,17 +207,17 @@ class _LoginPageState extends State<LoginPage> {
       ),
     ),
     const SizedBox(height: 20),
-    // Password TextField with validation
+    
     Container(
       decoration: BoxDecoration(
-        color: Colors.white, // Background color of the container
-        borderRadius: BorderRadius.circular(15), // Rounded corners
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(15), 
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5), // Shadow color
-            spreadRadius: 2, // How much the shadow spreads
-            blurRadius: 5, // Blur radius of the shadow
-            offset: const Offset(0, 3), // Changes the position of the shadow
+            color: Colors.grey.withOpacity(0.5), 
+            spreadRadius: 2, 
+            blurRadius: 5, 
+            offset: const Offset(0, 3), 
           ),
         ],
       ),
@@ -228,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
           labelText: 'Password',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide.none, // Remove border line
+            borderSide: BorderSide.none, 
           ),
           fillColor: Colors.white,
           filled: true,
@@ -266,12 +266,10 @@ class _LoginPageState extends State<LoginPage> {
     const SizedBox(height: 10),
   ],
 ),
-
-                // Full width "Sign in" button
-                SizedBox(
-                  width: double.infinity, // Makes the button full width
+                  SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _handleLogin, // Calls _handleLogin method
+                    onPressed: _handleLogin, 
                     child: const Text(
                       "Sign in",
                       style: TextStyle(
