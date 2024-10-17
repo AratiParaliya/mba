@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mba/Admin/approval_list.dart';
 import 'package:mba/Admin/delete_medicine.dart';
 import 'package:mba/Admin/invoice_download.dart';
+
+import 'package:mba/Admin/ledgerdscreen.dart';
 import 'package:mba/Admin/my_profile.dart';
 import 'package:mba/Admin/orderlist.dart';
 import 'package:mba/Admin/panding_bills.dart';
@@ -171,9 +173,9 @@ class _DashboardState extends State<Dashboard> {
       case 'Pending Bills':
         destinationScreen = PandingBills();
         break;
-      // case 'Ledger':
-      //   destinationScreen = ;
-      //   break;
+      case 'Ledger':
+        destinationScreen =LedgerScreen() ;
+        break;
       case 'My Profile':
         destinationScreen = MyProfile();
         break;
