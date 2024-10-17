@@ -8,15 +8,15 @@ class Lastpage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
+        
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -30,7 +30,7 @@ class Lastpage extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png', 
                   width: 60,
                   height: 60,
                 ),
@@ -46,17 +46,17 @@ class Lastpage extends StatelessWidget {
               ],
             ),
           ),
-          // Grey container with rounded corners at the top
+          
           Column(
             children: [
               SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
+                height: 100.0, 
               ),
               Expanded(
                 child: Stack(
                   children: [
                     Container(
-                      width: double.infinity, // Make it full width
+                      width: double.infinity, 
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                            begin: Alignment.topRight,
@@ -65,7 +65,7 @@ class Lastpage extends StatelessWidget {
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.4, 1.0], // Adjust stops to control color spread
+                      stops: [0.4, 1.0], 
                       tileMode: TileMode.clamp,
                         ),
                         borderRadius: const BorderRadius.only(
@@ -74,32 +74,32 @@ class Lastpage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Centered text with image above
+                   
                     Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/Confirm.png', // Add the image asset path
-                            width: 300, // Set the size of the image
+                            'assets/Confirm.png', 
+                            width: 300, 
                             height: 300,
                           ),
-                        // Space between image and text
+                        
                           const Text(
                             'Thank you !',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 100, 12, 5), // Red color for the text
+                              color: Color.fromARGB(255, 100, 12, 5), 
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 10), // Space between the two texts
+                          const SizedBox(height: 10),
                           const Text(
                             'For any further proceedings, \nwe will be in touch with you directly.',
                             style: TextStyle(
                               fontSize: 18,
-                              color: Color.fromARGB(255, 100, 12, 5), // Grey color for the additional text
+                              color: Color.fromARGB(255, 100, 12, 5), 
                             ),
                             textAlign: TextAlign.center,
                           ),
