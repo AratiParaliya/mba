@@ -170,21 +170,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                 _buildDetailRow('Size', '${size.toStringAsFixed(2)}'),
                                 _buildDetailRow('Price', '\$${price.toStringAsFixed(2)}'),
                                 const SizedBox(height: 20),
-                                Center(
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Quantity : ',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color(0xFF6F48EB),
-                                        ),
-                                      ),
-                                      _buildQuantityRow(),
-                                    ],
-                                  ),
-                                ),
+                               
                                 const SizedBox(height: 20),
                                 Center(
                                   child: ElevatedButton(
@@ -295,31 +281,6 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     );
   }
 
-  Widget _buildQuantityRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: () {
-            _updateQuantity(-1);
-          },
-          icon: const Icon(Icons.remove_circle_outline, color: Color(0xFF6F48EB)),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            '$_quantity',
-            style: const TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF6F48EB)),
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            _updateQuantity(1);
-          },
-          icon: const Icon(Icons.add_circle_outline, color: Color(0xFF6F48EB)),
-        ),
-      ],
-    );
+  
   }
-}
+
