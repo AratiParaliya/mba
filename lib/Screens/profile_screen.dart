@@ -167,7 +167,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           });
 
           switch (index) {
-            case 0:
+           case 0:
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const MedicinSearch()),
@@ -180,10 +180,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               );
               break;
             case 2:
-              setState(() {
-               
-                _currentIndex = 2;
-              });
+              // Already on Orders Page
               break;
             case 3:
               
