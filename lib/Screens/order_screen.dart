@@ -174,12 +174,24 @@ class _OrderScreenState extends State<OrderScreen> {
               // Already on Orders Page
               break;
             case 3:
-              var user;
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) =>  UserProfilePage(user: user,)),
-              );
-              break;
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
+    );
+  } else {
+    // Handle the case where the user is null (e.g., show a login screen or error message)
+    Fluttertoast.showToast(
+      msg: "User not logged in. Please log in to view your profile.",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  }
+  break;
+
           }
         },
         items: const [
