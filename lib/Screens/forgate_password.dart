@@ -5,20 +5,20 @@ import 'package:mba/Screens/verification_email.dart';
 class ForgatePassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Check if the keyboard is visible (viewInsets will be non-zero when the keyboard is up)
+    
     bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
-      resizeToAvoidBottomInset: true, // Allows the body to adjust when keyboard or clipboard is shown
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Container(
            width: double.infinity,
-            height: MediaQuery.of(context).size.height, // Ensure the container takes up full height
+            height: MediaQuery.of(context).size.height, 
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -31,17 +31,17 @@ class ForgatePassword extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               
-              // Logo and "Forget Password" text at the top (not scrollable)
+             
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Image.asset(
-                      'assets/logo.png', // Replace with your logo asset path
-                      width: 50, // Adjust the size as needed
+                      'assets/logo.png', 
+                      width: 50, 
                     ),
-                    SizedBox(height: 10), // Space between logo and text
+                    SizedBox(height: 10), 
                     Center(
                       child: Text(
                         "Forget Password",
@@ -55,7 +55,7 @@ class ForgatePassword extends StatelessWidget {
                 ),
               ),
           
-              // Scrollable section starts here
+              
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -63,20 +63,20 @@ class ForgatePassword extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Conditionally show the image when the keyboard is not visible
+                       
                         if (!isKeyboardVisible)
                           Container(
-                            height: MediaQuery.of(context).size.height / 2.5, // Dynamically adjust height
+                            height: MediaQuery.of(context).size.height / 2.5, 
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage("assets/forgetpassword.png"),
-                                fit: BoxFit.cover, // Make sure image covers the area
+                                fit: BoxFit.cover, 
                               ),
                             ),
                           ),
                         if (!isKeyboardVisible) SizedBox(height: 20),
           
-                        // Static Text
+                        
                         Text(
                           "Please Enter Your Email Address To Receive a Verification Code",
                           textAlign: TextAlign.center,
@@ -87,8 +87,6 @@ class ForgatePassword extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 40),
-          
-                        // Email Input Field
                         Container(
                           width: MediaQuery.of(context).size.width * 0.8,
                           decoration: BoxDecoration(
@@ -115,7 +113,7 @@ class ForgatePassword extends StatelessWidget {
                         ),
                         SizedBox(height: 30),
           
-                        // Send Button
+                        
                         MaterialButton(
                           minWidth: double.infinity,
                           height: 60,
