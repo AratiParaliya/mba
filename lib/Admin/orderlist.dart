@@ -12,6 +12,7 @@ class AdminOrderScreen extends StatefulWidget {
 class _AdminOrderScreenState extends State<AdminOrderScreen> {
   final Set<String> _approvedOrders = {};
   final Set<String> _declinedOrders = {};
+  String _searchQuery = ''; // Store the search query
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +93,28 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
+                        // Search Bar
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery = value.toLowerCase(); // Update search query
+                              });
+                            },
+                           decoration: InputDecoration(
+  hintText: 'Search by Order ID or User Name',
+  hintStyle: TextStyle(color: Color.fromARGB(255, 143, 133, 230)), // Set the hint text color
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12.0),
+    borderSide: BorderSide(color: Color.fromARGB(255, 143, 133, 230)),
+  ),
+  prefixIcon: const Icon(Icons.search),
+),
+
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance.collectionGroup('orders').snapshots(),
@@ -106,10 +129,18 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
 
                               final orders = snapshot.data!.docs;
 
+                              // Filter orders based on the search query
+                              final filteredOrders = orders.where((order) {
+                                final orderData = order.data() as Map<String, dynamic>;
+                                final orderId = orderData['orderId'].toString().toLowerCase();
+                                final userName = orderData['fullName']?.toLowerCase() ?? '';
+                                return orderId.contains(_searchQuery) || userName.contains(_searchQuery);
+                              }).toList();
+
                               return ListView.builder(
-                                itemCount: orders.length,
+                                itemCount: filteredOrders.length,
                                 itemBuilder: (context, index) {
-                                  final orderData = orders[index].data() as Map<String, dynamic>;
+                                  final orderData = filteredOrders[index].data() as Map<String, dynamic>;
                                   final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
                                   final orderId = orderData['orderId'];
                                   final userId = orderData['userId']; // Assuming you have userId in your orderData
@@ -206,56 +237,55 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
     }
   }
 
- Future<void> _declineOrder(String userId, String orderId) async {
-  try {
-    // Check if the order has already been declined
-    if (_declinedOrders.contains(orderId)) {
+  Future<void> _declineOrder(String userId, String orderId) async {
+    try {
+      // Check if the order has already been declined
+      if (_declinedOrders.contains(orderId)) {
+        Fluttertoast.showToast(
+          msg: "Order has already been declined.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.black,
+        );
+        return;
+      }
+
+      // Update the order status to declined in the original orders collection
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('order')
+          .doc(orderId)
+          .update({'status': 'declined'});
+
+      // Remove from approved_orders collection if it exists there
+      await FirebaseFirestore.instance.collection('approved_orders').doc(orderId).delete();
+
+      // Update the state to disable buttons
+      setState(() {
+        _declinedOrders.add(orderId);
+      });
+
+      // Show notification
       Fluttertoast.showToast(
-        msg: "Order has already been declined.",
+        msg: "Order declined successfully!",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.yellow,
-        textColor: Colors.black,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
       );
-      return;
+    } catch (e) {
+      print("Error declining order: $e");
+      Fluttertoast.showToast(
+        msg: "Failed to decline order: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
-
-    // Update the order status to declined in the original orders collection
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('order')
-        .doc(orderId)
-        .update({'status': 'declined'});
-
-    // Remove from approved_orders collection if it exists there
-    await FirebaseFirestore.instance.collection('approved_orders').doc(orderId).delete();
-
-    // Update the state to disable buttons
-    setState(() {
-      _declinedOrders.add(orderId);
-    });
-
-    // Show notification
-    Fluttertoast.showToast(
-      msg: "Order declined successfully!",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-    );
-  } catch (e) {
-    print("Error declining order: $e");
-    Fluttertoast.showToast(
-      msg: "Failed to decline order: $e",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-    );
   }
-}
-
 
   void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
     showDialog(
