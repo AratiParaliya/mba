@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:mba/Screens/login.dart'; // Ensure this import points to the correct Login page
+import 'package:mba/Screens/login.dart'; 
 
 class CreateNewPass extends StatelessWidget {
   @override
