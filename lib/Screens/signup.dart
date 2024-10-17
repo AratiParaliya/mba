@@ -12,18 +12,17 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final _authService = AuthService(); // Create an instance of AuthService
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
+  final _authService = AuthService(); 
+  final _formKey = GlobalKey<FormState>(); 
 
-  // Controllers to handle text input
+  
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController(); // New phone field
-  final TextEditingController _addressController = TextEditingController(); // New address field
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController(); 
 
-  // Method to handle sign up
   void _handleSignup() async {
     if (_formKey.currentState!.validate()) {
       String username = _usernameController.text.trim();
@@ -31,26 +30,26 @@ class _SignupPageState extends State<SignupPage> {
       String password = _passwordController.text.trim();
       String phone = _phoneController.text.trim();
       String address = _addressController.text.trim();
-      String userId = await _generateUserId(); // Generate user ID
+      String userId = await _generateUserId(); 
 
       try {
-        // Call the createUserWithEmailAndPassword method from AuthService
+        
         User? user = await _authService.createUserWithEmailAndPassword(
-          email, // Pass only email and password
+          email,
           password,
         );
 
         if (user != null) {
-          // Store user data in Firestore
+          
           await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-            'userId': userId, // Store the generated user ID
+            'userId': userId, 
             'username': username,
             'email': email,
             'phone': phone,
             'address': address,
           });
 
-          // Show a success message
+          
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Sign-up successful!'),
@@ -59,9 +58,9 @@ class _SignupPageState extends State<SignupPage> {
             ),
           );
 
-          // Delay the navigation to show the success message
+          
           Future.delayed(Duration(seconds: 2), () {
-            // Navigate to LoginPage
+           
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => LoginPage()),
@@ -69,7 +68,7 @@ class _SignupPageState extends State<SignupPage> {
           });
         }
       } on FirebaseAuthException catch (e) {
-        // Handle specific sign-up failure error from Firebase Auth
+       
         String errorMessage;
         switch (e.code) {
           case 'email-already-in-use':
@@ -92,7 +91,7 @@ class _SignupPageState extends State<SignupPage> {
           ),
         );
       } catch (e) {
-        // Handle any other errors
+       
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("An error occurred. Please try again."),
@@ -103,12 +102,12 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
-  // Method to generate the next user ID
+  
   Future<String> _generateUserId() async {
-    // Get the current collection length to create a new ID
+   
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('users').get();
-    int userCount = querySnapshot.docs.length; // Get the current user count
-    String newUserId = 'U${(userCount + 1).toString().padLeft(3, '0')}'; // Generate ID like U001
+    int userCount = querySnapshot.docs.length; 
+    String newUserId = 'U${(userCount + 1).toString().padLeft(3, '0')}'; 
     return newUserId;
   }
 
@@ -132,20 +131,20 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-          child: SingleChildScrollView( // Make the entire form scrollable
+          child: SingleChildScrollView( 
             child: Form(
-              key: _formKey,  // Wrap in Form for validation
+              key: _formKey,  
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  // Row for logo and "Sign In" button
+                 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Image.asset(
-                        'assets/logo.png', // Replace with your logo asset path
-                        width: 50, // Adjust the size as needed
+                        'assets/logo.png', 
+                        width: 50,
                       ),
                     ],
                   ),
@@ -169,7 +168,7 @@ class _SignupPageState extends State<SignupPage> {
                   const SizedBox(height: 30),
                   Column(
                     children: <Widget>[
-                      // Username TextField with shadow
+                      
                       _buildTextField(
                         controller: _usernameController,
                         labelText: 'Username',
@@ -182,7 +181,7 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      // Email TextField with shadow
+                     
                       _buildTextField(
                         controller: _emailController,
                         labelText: 'Email',
@@ -198,7 +197,7 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      // Password TextField with shadow
+                      
                       _buildTextField(
                         controller: _passwordController,
                         labelText: 'Password',
@@ -215,7 +214,7 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      // Confirm Password TextField with shadow
+                      
                       _buildTextField(
                         controller: _confirmPasswordController,
                         labelText: 'Confirm Password',
@@ -229,7 +228,7 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      // Phone number TextField with shadow
+                      
                       _buildTextField(
                         controller: _phoneController,
                         labelText: 'Phone Number',
@@ -246,7 +245,7 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      // Address TextField with shadow
+                      
                       _buildTextField(
                         controller: _addressController,
                         labelText: 'Address',
@@ -262,9 +261,9 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   const SizedBox(height: 30),
                   SizedBox(
-                    width: double.infinity,  // Makes the button full width
+                    width: double.infinity,  
                     child: ElevatedButton(
-                      onPressed: _handleSignup, // Calls _handleSignup method
+                      onPressed: _handleSignup, 
                       child: const Text(
                         "Sign up",
                         style: TextStyle(
@@ -286,7 +285,7 @@ class _SignupPageState extends State<SignupPage> {
                       const Text("Already have an account?"),
                       TextButton(
                         onPressed: () {
-                          // Navigate to Login page
+                         
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => LoginPage()),
@@ -310,8 +309,6 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
-
-  // Custom TextField widget for better code organization
   Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
