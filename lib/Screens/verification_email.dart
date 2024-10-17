@@ -5,20 +5,20 @@ import 'package:mba/Screens/create_new_pass.dart';
 class VerificationEmail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Check if the keyboard is visible (viewInsets will be non-zero when the keyboard is up)
+    
     bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
-      resizeToAvoidBottomInset: true, // Allows the layout to adjust when the keyboard appears
+      resizeToAvoidBottomInset: true, 
       body: SafeArea(
         child: Container(
           width: double.infinity,
-            height: MediaQuery.of(context).size.height, // Ensure the container takes up full height
+            height: MediaQuery.of(context).size.height, 
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -28,7 +28,7 @@ class VerificationEmail extends StatelessWidget {
          
           child: Column(
             children: <Widget>[
-              // Scrollable Section for Image and Label
+              
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.only(
@@ -41,15 +41,15 @@ class VerificationEmail extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      // Logo and "Verify Your Email" text
+                    
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Image.asset(
-                            'assets/logo.png', // Replace with your logo asset path
-                            width: 50, // Adjust the size as needed
+                            'assets/logo.png', 
+                            width: 50, 
                           ),
-                          SizedBox(height: 10), // Space between logo and text
+                          SizedBox(height: 10), 
                           Center(
                             child: Text(
                               "Verify Your Email",
@@ -62,21 +62,19 @@ class VerificationEmail extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 20),
-          
-                      // Conditionally display the image only if the keyboard is not visible
                       if (!isKeyboardVisible)
                         Container(
-                          height: MediaQuery.of(context).size.height / 2.6, // Adjust height dynamically
+                          height: MediaQuery.of(context).size.height / 2.6, 
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage("assets/email.png"),
-                              fit: BoxFit.cover, // Ensure the image fits nicely
+                              fit: BoxFit.cover, 
                             ),
                           ),
                         ),
                       if (!isKeyboardVisible) SizedBox(height: 5),
           
-                      // Instruction text
+                    
                       Text(
                         "Please Enter The 6 Digit Code Sent To Your Email Address",
                         textAlign: TextAlign.center,
@@ -92,12 +90,12 @@ class VerificationEmail extends StatelessWidget {
                 ),
               ),
           
-              // Fixed Section for OTP input fields and button
+             
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20), // Padding for the bottom section
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                 child: Column(
                   children: [
-                    // OTP input fields
+                    
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(6, (index) {
@@ -120,7 +118,7 @@ class VerificationEmail extends StatelessWidget {
                             style: TextStyle(fontSize: 24),
                             maxLength: 1,
                             decoration: InputDecoration(
-                              counterText: '', // Removes the counter below the text field
+                              counterText: '', 
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide.none,
@@ -132,7 +130,7 @@ class VerificationEmail extends StatelessWidget {
                     ),
                     SizedBox(height: 30),
           
-                    // "Verify" button
+                    
                     MaterialButton(
                       minWidth: double.infinity,
                       height: 60,
