@@ -2,7 +2,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import 'package:mba/Screens/order_screen.dart';
 import 'cart.dart';
 import 'medicine_details.dart';
@@ -19,6 +18,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
   final TextEditingController _searchController = TextEditingController();
   String searchQuery = '';
   List<Map<String, dynamic>> cartItems = []; // Local cart items
+  int _currentIndex = 0; // Keep track of current tab
 
   // Update search query
   void _updateSearchQuery(String query) {
@@ -70,6 +70,48 @@ class _MedicinSearchState extends State<MedicinSearch> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please log in to add items to your cart.')),
       );
+    }
+  }
+
+  // Handle navigation
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MedicinSearch()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Cart(cartItems: cartItems)),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OrderScreen()),
+        );
+        break;
+      case 3:
+        // Fetch the current user
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please log in to view your profile.')),
+          );
+        }
+        break;
     }
   }
 
@@ -147,74 +189,37 @@ class _MedicinSearchState extends State<MedicinSearch> {
                     ),
                   ),
                 ),
-                // DotNavigationBar for bottom navigation
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 143, 133, 230),
-                  ),
-                  child: DotNavigationBar(
-                    margin: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
-                    currentIndex: 0,
-                    dotIndicatorColor: const Color(0xff73544C),
-                    unselectedItemColor: Colors.grey[300],
-                    splashBorderRadius: 50,
-                    onTap: (index) async {
-                      switch (index) {
-                        case 0:
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MedicinSearch()),
-                          );
-                          break;
-                        case 1:
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Cart(cartItems: cartItems)),
-                          );
-                          break;
-                          case 2:
-                          Navigator.push(
-                            context,
-                          MaterialPageRoute(builder: (context) => OrderScreen( )),
-                          );
-                          break;
-                        case 3:
-                          // Fetch the current user
-                          User? user = FirebaseAuth.instance.currentUser;
-                          if (user != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Please log in to view your profile.')),
-                            );
-                          }
-                          break;
-                      }
-                    },
-                    items: [
-                      DotNavigationBarItem(
-                        icon: const Icon(Icons.home),
-                        selectedColor: const Color(0xff73544C),
-                      ),
-                      DotNavigationBarItem(
-                        icon: const Icon(Icons.add_shopping_cart_rounded),
-                        selectedColor: const Color(0xff73544C),
-                      ),
-                       DotNavigationBarItem(
-                        icon: const Icon(Icons.border_outer_outlined),
-                        selectedColor: const Color(0xff73544C),
-                      ),
-                      DotNavigationBarItem(
-                        icon: const Icon(Icons.person),
-                        selectedColor: const Color(0xff73544C),
-                      ),
-                    ],
-                  ),
-                ),
               ],
+            ),
+            // Bottom Navigation Bar
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: BottomNavigationBar(
+                currentIndex: _currentIndex,
+                onTap: _onTabTapped,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add_shopping_cart_rounded),
+                    label: 'Cart',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.border_outer_outlined),
+                    label: 'Orders',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Profile',
+                  ),
+                ],
+                selectedItemColor: const Color(0xff73544C),
+                unselectedItemColor: Colors.grey,
+              ),
             ),
           ],
         ),
@@ -290,7 +295,8 @@ class _MedicinSearchState extends State<MedicinSearch> {
                               documentId: medicine.id,
                               medicineName: medicineName,
                               genericName: genericName,
-                              price: price, addToCart: () {  },
+                              price: price,
+                              addToCart: () {},
                             ),
                           ),
                         );

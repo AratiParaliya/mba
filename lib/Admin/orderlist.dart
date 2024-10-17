@@ -1,8 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // For displaying notifications
 
-class AdminOrderScreen extends StatelessWidget {
+class AdminOrderScreen extends StatefulWidget {
   const AdminOrderScreen({Key? key}) : super(key: key);
+
+  @override
+  _AdminOrderScreenState createState() => _AdminOrderScreenState();
+}
+
+class _AdminOrderScreenState extends State<AdminOrderScreen> {
+  final Set<String> _approvedOrders = {};
+  final Set<String> _declinedOrders = {};
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +83,7 @@ class AdminOrderScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                         const Text(
+                        const Text(
                           'Order List',
                           style: TextStyle(
                             fontSize: 24,
@@ -90,22 +99,43 @@ class AdminOrderScreen extends StatelessWidget {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                                 return const Center(child: CircularProgressIndicator());
                               }
-                          
+
                               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                                 return const Center(child: Text('No orders found.'));
                               }
-                          
+
                               final orders = snapshot.data!.docs;
-                          
+
                               return ListView.builder(
                                 itemCount: orders.length,
                                 itemBuilder: (context, index) {
                                   final orderData = orders[index].data() as Map<String, dynamic>;
                                   final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
+                                  final orderId = orderData['orderId'];
+                                  final userId = orderData['userId']; // Assuming you have userId in your orderData
+
+                                  // Check if the order has been approved or declined
+                                  final isApproved = _approvedOrders.contains(orderId);
+                                  final isDeclined = _declinedOrders.contains(orderId);
+                                  final status = orderData['status'];
+
                                   return Card(
                                     child: ListTile(
-                                      title: Text('Order ID: ${orderData['orderId']}'),
+                                      title: Text('Order ID: $orderId'),
                                       subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(Icons.check, color: Colors.green),
+                                            onPressed: (status == 'approved' || isDeclined) ? null : () => _approveOrder(orderData, userId),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.close, color: Colors.red),
+                                            onPressed: (status == 'declined' || isApproved) ? null : () => _declineOrder(userId, orderId),
+                                          ),
+                                        ],
+                                      ),
                                       onTap: () => _showOrderDetails(context, orderData, cartItems),
                                     ),
                                   );
@@ -125,6 +155,107 @@ class AdminOrderScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _approveOrder(Map<String, dynamic> orderData, String userId) async {
+    try {
+      // Check if the order has already been approved
+      if (orderData['status'] == 'approved') {
+        Fluttertoast.showToast(
+          msg: "Order has already been approved.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.black,
+        );
+        return;
+      }
+
+      // Update the order status to approved in the original orders collection
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('order')
+          .doc(orderData['orderId'])
+          .update({'status': 'approved'});
+
+      // Move to approved_orders collection only if not already present
+      await FirebaseFirestore.instance.collection('approved_orders').doc(orderData['orderId']).set(orderData);
+
+      // Update the state to disable buttons
+      setState(() {
+        _approvedOrders.add(orderData['orderId']);
+      });
+
+      // Show notification
+      Fluttertoast.showToast(
+        msg: "Order approved successfully!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+    } catch (e) {
+      print("Error approving order: $e");
+      Fluttertoast.showToast(
+        msg: "Failed to approve order: $e",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+ Future<void> _declineOrder(String userId, String orderId) async {
+  try {
+    // Check if the order has already been declined
+    if (_declinedOrders.contains(orderId)) {
+      Fluttertoast.showToast(
+        msg: "Order has already been declined.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.yellow,
+        textColor: Colors.black,
+      );
+      return;
+    }
+
+    // Update the order status to declined in the original orders collection
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('order')
+        .doc(orderId)
+        .update({'status': 'declined'});
+
+    // Remove from approved_orders collection if it exists there
+    await FirebaseFirestore.instance.collection('approved_orders').doc(orderId).delete();
+
+    // Update the state to disable buttons
+    setState(() {
+      _declinedOrders.add(orderId);
+    });
+
+    // Show notification
+    Fluttertoast.showToast(
+      msg: "Order declined successfully!",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  } catch (e) {
+    print("Error declining order: $e");
+    Fluttertoast.showToast(
+      msg: "Failed to decline order: $e",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  }
+}
+
 
   void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
     showDialog(

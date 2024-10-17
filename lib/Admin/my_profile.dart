@@ -1,13 +1,17 @@
-import 'package:flutter/material.dart';
 
-class Myprofile extends StatefulWidget {
-  const Myprofile({super.key});
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mba/Screens/login.dart';
+ // Ensure this import points to your LoginScreen file
+
+class MyProfile extends StatefulWidget {
+  const MyProfile({super.key});
 
   @override
-  State<Myprofile> createState() => _MedicinSearchState();
+  State<MyProfile> createState() => _MyProfileState();
 }
 
-class _MedicinSearchState extends State<Myprofile> {
+class _MyProfileState extends State<MyProfile> {
   // Controllers for form fields
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -217,6 +221,19 @@ class _MedicinSearchState extends State<Myprofile> {
                             ],
                           ),
                           const SizedBox(height: 30),
+
+                          // Logout Button
+                          TextButton(
+                            onPressed: () => _logout(),
+                            child: const Text(
+                              'Logout',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -228,5 +245,23 @@ class _MedicinSearchState extends State<Myprofile> {
         ],
       ),
     );
+  }
+
+  void _logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      // Navigate to the Login Screen
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) =>  LoginPage()),
+        (Route<dynamic> route) => false,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Logged out successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error logging out: $e')),
+      );
+    }
   }
 }

@@ -1,25 +1,55 @@
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-
 import 'package:mba/Screens/login.dart';
-import 'package:mba/Screens/medicin_search.dart';
-
+import 'package:mba/Screens/profile_screen.dart';
 import 'package:mba/Screens/signup.dart';
 // Make sure you have this package
 
 
 
-void main() async{ 
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-     await Firebase.initializeApp();
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home:HomePage(),
-  ));
+  await Firebase.initializeApp(); // Ensure Firebase is initialized
+
+  runApp(MyApp());
 }
 
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: AuthenticationWrapper(),
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/home': (context) => HomePage(), // This is the main screen of the app after login
+      },
+    );
+  }
+}
+
+class AuthenticationWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData) {
+          // User is logged in
+          return HomePage();
+        } else {
+          // User is not logged in
+          return LoginPage();
+        }
+      },
+    );
+  }
+}
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();

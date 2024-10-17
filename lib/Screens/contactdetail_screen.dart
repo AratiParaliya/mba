@@ -44,7 +44,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         .get();
 
     if (ordersSnapshot.docs.isNotEmpty) {
-      // If orders exist, fetch the latest order details (or adjust as needed)
       DocumentSnapshot orderDoc = ordersSnapshot.docs.last;
       final orderData = orderDoc.data() as Map<String, dynamic>;
 
@@ -102,7 +101,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         'status': 'pending',
       };
 
-      // Save the order in Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
@@ -116,7 +114,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         const SnackBar(content: Text("Order saved successfully!")),
       );
 
-      // Navigate to the final confirmation page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const OrderConfirmationPage()),
@@ -237,54 +234,20 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                           ),
                           const SizedBox(height: 20),
                           _buildSectionTitle('Contact Details'),
-                          _buildTextFormField('Full Name', fullNameController, 'John Doe'),
-                          _buildTextFormField(
-                            'Contact Number',
-                            contactNameController,
-                            '1234567890',
-                            keyboardType: TextInputType.phone,
-                            validator: (value) {
-                              if (value == null || value.isEmpty || value.length != 10) {
-                                return 'Enter a valid 10-digit contact number';
-                              }
-                              return null;
-                            },
-                          ),
-                          _buildTextFormField(
-                            'Alternate Number',
-                            alternateNumberController,
-                            '0987654321',
-                            keyboardType: TextInputType.phone,
-                            validator: (value) {
-                              if (value == null || value.length != 10) {
-                                return 'Enter a valid 10-digit alternate number';
-                              }
-                              return null;
-                            },
-                          ),
-                          _buildTextFormField(
-                            'Email Address',
-                            emailAddressController,
-                            'email@example.com',
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty || !RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                                return 'Enter a valid email address';
-                              }
-                              return null;
-                            },
-                          ),
-                          _buildTextFormField('Address', addressController, '123 Main St'),
-                          _buildTextFormField('Pincode', pincodeController, '123456',
-                              keyboardType: TextInputType.number),
-                          _buildTextFormField('City', cityController, 'Your City'),
-                          _buildTextFormField('State', stateController, 'Your State'),
+                          _buildCustomTextFormField('Full Name', fullNameController),
+                          _buildCustomTextFormField('Contact Number', contactNameController),
+                          _buildCustomTextFormField('Alternate Number', alternateNumberController),
+                          _buildCustomTextFormField('Email Address', emailAddressController),
+                          _buildCustomTextFormField('Address', addressController),
+                          _buildCustomTextFormField('Pincode', pincodeController),
+                          _buildCustomTextFormField('City', cityController),
+                          _buildCustomTextFormField('State', stateController),
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: isSaving ? null : _saveOrderDetails,
                             child: isSaving
                                 ? const CircularProgressIndicator()
-                                : const Text('Proceed to Confirm Order'),
+                                : const Text("place order"),
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -301,46 +264,100 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   }
 
   Widget _buildSectionTitle(String title) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0F4FF),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF6F48EB),
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF8F9FD),
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.2),
+          blurRadius: 6,
+          offset: const Offset(0, 3),
         ),
+      ],
+    ),
+    child: Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF6F48EB),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildTextFormField(
-      String labelText, TextEditingController controller, String hintText,
-      {TextInputType keyboardType = TextInputType.text, String? Function(String?)? validator}) {
+
+  Widget _buildCustomTextFormField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: labelText,
-          hintText: hintText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade300),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F9FD),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6F48EB),
+                  ),
+                ),
+              ),
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF6F48EB)),
+          const SizedBox(width: 10), // Space between label and text field
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F9FD),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: TextFormField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: 'Enter $label',
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter $label';
+                  }
+                  return null;
+                },
+              ),
+            ),
           ),
-        ),
-        validator: validator,
+        ],
       ),
     );
   }

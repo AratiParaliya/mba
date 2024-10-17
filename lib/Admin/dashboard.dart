@@ -175,7 +175,7 @@ class _DashboardState extends State<Dashboard> {
       //   destinationScreen = ;
       //   break;
       case 'My Profile':
-        destinationScreen = Myprofile();
+        destinationScreen = MyProfile();
         break;
       default:
         return; // If no match, do nothing
