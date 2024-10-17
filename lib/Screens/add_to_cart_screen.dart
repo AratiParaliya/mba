@@ -20,8 +20,9 @@ class AddToCartScreen extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
