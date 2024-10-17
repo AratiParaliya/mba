@@ -13,7 +13,7 @@ class AddToCartScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
+          
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
@@ -21,7 +21,6 @@ class AddToCartScreen extends StatelessWidget {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188), 
-                  
                   Colors.white, 
                 ],
                 radius: 2,
@@ -36,7 +35,7 @@ class AddToCartScreen extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png', 
                   width: 60,
                   height: 60,
                 ),
@@ -52,11 +51,11 @@ class AddToCartScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Grey container with rounded corners at the top
+         
           Column(
             children: [
               const SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
+                height: 100.0, 
               ),
               Expanded(
                 child: Container(
@@ -70,7 +69,7 @@ class AddToCartScreen extends StatelessWidget {
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.4, 1.0], // Adjust stops to control color spread
+                      stops: [0.4, 1.0], 
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: BorderRadius.only(
@@ -82,8 +81,6 @@ class AddToCartScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
-
-                        // Add Medicine Company Name and Medicine Name in the center
                         const Text(
                           'Medicine Company Name and Medicine Name',
                           textAlign: TextAlign.center,
@@ -105,7 +102,6 @@ class AddToCartScreen extends StatelessWidget {
                         _buildDetailRow('Price', '\$10.00'),
                         const SizedBox(height: 30),
 
-                        // Add to Cart button
                         Row(
                           children: [
                             Expanded(
@@ -115,7 +111,7 @@ class AddToCartScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Cart(cartItems: [],)),);
-                                  // Handle Add to Cart functionality
+                                  
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -137,7 +133,7 @@ class AddToCartScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 20),
-                        // Buy Now button
+                      
                         Row(
                           children: [
                             Expanded(
@@ -181,7 +177,7 @@ class AddToCartScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to build a section title (e.g., "Product Details")
+  
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,
