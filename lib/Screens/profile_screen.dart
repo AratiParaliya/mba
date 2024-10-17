@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mba/Screens/order_screen.dart';
 import 'cart.dart'; 
 import 'medicin_search.dart'; 
 
@@ -180,10 +181,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
               );
               break;
             case 2:
-              // Already on Orders Page
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) =>  OrderScreen()),
+              );
               break;
             case 3:
-              
+              // Already on Orders Page
               break;
           }
         },
