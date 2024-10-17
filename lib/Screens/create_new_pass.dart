@@ -5,20 +5,20 @@ import 'package:mba/Screens/login.dart'; // Ensure this import points to the cor
 class CreateNewPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Check if the keyboard is visible (viewInsets will be non-zero when the keyboard is up)
+    
     bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
-      resizeToAvoidBottomInset: true, // Allow resizing when the keyboard appears
+      resizeToAvoidBottomInset: true, 
       body: SafeArea(
         child: Container(
           width: double.infinity,
-            height: MediaQuery.of(context).size.height, // Ensure the container takes up full height
+            height: MediaQuery.of(context).size.height, 
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -44,15 +44,15 @@ class CreateNewPass extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        // Logo and title
+                        
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Image.asset(
-                              'assets/logo.png', // Replace with your logo asset path
-                              width: 50, // Adjust the size as needed
+                              'assets/logo.png',
+                              width: 50, 
                             ),
-                            SizedBox(height: 10), // Space between logo and text
+                            SizedBox(height: 10), 
                             Center(
                               child: Text(
                                 "Create New Password",
@@ -64,15 +64,15 @@ class CreateNewPass extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 20), // Space after the logo and title
+                        SizedBox(height: 20),
           
-                        // Conditionally display the image only if the keyboard is not visible
+                        
                         if (!isKeyboardVisible)
                           Container(
                             height: MediaQuery.of(context).size.height / 3,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage("assets/code.png"), // Replace with your image asset
+                                image: AssetImage("assets/code.png"), 
                                 fit: BoxFit.cover, // Adjust how the image fits
                               ),
                             ),
@@ -88,39 +88,9 @@ class CreateNewPass extends StatelessWidget {
                             fontSize: 22,
                           ),
                         ),
-                        SizedBox(height: 20), // Space before the input fields
+                        SizedBox(height: 20), 
           
-                        // New Password TextField
-                        Center(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.8, // Adjust width if needed
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              obscureText: true, // To hide password input
-                              decoration: InputDecoration(
-                                hintText: "New Password",
-                                labelText: 'New Password',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide.none,
-                                ),
-                                fillColor: Colors.white,
-                                filled: true,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20), // Space before the confirm password input
-          
-                        // Confirm Password TextField
+                      
                         Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
@@ -134,7 +104,35 @@ class CreateNewPass extends StatelessWidget {
                               ],
                             ),
                             child: TextField(
-                              obscureText: true, // To hide password input
+                              obscureText: true, 
+                              decoration: InputDecoration(
+                                hintText: "New Password",
+                                labelText: 'New Password',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                                fillColor: Colors.white,
+                                filled: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20), 
+                        Center(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: TextField(
+                              obscureText: true,
                               decoration: InputDecoration(
                                 hintText: "Confirm Password",
                                 labelText: 'Confirm Password',
@@ -148,16 +146,14 @@ class CreateNewPass extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 30), // Space before the button
-          
-                        // "Save" button
+                        SizedBox(height: 30),
                         MaterialButton(
                           minWidth: double.infinity,
                           height: 60,
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to Login page
+                              MaterialPageRoute(builder: (context) => LoginPage()), 
                             );
                           },
                           color: Color.fromARGB(255, 110, 102, 188),
