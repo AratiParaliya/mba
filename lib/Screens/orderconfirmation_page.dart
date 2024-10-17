@@ -15,15 +15,15 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
+         
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188), 
+                  Colors.white, 
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -37,7 +37,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
@@ -53,11 +53,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
               ],
             ),
           ),
-          // Content area
+         
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 100.0), // Space for logo and title
+              const SizedBox(height: 100.0), 
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -67,8 +67,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white, // Light color
-                        Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        Colors.white, 
+                        Color.fromARGB(255, 143, 133, 230),
                       ],
                       stops: [0.3, 1.0],
                       tileMode: TileMode.clamp,
@@ -106,10 +106,10 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                         const SizedBox(height: 30),
                         ElevatedButton(
                           onPressed: () {
-                            // Navigate back to the main screen or home page
+                            
                            Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MedicinSearch()), // Replace with your Admin page
+            MaterialPageRoute(builder: (context) => MedicinSearch()),
           );
                           },
                           child: const Text("Back to Home"),
