@@ -1,6 +1,4 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mba/Screens/login.dart';
 
 class CreatePasswordScreen extends StatefulWidget {
@@ -14,71 +12,40 @@ class CreatePasswordScreen extends StatefulWidget {
 }
 
 class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
-  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _checkIfUserIsSignedIn();
-  }
+  void _resetPassword() {
+    String password = _passwordController.text;
+    String confirmPassword = _confirmPasswordController.text;
 
-  void _checkIfUserIsSignedIn() {
-    User? user = _auth.currentUser;
-    if (user == null) {
-      // No user is signed in, navigate to login page
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-        (Route<dynamic> route) => false,
-      );
-    }
-  }
-
-  void _changePassword() async {
-    if (_newPasswordController.text.isEmpty || _confirmPasswordController.text.isEmpty) {
+    if (password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields.')),
+        SnackBar(content: Text("Please fill in both fields.")),
       );
       return;
     }
 
-    if (_newPasswordController.text != _confirmPasswordController.text) {
+    if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passwords do not match.')),
+        SnackBar(content: Text("Passwords do not match.")),
       );
       return;
     }
 
-    try {
-      // Get the current user
-      User? user = _auth.currentUser;
-      if (user != null) {
-        // Update the password directly
-        await user.updatePassword(_newPasswordController.text);
+    // Call your backend or API to reset the password here
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Your password has been changed successfully.')),
-        );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Password reset successfully!")),
+    );
 
-        // Navigate to the login screen
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: User not found.')),
-        );
-      }
-    } catch (error) {
-      // Handle potential errors such as reauthentication needed
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to change password: $error')),
-      );
-    }
+    // Navigate to the LoginPage after a successful password reset
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
   }
 
   @override
@@ -114,45 +81,38 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                       left: 30,
                       right: 30,
                       top: 30,
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 30, // Adjust padding for keyboard
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 30,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Image.asset(
-                              'assets/logo.png',
-                              width: 50,
+                        Image.asset(
+                          'assets/logo.png',
+                          width: 50,
+                        ),
+                        SizedBox(height: 10),
+                        Center(
+                          child: Text(
+                            "Create New Password",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
                             ),
-                            SizedBox(height: 10),
-                            Center(
-                              child: Text(
-                                "Create New Password",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                         SizedBox(height: 20),
-
                         if (!isKeyboardVisible)
                           Container(
                             height: MediaQuery.of(context).size.height / 3,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage("assets/code.png"),
-                                fit: BoxFit.cover, // Adjust how the image fits
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
                         if (!isKeyboardVisible) SizedBox(height: 5),
-
                         Text(
                           "All Set For Creating New Password",
                           textAlign: TextAlign.center,
@@ -163,8 +123,6 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                           ),
                         ),
                         SizedBox(height: 20),
-
-                        // New Password Field
                         Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
@@ -178,8 +136,8 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                               ],
                             ),
                             child: TextField(
-                              controller: _newPasswordController,
-                              obscureText: true,
+                              controller: _passwordController,
+                              obscureText: !_isPasswordVisible,
                               decoration: InputDecoration(
                                 hintText: "New Password",
                                 labelText: 'New Password',
@@ -189,13 +147,21 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                 ),
                                 fillColor: Colors.white,
                                 filled: true,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPasswordVisible = !_isPasswordVisible;
+                                    });
+                                  },
+                                ),
                               ),
                             ),
                           ),
                         ),
                         SizedBox(height: 20),
-
-                        // Confirm Password Field
                         Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
@@ -210,7 +176,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                             ),
                             child: TextField(
                               controller: _confirmPasswordController,
-                              obscureText: true,
+                              obscureText: !_isConfirmPasswordVisible,
                               decoration: InputDecoration(
                                 hintText: "Confirm Password",
                                 labelText: 'Confirm Password',
@@ -220,17 +186,25 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                 ),
                                 fillColor: Colors.white,
                                 filled: true,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                    });
+                                  },
+                                ),
                               ),
                             ),
                           ),
                         ),
                         SizedBox(height: 30),
-
-                        // Save Button
                         MaterialButton(
                           minWidth: double.infinity,
                           height: 60,
-                          onPressed: _changePassword,
+                          onPressed: _resetPassword,
                           color: Color.fromARGB(255, 110, 102, 188),
                           shape: RoundedRectangleBorder(
                             side: BorderSide(
