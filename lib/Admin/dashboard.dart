@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:mba/Admin/approval_list.dart';
 import 'package:mba/Admin/delete_medicine.dart';
@@ -9,11 +8,7 @@ import 'package:mba/Admin/my_profile.dart';
 import 'package:mba/Admin/orderlist.dart';
 import 'package:mba/Admin/panding_bills.dart';
 
-
 // Main entry point of the application
-
-
-
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -35,8 +30,8 @@ class _DashboardState extends State<Dashboard> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188),
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -71,7 +66,8 @@ class _DashboardState extends State<Dashboard> {
           Column(
             children: [
               const SizedBox(
-                height: 120.0, // This height should be slightly less than the blue container's height
+                height:
+                    120.0, // This height should be slightly less than the blue container's height
               ),
               Expanded(
                 child: Container(
@@ -117,12 +113,14 @@ class _DashboardState extends State<Dashboard> {
           borderRadius: BorderRadius.circular(10.0), // Rounded corners
         ),
         elevation: 3,
-        margin: const EdgeInsets.symmetric(vertical: 10.0), // Vertical spacing between cards
+        margin: const EdgeInsets.symmetric(
+            vertical: 10.0), // Vertical spacing between cards
         child: Container(
           height: 80, // Increase the height of each card
           padding: const EdgeInsets.symmetric(horizontal: 10.0), // Add padding
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start, // Align the contents to the left
+            mainAxisAlignment:
+                MainAxisAlignment.start, // Align the contents to the left
             crossAxisAlignment: CrossAxisAlignment.center, // Center vertically
             children: [
               Icon(
@@ -174,7 +172,7 @@ class _DashboardState extends State<Dashboard> {
         destinationScreen = PandingBills();
         break;
       case 'Ledger':
-        destinationScreen =LedgerScreen() ;
+        destinationScreen = LedgerScreen();
         break;
       case 'My Profile':
         destinationScreen = MyProfile();
@@ -190,5 +188,3 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
-
-
