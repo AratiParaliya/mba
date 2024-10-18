@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mba/Admin/ledgerdetail_screen.dart';
- // Import the new screen
+// Import the new screen
 
 class LedgerScreen extends StatelessWidget {
   @override
@@ -36,12 +35,15 @@ class LedgerScreen extends StatelessWidget {
             // If the full name is not already in the set, add it to both the set and the unique orders list
             if (!uniqueNames.contains(fullName)) {
               uniqueNames.add(fullName);
-              groupedOrders[fullName] = [orderData]; // Initialize a new list for this name
+              groupedOrders[fullName] = [
+                orderData
+              ]; // Initialize a new list for this name
             } else {
-              groupedOrders[fullName]!.add(orderData); // Add to the existing list for this name
+              groupedOrders[fullName]!
+                  .add(orderData); // Add to the existing list for this name
             }
           }
-
+// group
           return ListView.builder(
             itemCount: uniqueNames.length,
             itemBuilder: (context, index) {
