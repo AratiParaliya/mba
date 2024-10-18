@@ -93,13 +93,14 @@ class _LoginPageState extends State<LoginPage> {
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
+            gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 162, 146, 199),
-                Colors.white,
+                Color.fromARGB(255, 110, 102, 188), // Darker purple
+                Colors.white, // Light center
               ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              radius: 2,
+              center: Alignment(2.8, -1.0),
+              tileMode: TileMode.clamp,
             ),
           ),
           child: Column(
