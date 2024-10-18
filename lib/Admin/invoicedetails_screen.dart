@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:open_file/open_file.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InvoiceDetailsScreen extends StatefulWidget {
   final String orderId;
@@ -15,9 +15,18 @@ class InvoiceDetailsScreen extends StatefulWidget {
 }
 
 class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
-  String? customerName;
-  double? amount;
-  String? date;
+  String? fullName;
+  double? totalPrice;
+  String? createdAt;
+  String? address;
+  String? alternateNumber;
+  List<Map<String, dynamic>> cartItems = [];
+  String? contactNumber;
+  String? city;
+  String? emailAddress;
+  String? pinCode;
+  String? state;
+  String? status;
 
   @override
   void initState() {
@@ -26,17 +35,38 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
   }
 
   Future<void> _fetchInvoiceDetails() async {
-    // Fetch invoice details from Firestore
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('invoices')
-        .doc(widget.orderId)
-        .get();
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('approved_orders')
+          .doc(widget.orderId)
+          .get();
 
-    setState(() {
-      customerName = doc['customerName']; // Make sure to match your Firestore field names
-      amount = doc['amount'];
-      date = doc['date'];
-    });
+      if (doc.exists) {
+        setState(() {
+          fullName = doc['fullName'] ?? 'Unknown';
+          totalPrice = doc['totalPrice'] ?? 0.0;
+          createdAt = doc['createdAt'] != null ? doc['createdAt'].toDate().toString() : 'Unknown';
+          address = "${doc['city'] ?? 'Unknown'}, ${doc['state'] ?? 'Unknown'}, ${doc['pinCode'] ?? 'Unknown'}";
+          alternateNumber = doc['alternateNumber'] ?? 'Unknown';
+          cartItems = List<Map<String, dynamic>>.from(doc['cartItems'] ?? []);
+          contactNumber = doc['contactNumber'] ?? 'Unknown';
+          city = doc['city'] ?? 'Unknown';
+          emailAddress = doc['emailAddress'] ?? 'Unknown';
+          pinCode = doc['pinCode'] ?? 'Unknown';
+          state = doc['state'] ?? 'Unknown';
+          status = doc['status'] ?? 'Unknown';
+        });
+      } else {
+        setState(() {
+          fullName = 'No data found';
+        });
+      }
+    } catch (e) {
+      print('Error fetching document: $e');
+      setState(() {
+        fullName = 'Error fetching data';
+      });
+    }
   }
 
   @override
@@ -45,72 +75,84 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
       appBar: AppBar(
         title: Text('Invoice Details'),
       ),
-      body: Center(
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.purple.shade50,
+              Colors.purple.shade100,
+              Colors.purple.shade200,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Invoice Details for Order ID: ${widget.orderId}',
-                  style: TextStyle(fontSize: 20)),
-              SizedBox(height: 20),
-              // Display fetched invoice details
-              Text('Customer: ${customerName ?? 'Loading...'}'),
-              Text('Amount: \$${amount?.toStringAsFixed(2) ?? 'Loading...'}'),
-              Text('Date: ${date ?? 'Loading...'}'),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Back to Invoices'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await _downloadPDF();
-                },
-                child: Text('Download PDF with Image'),
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 40),
+                Text(
+                  'Invoice Details for Order ID: ${widget.orderId}',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 20),
+                _buildDetailText('Full Name', fullName ?? 'Loading...'),
+                _buildDetailText('Contact Number', contactNumber ?? 'Loading...'),
+                _buildDetailText('Alternate Number', alternateNumber ?? 'Loading...'),
+                _buildDetailText('Email Address', emailAddress ?? 'Loading...'),
+                _buildDetailText('Address', address ?? 'Loading...'),
+                _buildDetailText('Pincode', pinCode ?? 'Loading...'),
+                _buildDetailText('City', city ?? 'Loading...'),
+                _buildDetailText('State', state ?? 'Loading...'),
+                _buildDetailText('Total Price', totalPrice?.toStringAsFixed(2) ?? 'Loading...'),
+                _buildDetailText('Status', status ?? 'Loading...'),
+                _buildDetailText('Created At', createdAt ?? 'Loading...'),
+                SizedBox(height: 20),
+                Text(
+                  'Cart Items:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: cartItems.length,
+                  itemBuilder: (context, index) {
+                    var item = cartItems[index];
+                    return ListTile(
+                      title: Text(item['itemName']),
+                      subtitle: Text('Quantity: ${item['quantity']}, Price: ${item['price']}'),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> _downloadPDF() async {
-    final pdf = pw.Document();
-
-    // Build the PDF content using fetched details
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text('Invoice Details for Order ID: ${widget.orderId}'),
-              pw.Text('Customer: $customerName'),
-              pw.Text('Amount: \$${amount?.toStringAsFixed(2)}'),
-              pw.Text('Date: $date'),
-              pw.SizedBox(height: 20),
-              pw.Center(
-                child: pw.Text('Thank you for your business!'),
-              ),
-            ],
-          );
-        },
+  Widget _buildDetailText(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('$label: ', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(value),
+        ],
       ),
     );
-
-    // Get the appropriate directory to save the PDF
-    final output = await getApplicationDocumentsDirectory();
-    final file = File("${output.path}/invoice_${widget.orderId}.pdf");
-
-    // Save the PDF
-    await file.writeAsBytes(await pdf.save());
-
-    // Open the file for the user
-    OpenFile.open(file.path);
   }
 }

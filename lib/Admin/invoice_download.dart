@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mba/Admin/invoicedetails_screen.dart';
-import 'package:open_file/open_file.dart';
-// For PDF generation
-import 'package:pdf/pdf.dart'; // For PDF structure
-import 'package:pdf/widgets.dart' as pw; // For building PDF content
-import 'package:path_provider/path_provider.dart';
-import 'dart:io'; // For saving files
-import 'package:flutter/services.dart'; // For loading assets
-// For opening files
+import 'package:mba/Admin/invoicedetails_screen.dart'; // Make sure you have this screen
+import 'package:open_file/open_file.dart'; // For opening PDFs
 
 void main() {
   runApp(MaterialApp(
@@ -24,8 +17,7 @@ class InvoiceScreen extends StatelessWidget {
         backgroundColor: Colors.deepPurple[200],
         title: Row(
           children: [
-            Image.asset('assets/logo.png',
-                height: 40), // Replace with your logo image
+            Image.asset('assets/logo.png', height: 40), // Replace with your logo image
             SizedBox(width: 10),
             Text('MBA International Pharma', style: TextStyle(fontSize: 20)),
           ],
@@ -75,8 +67,7 @@ class InvoiceScreen extends StatelessWidget {
             // List of invoices
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance.collection('orders').snapshots(),
+                stream: FirebaseFirestore.instance.collection('approved_orders').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -95,10 +86,8 @@ class InvoiceScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       var orderData = snapshot.data!.docs[index];
                       String dateOfCreation =
-                          (orderData['createdAt'] as Timestamp)
-                              .toDate()
-                              .toString();
-                      String orderId = orderData['orderId'];
+                          (orderData['createdAt'] as Timestamp).toDate().toString();
+                      String orderId = orderData.id; // Get the document ID as orderId
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -176,4 +165,3 @@ class InvoiceItem extends StatelessWidget {
     );
   }
 }
-
