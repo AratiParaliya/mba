@@ -48,6 +48,7 @@ dependencies:
   pdf: ^3.11.1
   flutter_launcher_icons: ^0.14.1
   open_file: ^3.5.9
+  mailer: ^6.2.0
 
 flutter_launcher_icons:
   android: "launcher_icon"
