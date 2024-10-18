@@ -1,18 +1,43 @@
 import 'package:flutter/material.dart';
-
 import 'package:open_file/open_file.dart';
-// For PDF generation
-// For PDF structure
-import 'package:pdf/widgets.dart' as pw; // For building PDF content
+import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
-import 'dart:io'; // For saving files
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
-class InvoiceDetailsScreen extends StatelessWidget {
+class InvoiceDetailsScreen extends StatefulWidget {
   final String orderId;
 
   InvoiceDetailsScreen({required this.orderId});
+
+  @override
+  _InvoiceDetailsScreenState createState() => _InvoiceDetailsScreenState();
+}
+
+class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
+  String? customerName;
+  double? amount;
+  String? date;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchInvoiceDetails();
+  }
+
+  Future<void> _fetchInvoiceDetails() async {
+    // Fetch invoice details from Firestore
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('invoices')
+        .doc(widget.orderId)
+        .get();
+
+    setState(() {
+      customerName = doc['customerName']; // Make sure to match your Firestore field names
+      amount = doc['amount'];
+      date = doc['date'];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +51,13 @@ class InvoiceDetailsScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Invoice Details for Order ID: $orderId',
+              Text('Invoice Details for Order ID: ${widget.orderId}',
                   style: TextStyle(fontSize: 20)),
               SizedBox(height: 20),
-              // Sample Invoice Details
-              Text('Customer: John Doe'),
-              Text('Amount: \$100.00'),
-              Text('Date: 2024-10-16'),
+              // Display fetched invoice details
+              Text('Customer: ${customerName ?? 'Loading...'}'),
+              Text('Amount: \$${amount?.toStringAsFixed(2) ?? 'Loading...'}'),
+              Text('Date: ${date ?? 'Loading...'}'),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -41,10 +66,9 @@ class InvoiceDetailsScreen extends StatelessWidget {
                 child: Text('Back to Invoices'),
               ),
               SizedBox(height: 20),
-
               ElevatedButton(
                 onPressed: () async {
-                  await _downloadPDF(); // Download PDF with image
+                  await _downloadPDF();
                 },
                 child: Text('Download PDF with Image'),
               ),
@@ -55,84 +79,23 @@ class InvoiceDetailsScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _downloadInvoiceAsPdf(BuildContext context) async {
-    final pdf = pw.Document();
-
-    // Build the PDF content
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Column(
-              mainAxisAlignment: pw.MainAxisAlignment.center,
-              children: [
-                pw.Text('Invoice Details for Order ID: $orderId',
-                    style: pw.TextStyle(fontSize: 20)),
-                pw.SizedBox(height: 20),
-                pw.Text('Customer: John Doe'),
-                pw.Text('Amount: \$100.00'),
-                pw.Text('Date: 2024-10-16'),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    // Get the appropriate path for saving the PDF
-    final downloadPath = await _getDownloadPath();
-
-    try {
-      // Construct the file path
-      final filePath = '$downloadPath/invoice_$orderId.pdf';
-      final file = File(filePath);
-
-      // Write the PDF file to the constructed path
-      await file.writeAsBytes(await pdf.save());
-
-      // Notify the user of successful download
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invoice PDF downloaded to $filePath')),
-      );
-    } catch (e) {
-      print("Error saving PDF: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error downloading invoice: ${e.toString()}')),
-      );
-    }
-  }
-
-  Future<String> _getDownloadPath() async {
-    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      // This path ensures the PDF is saved on the Desktop for desktop platforms
-      final homeDirectory = Platform.isWindows
-          ? Platform.environment['USERPROFILE']
-          : Platform.environment['HOME'];
-
-      return '$homeDirectory/Desktop'; // Saving on the Desktop
-    } else {
-      // For mobile platforms
-      final directory = await getApplicationDocumentsDirectory();
-      return directory.path;
-    }
-  }
-
-  // The new method for downloading a PDF with an image
   Future<void> _downloadPDF() async {
     final pdf = pw.Document();
 
-    // Load image from assets
-
-    // Add page to PDF with the image and text
+    // Build the PDF content using fetched details
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
+              pw.Text('Invoice Details for Order ID: ${widget.orderId}'),
+              pw.Text('Customer: $customerName'),
+              pw.Text('Amount: \$${amount?.toStringAsFixed(2)}'),
+              pw.Text('Date: $date'),
               pw.SizedBox(height: 20),
               pw.Center(
-                child: pw.Text('Item Details'), // Customize as needed
+                child: pw.Text('Thank you for your business!'),
               ),
             ],
           );
@@ -142,7 +105,7 @@ class InvoiceDetailsScreen extends StatelessWidget {
 
     // Get the appropriate directory to save the PDF
     final output = await getApplicationDocumentsDirectory();
-    final file = File("${output.path}/item_details.pdf");
+    final file = File("${output.path}/invoice_${widget.orderId}.pdf");
 
     // Save the PDF
     await file.writeAsBytes(await pdf.save());

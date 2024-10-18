@@ -46,9 +46,17 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
           priceController.text = data['price'].toString() ?? '';
           isLoading = false;
         });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        print('Document does not exist'); // Debugging
       }
     } catch (e) {
-      print('Error fetching product data: $e');
+      print('Error fetching product data: $e'); // Debugging
+      setState(() {
+        isLoading = false; // Stop loading on error
+      });
     }
   }
 
@@ -64,8 +72,8 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188),
-                  Colors.white,
+                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Colors.white, // Light center
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -97,8 +105,7 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
           ),
           Column(
             children: [
-              const SizedBox(
-                  height: 100.0), // Adjust height to fit below the logo
+              const SizedBox(height: 100.0), // Adjust height to fit below the logo
               Expanded(
                 child: Container(
                   width: double.infinity, // Make it full width
@@ -126,17 +133,12 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
                             children: [
                               const SizedBox(height: 20),
                               _buildSectionTitle('Product Details'),
-                              _buildTextField('Medicine Name',
-                                  medicineNameController, 'Paracetamol 500mg'),
-                              _buildTextField('Generic Name',
-                                  genericNameController, 'Paracetamol'),
-                              _buildTextField('Brand', brandController,
-                                  'XYZ Pharmaceuticals'),
+                              _buildTextField('Medicine Name', medicineNameController, 'Paracetamol 500mg'),
+                              _buildTextField('Generic Name', genericNameController, 'Paracetamol'),
+                              _buildTextField('Brand', brandController, 'XYZ Pharmaceuticals'),
                               _buildTextField('Type', typeController, 'Tablet'),
-                              _buildTextField(
-                                  'Size', sizeController, 'Enter size'),
-                              _buildTextField(
-                                  'Price', priceController, 'Enter price'),
+                              _buildTextField('Size', sizeController, 'Enter size'),
+                              _buildTextField('Price', priceController, 'Enter price'),
                               const SizedBox(height: 30),
                               // Save button to update the product
                               Row(
@@ -148,13 +150,10 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
                                         updateProductDetails();
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 113, 101, 228),
+                                        padding: const EdgeInsets.symmetric(vertical: 16),
+                                        backgroundColor: const Color.fromARGB(255, 113, 101, 228),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
+                                          borderRadius: BorderRadius.circular(30),
                                         ),
                                       ),
                                       child: const Text(
@@ -205,8 +204,7 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
   }
 
   // Helper method to build each TextField for user input
-  Widget _buildTextField(
-      String label, TextEditingController controller, String hintText) {
+  Widget _buildTextField(String label, TextEditingController controller, String hintText) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -236,7 +234,7 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
           Expanded(
             flex: 4,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
