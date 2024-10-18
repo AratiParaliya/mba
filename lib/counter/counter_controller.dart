@@ -8,8 +8,8 @@ class CounterController extends GetxController {
 
   decrement() {
     if (count.value > 0) count--;
-    
   }
+  // Method to reset the count to 0
 
   reset() {
     count.value = 0;

@@ -27,7 +27,7 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -60,7 +60,8 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
           // Main content
           Column(
             children: [
-              const SizedBox(height: 100.0), // Height for spacing below the header
+              const SizedBox(
+                  height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
                   width: double.infinity, // Full width
@@ -72,7 +73,10 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [
+                        0.3,
+                        1.0
+                      ], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -99,75 +103,107 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                           child: TextField(
                             onChanged: (value) {
                               setState(() {
-                                _searchQuery = value.toLowerCase(); // Update search query
+                                _searchQuery =
+                                    value.toLowerCase(); // Update search query
                               });
                             },
-                           decoration: InputDecoration(
-  hintText: 'Search by Order ID or User Name',
-  hintStyle: TextStyle(color: Color.fromARGB(255, 143, 133, 230)), // Set the hint text color
-  border: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12.0),
-    borderSide: BorderSide(color: Color.fromARGB(255, 143, 133, 230)),
-  ),
-  prefixIcon: const Icon(Icons.search),
-),
-
+                            decoration: InputDecoration(
+                              hintText: 'Search by Order ID or User Name',
+                              hintStyle: TextStyle(
+                                  color: Color.fromARGB(255, 143, 133,
+                                      230)), // Set the hint text color
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 143, 133, 230)),
+                              ),
+                              prefixIcon: const Icon(Icons.search),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance.collectionGroup('orders').snapshots(),
+                            stream: FirebaseFirestore.instance
+                                .collectionGroup('orders')
+                                .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
 
-                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                return const Center(child: Text('No orders found.'));
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return const Center(
+                                    child: Text('No orders found.'));
                               }
 
                               final orders = snapshot.data!.docs;
 
                               // Filter orders based on the search query
                               final filteredOrders = orders.where((order) {
-                                final orderData = order.data() as Map<String, dynamic>;
-                                final orderId = orderData['orderId'].toString().toLowerCase();
-                                final userName = orderData['fullName']?.toLowerCase() ?? '';
-                                return orderId.contains(_searchQuery) || userName.contains(_searchQuery);
+                                final orderData =
+                                    order.data() as Map<String, dynamic>;
+                                final orderId = orderData['orderId']
+                                    .toString()
+                                    .toLowerCase();
+                                final userName =
+                                    orderData['fullName']?.toLowerCase() ?? '';
+                                return orderId.contains(_searchQuery) ||
+                                    userName.contains(_searchQuery);
                               }).toList();
 
                               return ListView.builder(
                                 itemCount: filteredOrders.length,
                                 itemBuilder: (context, index) {
-                                  final orderData = filteredOrders[index].data() as Map<String, dynamic>;
-                                  final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
+                                  final orderData = filteredOrders[index].data()
+                                      as Map<String, dynamic>;
+                                  final cartItems =
+                                      List<Map<String, dynamic>>.from(
+                                          orderData['cartItems'] ?? []);
                                   final orderId = orderData['orderId'];
-                                  final userId = orderData['userId']; // Assuming you have userId in your orderData
+                                  final userId = orderData[
+                                      'userId']; // Assuming you have userId in your orderData
 
                                   // Check if the order has been approved or declined
-                                  final isApproved = _approvedOrders.contains(orderId);
-                                  final isDeclined = _declinedOrders.contains(orderId);
+                                  final isApproved =
+                                      _approvedOrders.contains(orderId);
+                                  final isDeclined =
+                                      _declinedOrders.contains(orderId);
                                   final status = orderData['status'];
 
                                   return Card(
                                     child: ListTile(
                                       title: Text('Order ID: $orderId'),
-                                      subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                      subtitle: Text(
+                                          'User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
-                                            icon: const Icon(Icons.check, color: Colors.green),
-                                            onPressed: (status == 'approved' || isDeclined) ? null : () => _approveOrder(orderData, userId),
+                                            icon: const Icon(Icons.check,
+                                                color: Colors.green),
+                                            onPressed: (status == 'approved' ||
+                                                    isDeclined)
+                                                ? null
+                                                : () => _approveOrder(
+                                                    orderData, userId),
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.close, color: Colors.red),
-                                            onPressed: (status == 'declined' || isApproved) ? null : () => _declineOrder(userId, orderId),
+                                            icon: const Icon(Icons.close,
+                                                color: Colors.red),
+                                            onPressed: (status == 'declined' ||
+                                                    isApproved)
+                                                ? null
+                                                : () => _declineOrder(
+                                                    userId, orderId),
                                           ),
                                         ],
                                       ),
-                                      onTap: () => _showOrderDetails(context, orderData, cartItems),
+                                      onTap: () => _showOrderDetails(
+                                          context, orderData, cartItems),
                                     ),
                                   );
                                 },
@@ -187,7 +223,8 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
     );
   }
 
-  Future<void> _approveOrder(Map<String, dynamic> orderData, String userId) async {
+  Future<void> _approveOrder(
+      Map<String, dynamic> orderData, String userId) async {
     try {
       // Check if the order has already been approved
       if (orderData['status'] == 'approved') {
@@ -210,7 +247,10 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
           .update({'status': 'approved'});
 
       // Move to approved_orders collection only if not already present
-      await FirebaseFirestore.instance.collection('approved_orders').doc(orderData['orderId']).set(orderData);
+      await FirebaseFirestore.instance
+          .collection('approved_orders')
+          .doc(orderData['orderId'])
+          .set(orderData);
 
       // Update the state to disable buttons
       setState(() {
@@ -260,7 +300,10 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
           .update({'status': 'declined'});
 
       // Remove from approved_orders collection if it exists there
-      await FirebaseFirestore.instance.collection('approved_orders').doc(orderId).delete();
+      await FirebaseFirestore.instance
+          .collection('approved_orders')
+          .doc(orderId)
+          .delete();
 
       // Update the state to disable buttons
       setState(() {
@@ -287,7 +330,8 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
     }
   }
 
-  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
+  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData,
+      List<Map<String, dynamic>> cartItems) {
     showDialog(
       context: context,
       builder: (context) {
@@ -305,11 +349,11 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
               const SizedBox(height: 10),
               const Text('Cart Items:'),
               ...cartItems.map((item) => ListTile(
-                title: Text(item['medicineName'] ?? 'Unknown'),
-                subtitle: Text(
-                  "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                ),
-              )),
+                    title: Text(item['medicineName'] ?? 'Unknown'),
+                    subtitle: Text(
+                      "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                    ),
+                  )),
             ],
           ),
           actions: [

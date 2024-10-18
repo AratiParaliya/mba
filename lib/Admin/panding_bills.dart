@@ -16,7 +16,7 @@ class PandingBills extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white, // Light center
                 ],
                 radius: 2,
@@ -50,7 +50,8 @@ class PandingBills extends StatelessWidget {
           // Main content
           Column(
             children: [
-              const SizedBox(height: 100.0), // Height for spacing below the header
+              const SizedBox(
+                  height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
                   width: double.infinity, // Full width
@@ -62,7 +63,10 @@ class PandingBills extends StatelessWidget {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [
+                        0.3,
+                        1.0
+                      ], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -85,14 +89,20 @@ class PandingBills extends StatelessWidget {
                         const SizedBox(height: 20),
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance.collection('pending_bills').snapshots(),
+                            stream: FirebaseFirestore.instance
+                                .collection('pending_bills')
+                                .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
 
-                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                return const Center(child: Text('No orders found.'));
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return const Center(
+                                    child: Text('No orders found.'));
                               }
 
                               final orders = snapshot.data!.docs;
@@ -100,19 +110,29 @@ class PandingBills extends StatelessWidget {
                               return ListView.builder(
                                 itemCount: orders.length,
                                 itemBuilder: (context, index) {
-                                  final orderData = orders[index].data() as Map<String, dynamic>;
-                                  final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
+                                  final orderData = orders[index].data()
+                                      as Map<String, dynamic>;
+                                  final cartItems =
+                                      List<Map<String, dynamic>>.from(
+                                          orderData['cartItems'] ?? []);
                                   return Card(
                                     child: ListTile(
-                                      title: Text('Order ID: ${orderData['orderId']}'),
-                                      subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                      title: Text(
+                                          'Order ID: ${orderData['orderId']}'),
+                                      subtitle: Text(
+                                          'User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
                                       trailing: IconButton(
-                                        icon: const Icon(Icons.delete, color: Colors.red),
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
                                         onPressed: () {
-                                          _showDeleteConfirmationDialog(context, orders[index].id); // Use the document ID
+                                          _showDeleteConfirmationDialog(
+                                              context,
+                                              orders[index]
+                                                  .id); // Use the document ID
                                         },
                                       ),
-                                      onTap: () => _showOrderDetails(context, orderData, cartItems),
+                                      onTap: () => _showOrderDetails(
+                                          context, orderData, cartItems),
                                     ),
                                   );
                                 },
@@ -132,7 +152,8 @@ class PandingBills extends StatelessWidget {
     );
   }
 
-  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
+  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData,
+      List<Map<String, dynamic>> cartItems) {
     showDialog(
       context: context,
       builder: (context) {
@@ -150,11 +171,11 @@ class PandingBills extends StatelessWidget {
               const SizedBox(height: 10),
               const Text('Cart Items:'),
               ...cartItems.map((item) => ListTile(
-                title: Text(item['medicineName'] ?? 'Unknown'),
-                subtitle: Text(
-                  "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                ),
-              )),
+                    title: Text(item['medicineName'] ?? 'Unknown'),
+                    subtitle: Text(
+                      "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                    ),
+                  )),
             ],
           ),
           actions: [
@@ -195,7 +216,9 @@ class PandingBills extends StatelessWidget {
 
   void _deleteOrder(String orderId) {
     // Reference to the pending bill document to delete
-    final pendingBillRef = FirebaseFirestore.instance.collection('pending_bills').doc(orderId); // Correct collection name
+    final pendingBillRef = FirebaseFirestore.instance
+        .collection('pending_bills')
+        .doc(orderId); // Correct collection name
 
     // Delete the order from the pending bill
     pendingBillRef.delete().then((_) {

@@ -16,8 +16,8 @@ class ApprovalList extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188),
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -50,7 +50,8 @@ class ApprovalList extends StatelessWidget {
           // Main content
           Column(
             children: [
-              const SizedBox(height: 100.0), // Height for spacing below the header
+              const SizedBox(
+                  height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
                   width: double.infinity, // Full width
@@ -62,7 +63,10 @@ class ApprovalList extends StatelessWidget {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [
+                        0.3,
+                        1.0
+                      ], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -74,7 +78,7 @@ class ApprovalList extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                         const Text(
+                        const Text(
                           'Order List',
                           style: TextStyle(
                             fontSize: 24,
@@ -85,28 +89,40 @@ class ApprovalList extends StatelessWidget {
                         const SizedBox(height: 20),
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance.collectionGroup('approved_orders').snapshots(),
+                            stream: FirebaseFirestore.instance
+                                .collectionGroup('approved_orders')
+                                .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
-                          
-                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                return const Center(child: Text('No orders found.'));
+
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return const Center(
+                                    child: Text('No orders found.'));
                               }
-                          
+
                               final orders = snapshot.data!.docs;
-                          
+
                               return ListView.builder(
                                 itemCount: orders.length,
                                 itemBuilder: (context, index) {
-                                  final orderData = orders[index].data() as Map<String, dynamic>;
-                                  final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
+                                  final orderData = orders[index].data()
+                                      as Map<String, dynamic>;
+                                  final cartItems =
+                                      List<Map<String, dynamic>>.from(
+                                          orderData['cartItems'] ?? []);
                                   return Card(
                                     child: ListTile(
-                                      title: Text('Order ID: ${orderData['orderId']}'),
-                                      subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
-                                      onTap: () => _showOrderDetails(context, orderData, cartItems),
+                                      title: Text(
+                                          'Order ID: ${orderData['orderId']}'),
+                                      subtitle: Text(
+                                          'User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                      onTap: () => _showOrderDetails(
+                                          context, orderData, cartItems),
                                     ),
                                   );
                                 },
@@ -126,7 +142,8 @@ class ApprovalList extends StatelessWidget {
     );
   }
 
-  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
+  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData,
+      List<Map<String, dynamic>> cartItems) {
     showDialog(
       context: context,
       builder: (context) {
@@ -144,11 +161,11 @@ class ApprovalList extends StatelessWidget {
               const SizedBox(height: 10),
               const Text('Cart Items:'),
               ...cartItems.map((item) => ListTile(
-                title: Text(item['medicineName'] ?? 'Unknown'),
-                subtitle: Text(
-                  "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                ),
-              )),
+                    title: Text(item['medicineName'] ?? 'Unknown'),
+                    subtitle: Text(
+                      "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                    ),
+                  )),
             ],
           ),
           actions: [

@@ -23,7 +23,8 @@ class InvoiceScreen extends StatelessWidget {
         backgroundColor: Colors.deepPurple[200],
         title: Row(
           children: [
-            Image.asset('assets/logo.png', height: 40), // Replace with your logo image
+            Image.asset('assets/logo.png',
+                height: 40), // Replace with your logo image
             SizedBox(width: 10),
             Text('MBA International Pharma', style: TextStyle(fontSize: 20)),
           ],
@@ -54,9 +55,18 @@ class InvoiceScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(child: Center(child: Text('Date', style: TextStyle(fontWeight: FontWeight.bold)))),
-                Expanded(child: Center(child: Text('Bill No.', style: TextStyle(fontWeight: FontWeight.bold)))),
-                Expanded(child: Center(child: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)))),
+                Expanded(
+                    child: Center(
+                        child: Text('Date',
+                            style: TextStyle(fontWeight: FontWeight.bold)))),
+                Expanded(
+                    child: Center(
+                        child: Text('Bill No.',
+                            style: TextStyle(fontWeight: FontWeight.bold)))),
+                Expanded(
+                    child: Center(
+                        child: Text('Actions',
+                            style: TextStyle(fontWeight: FontWeight.bold)))),
               ],
             ),
             Divider(),
@@ -64,7 +74,8 @@ class InvoiceScreen extends StatelessWidget {
             // List of invoices
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('orders').snapshots(),
+                stream:
+                    FirebaseFirestore.instance.collection('orders').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -82,7 +93,10 @@ class InvoiceScreen extends StatelessWidget {
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
                       var orderData = snapshot.data!.docs[index];
-                      String dateOfCreation = (orderData['createdAt'] as Timestamp).toDate().toString();
+                      String dateOfCreation =
+                          (orderData['createdAt'] as Timestamp)
+                              .toDate()
+                              .toString();
                       String orderId = orderData['orderId'];
 
                       return Padding(
@@ -133,17 +147,17 @@ class InvoiceItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.deepPurple[50],
+        color: Colors.deepPurple[50], // white
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           // Date
           Expanded(child: Center(child: Text(dateOfCreation))),
-          
+
           // Bill Number
           Expanded(child: Center(child: Text(orderId))),
-          
+
           // Actions: View
           Expanded(
             child: Row(
@@ -179,7 +193,8 @@ class InvoiceDetailsScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Invoice Details for Order ID: $orderId', style: TextStyle(fontSize: 20)),
+              Text('Invoice Details for Order ID: $orderId',
+                  style: TextStyle(fontSize: 20)),
               SizedBox(height: 20),
               // Sample Invoice Details
               Text('Customer: John Doe'),
@@ -193,7 +208,7 @@ class InvoiceDetailsScreen extends StatelessWidget {
                 child: Text('Back to Invoices'),
               ),
               SizedBox(height: 20),
-             
+
               ElevatedButton(
                 onPressed: () async {
                   await _downloadPDF(); // Download PDF with image
@@ -218,7 +233,8 @@ class InvoiceDetailsScreen extends StatelessWidget {
             child: pw.Column(
               mainAxisAlignment: pw.MainAxisAlignment.center,
               children: [
-                pw.Text('Invoice Details for Order ID: $orderId', style: pw.TextStyle(fontSize: 20)),
+                pw.Text('Invoice Details for Order ID: $orderId',
+                    style: pw.TextStyle(fontSize: 20)),
                 pw.SizedBox(height: 20),
                 pw.Text('Customer: John Doe'),
                 pw.Text('Amount: \$100.00'),
@@ -273,7 +289,6 @@ class InvoiceDetailsScreen extends StatelessWidget {
     final pdf = pw.Document();
 
     // Load image from assets
-   
 
     // Add page to PDF with the image and text
     pdf.addPage(
@@ -282,7 +297,6 @@ class InvoiceDetailsScreen extends StatelessWidget {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              
               pw.SizedBox(height: 20),
               pw.Center(
                 child: pw.Text('Item Details'), // Customize as needed
@@ -296,10 +310,10 @@ class InvoiceDetailsScreen extends StatelessWidget {
     // Get the appropriate directory to save the PDF
     final output = await getApplicationDocumentsDirectory();
     final file = File("${output.path}/item_details.pdf");
-    
+
     // Save the PDF
     await file.writeAsBytes(await pdf.save());
-    
+
     // Open the file for the user
     OpenFile.open(file.path);
   }
