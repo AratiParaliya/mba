@@ -1,4 +1,4 @@
- // Import your add medicine screen
+// Import your add medicine screen
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +29,8 @@ class _FetchMedicinesState extends State<FetchMedicines> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Color.fromARGB(255, 110, 102, 188),
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -91,12 +91,17 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                           child: StreamBuilder<QuerySnapshot>(
                             stream: medicinesCollection.snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               } else if (snapshot.hasError) {
-                                return Center(child: Text('Error: ${snapshot.error}'));
-                              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                return const Center(child: Text('No medicines found.'));
+                                return Center(
+                                    child: Text('Error: ${snapshot.error}'));
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return const Center(
+                                    child: Text('No medicines found.'));
                               } else {
                                 final medicines = snapshot.data!.docs;
                                 return ListView.builder(
@@ -111,21 +116,26 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                         ),
                         // Add Medicine Button
                         Padding(
-                          padding: const EdgeInsets.only(top: 16.0), // Add some top padding
+                          padding: const EdgeInsets.only(
+                              top: 16.0), // Add some top padding
                           child: ElevatedButton(
                             onPressed: () {
                               // Navigate to Add Medicine screen
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const AddMedicine()),
+                                MaterialPageRoute(
+                                    builder: (context) => const AddMedicine()),
                               );
                             },
                             child: const Text('Add Medicine'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 125, 113, 235), // Button color
-                              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                              backgroundColor: const Color.fromARGB(
+                                  255, 125, 113, 235), // Button color
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 15),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30), // Rounded corners for the button
+                                borderRadius: BorderRadius.circular(
+                                    30), // Rounded corners for the button
                               ),
                             ),
                           ),
@@ -148,13 +158,16 @@ class _FetchMedicinesState extends State<FetchMedicines> {
 
     // Debugging: Print the medicine data and its keys
     print("Medicine Data: $medicineData");
-    print("Keys: ${medicineData.keys}");  // Log the keys to check available fields
+    print(
+        "Keys: ${medicineData.keys}"); // Log the keys to check available fields
 
     String medicineName = medicineData['medicineName'] ?? 'Unknown Medicine';
     String genericName = medicineData['genericName'] ?? 'Unknown Generic Name';
     double price = (medicineData['price'] is double)
         ? medicineData['price']
-        : (medicineData['price'] is int) ? (medicineData['price'] as int).toDouble() : 0.0;
+        : (medicineData['price'] is int)
+            ? (medicineData['price'] as int).toDouble()
+            : 0.0;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -194,22 +207,24 @@ class _FetchMedicinesState extends State<FetchMedicines> {
             Row(
               children: [
                 IconButton(
-  icon: const Icon(Icons.edit, color: Color.fromARGB(255, 110, 102, 188)),
-  onPressed: () {
-    // Navigate to the EditMedicineDetails screen, passing the product ID
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditMedicineDetails(
-          productId: medicineDoc.id, // Pass the document ID (medicine ID) to the edit screen
-        ),
-      ),
-    );
-  },
-),
-
+                  icon: const Icon(Icons.edit,
+                      color: Color.fromARGB(255, 110, 102, 188)),
+                  onPressed: () {
+                    // Navigate to the EditMedicineDetails screen, passing the product ID
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditMedicineDetails(
+                          productId: medicineDoc
+                              .id, // Pass the document ID (medicine ID) to the edit screen
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Color.fromARGB(255, 110, 102, 188)),
+                  icon: const Icon(Icons.close,
+                      color: Color.fromARGB(255, 110, 102, 188)),
                   onPressed: () {
                     // Handle delete functionality here
                     _deleteMedicine(medicineDoc.id); // Call delete function
