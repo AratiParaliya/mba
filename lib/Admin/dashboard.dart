@@ -168,7 +168,7 @@ class _DashboardState extends State<Dashboard> {
         destinationScreen = ApprovalList();
         break;
       case 'Download Invoice':
-        destinationScreen = InvoiceDownload();
+        destinationScreen = InvoiceScreen();
         break;
       case 'Pending Bills':
         destinationScreen = PandingBills();

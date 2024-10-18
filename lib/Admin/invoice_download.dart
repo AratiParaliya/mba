@@ -1,212 +1,306 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:open_file/open_file.dart';
+// For PDF generation
+import 'package:pdf/pdf.dart'; // For PDF structure
+import 'package:pdf/widgets.dart' as pw; // For building PDF content
+import 'package:path_provider/path_provider.dart';
+import 'dart:io'; // For saving files
+import 'package:flutter/services.dart'; // For loading assets
+// For opening files
 
-class InvoiceDownload extends StatelessWidget {
-  const InvoiceDownload({super.key});
+void main() {
+  runApp(MaterialApp(
+    home: InvoiceScreen(),
+  ));
+}
 
+class InvoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Gradient
-          Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
-                ],
-                radius: 2,
-                center: Alignment(2.8, -1.0),
-                tileMode: TileMode.clamp,
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurple[200],
+        title: Row(
+          children: [
+            Image.asset('assets/logo.png', height: 40), // Replace with your logo image
+            SizedBox(width: 10),
+            Text('MBA International Pharma', style: TextStyle(fontSize: 20)),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Search bar
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.deepPurple[50],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              child: TextField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Search with date',
+                  icon: Icon(Icons.search, color: Colors.deepPurple),
+                ),
               ),
             ),
-          ),
-          // Top logo and title
-          Positioned(
-            top: 30,
-            left: 20,
-            child: Row(
+            SizedBox(height: 20),
+
+            // Table Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
-                  width: 60,
-                  height: 60,
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'MBA International Pharma',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 110, 102, 188),
-                  ),
+                Expanded(child: Center(child: Text('Date', style: TextStyle(fontWeight: FontWeight.bold)))),
+                Expanded(child: Center(child: Text('Bill No.', style: TextStyle(fontWeight: FontWeight.bold)))),
+                Expanded(child: Center(child: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)))),
+              ],
+            ),
+            Divider(),
+
+            // List of invoices
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('orders').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error fetching data.'));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No orders available.'));
+                  }
+
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      var orderData = snapshot.data!.docs[index];
+                      String dateOfCreation = (orderData['createdAt'] as Timestamp).toDate().toString();
+                      String orderId = orderData['orderId'];
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: InvoiceItem(
+                          dateOfCreation: dateOfCreation,
+                          orderId: orderId,
+                          onViewDetails: () {
+                            _showInvoiceDetails(context, orderId);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showInvoiceDetails(BuildContext context, String orderId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InvoiceDetailsScreen(orderId: orderId),
+      ),
+    );
+  }
+}
+
+class InvoiceItem extends StatelessWidget {
+  final String dateOfCreation;
+  final String orderId;
+  final VoidCallback onViewDetails;
+
+  InvoiceItem({
+    required this.dateOfCreation,
+    required this.orderId,
+    required this.onViewDetails,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.deepPurple[50],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Date
+          Expanded(child: Center(child: Text(dateOfCreation))),
+          
+          // Bill Number
+          Expanded(child: Center(child: Text(orderId))),
+          
+          // Actions: View
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.remove_red_eye, color: Colors.deepPurple),
+                  onPressed: onViewDetails,
                 ),
               ],
             ),
-          ),
-
-          // Grey container with rounded corners and table layout
-          Column(
-            children: [
-              const SizedBox(
-                height: 100.0, // Space for logo area
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity, // Full width
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                       begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Colors.white,
-                        Color.fromARGB(255, 143, 133, 230),
-                      ],
-                   stops: [0.4, 1.0],// Adjust stops to control color spread
-                      tileMode: TileMode.clamp,
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(60),
-                      topRight: Radius.circular(60),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        // Search bar
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(color: const Color.fromARGB(255, 110, 102, 188), width: 1.5),
-                          ),
-                          child: const TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Search with date',
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-
-                        // Table header with borders around labels
-                        Row(
-                          children: [
-                            headerTextWithBorder('Date'),
-                            const SizedBox(width: 20.0), // Space between Date and Bill No.
-                            headerTextWithBorder('Bill No.'),
-                            const SizedBox(width: 20.0), // Space between Bill No. and Download
-                            headerTextWithBorder('Download'),
-                          ],
-                        ),
-                        const SizedBox(height: 10.0),
-
-                        // Table data in a ListView
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: 8, // Number of rows
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0), // Add vertical padding between rows
-                                child: Row(
-                                  children: [
-                                    // Date cell
-                                    tableCell('03/08/2024'),
-                                    const SizedBox(width: 20.0), // Space between Date and Bill No.
-                                    // Bill No. cell
-                                    tableCell('1111'),
-                                    const SizedBox(width: 20.0), // Space between Bill No. and Download
-                                    
-                                    // Download button
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        height: 40.0,
-                                        alignment: Alignment.center,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            // Action for download
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color.fromARGB(255, 143, 133, 230), 
-                                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10.0),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'Download',
-                                            style: TextStyle(color:  Color.fromARGB(255, 113, 101, 228)),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
+}
 
-  // Function to create table header text with border
-  Widget headerTextWithBorder(String text) {
-    return Expanded(
-      flex: 1,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: const Color.fromARGB(255, 110, 102, 188), // Border color
-            width: 1.5,
-          ),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 110, 102, 188), // Updated header color
+class InvoiceDetailsScreen extends StatelessWidget {
+  final String orderId;
+
+  InvoiceDetailsScreen({required this.orderId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Invoice Details'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Invoice Details for Order ID: $orderId', style: TextStyle(fontSize: 20)),
+              SizedBox(height: 20),
+              // Sample Invoice Details
+              Text('Customer: John Doe'),
+              Text('Amount: \$100.00'),
+              Text('Date: 2024-10-16'),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Back to Invoices'),
+              ),
+              SizedBox(height: 20),
+             
+              ElevatedButton(
+                onPressed: () async {
+                  await _downloadPDF(); // Download PDF with image
+                },
+                child: Text('Download PDF with Image'),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // Function to create a table cell
-  Widget tableCell(String text) {
-    return Expanded(
-      flex: 1,
-      child: Container(
-        height: 40.0,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(color: const Color.fromARGB(255, 206, 203, 234)), // Updated border color
-        ),
-        child: Text(
-          text,
-          textAlign: TextAlign.center, // Center align text in the cell
-          style: const TextStyle(fontSize: 16.0),
-        ),
+  Future<void> _downloadInvoiceAsPdf(BuildContext context) async {
+    final pdf = pw.Document();
+
+    // Build the PDF content
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Column(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              children: [
+                pw.Text('Invoice Details for Order ID: $orderId', style: pw.TextStyle(fontSize: 20)),
+                pw.SizedBox(height: 20),
+                pw.Text('Customer: John Doe'),
+                pw.Text('Amount: \$100.00'),
+                pw.Text('Date: 2024-10-16'),
+              ],
+            ),
+          );
+        },
       ),
     );
+
+    // Get the appropriate path for saving the PDF
+    final downloadPath = await _getDownloadPath();
+
+    try {
+      // Construct the file path
+      final filePath = '$downloadPath/invoice_$orderId.pdf';
+      final file = File(filePath);
+
+      // Write the PDF file to the constructed path
+      await file.writeAsBytes(await pdf.save());
+
+      // Notify the user of successful download
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invoice PDF downloaded to $filePath')),
+      );
+    } catch (e) {
+      print("Error saving PDF: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error downloading invoice: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<String> _getDownloadPath() async {
+    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      // This path ensures the PDF is saved on the Desktop for desktop platforms
+      final homeDirectory = Platform.isWindows
+          ? Platform.environment['USERPROFILE']
+          : Platform.environment['HOME'];
+
+      return '$homeDirectory/Desktop'; // Saving on the Desktop
+    } else {
+      // For mobile platforms
+      final directory = await getApplicationDocumentsDirectory();
+      return directory.path;
+    }
+  }
+
+  // The new method for downloading a PDF with an image
+  Future<void> _downloadPDF() async {
+    final pdf = pw.Document();
+
+    // Load image from assets
+   
+
+    // Add page to PDF with the image and text
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              
+              pw.SizedBox(height: 20),
+              pw.Center(
+                child: pw.Text('Item Details'), // Customize as needed
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    // Get the appropriate directory to save the PDF
+    final output = await getApplicationDocumentsDirectory();
+    final file = File("${output.path}/item_details.pdf");
+    
+    // Save the PDF
+    await file.writeAsBytes(await pdf.save());
+    
+    // Open the file for the user
+    OpenFile.open(file.path);
   }
 }
