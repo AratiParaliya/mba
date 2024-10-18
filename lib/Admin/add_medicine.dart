@@ -10,7 +10,6 @@ class AddMedicine extends StatefulWidget {
 }
 
 class _AddMedicineState extends State<AddMedicine> {
-  // Controllers for TextFields
   final TextEditingController medicineNameController = TextEditingController();
   final TextEditingController genericNameController = TextEditingController();
   final TextEditingController brandController = TextEditingController();
@@ -18,7 +17,6 @@ class _AddMedicineState extends State<AddMedicine> {
   final TextEditingController sizeController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
 
-  // Firestore reference
   final CollectionReference medicinesCollection =
       FirebaseFirestore.instance.collection('product');
 
