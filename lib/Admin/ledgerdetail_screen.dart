@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // material
 
 class LedgerDetailsScreen extends StatelessWidget {
   final String fullName;
@@ -20,7 +20,8 @@ class LedgerDetailsScreen extends StatelessWidget {
             List<dynamic> cartItems = orderData['cartItems'] ?? [];
             // Format the createdAt date if it's present
             DateTime createdAt = (orderData['createdAt'] as Timestamp).toDate();
-            String formattedDate = "${createdAt.day}/${createdAt.month}/${createdAt.year}"; // Change format as needed
+            String formattedDate =
+                "${createdAt.day}/${createdAt.month}/${createdAt.year}"; // Change format as needed
             String orderId = orderData['orderId'] ?? 'N/A';
 
             return Padding(
@@ -28,17 +29,23 @@ class LedgerDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Order ID: $orderId', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text('Order ID: $orderId',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 5),
-                  Text('Created At: $formattedDate', style: TextStyle(fontSize: 14)),
+                  Text('Created At: $formattedDate',
+                      style: TextStyle(fontSize: 14)),
                   SizedBox(height: 10),
-                  Text('Total Price: \$${orderData['totalPrice'] ?? 0}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text('Total Price: \$${orderData['totalPrice'] ?? 0}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Text('Delivery Address: ${orderData['address'] ?? 'N/A'}'),
                   SizedBox(height: 10),
                   Text('Contact: ${orderData['contactNumber'] ?? 'N/A'}'),
                   SizedBox(height: 10),
-                  Text('Cart Items:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Cart Items:',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   ...cartItems.map((item) {
                     return ListTile(
                       title: Text(item['medicineName'] ?? 'Unknown'),
