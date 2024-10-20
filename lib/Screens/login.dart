@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final String _adminEmail = 'apara@gmail.com';
+  final String _adminEmail = 'admin@gmail.com';
   final String _adminPassword = 'admin123';
 
   void _handleLogin() async {
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                           const SizedBox(height: 150),
+                           const SizedBox(height: 100),
                           const Text(
                             "Sign In",
                             style: TextStyle(

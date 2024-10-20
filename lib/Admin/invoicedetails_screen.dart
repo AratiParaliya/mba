@@ -46,7 +46,7 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
       if (doc.exists) {
         setState(() {
           fullName = doc['fullName'] ?? 'Unknown';
-          totalPrice = doc['totalPrice'] ?? 0.0;
+          totalPrice = doc['totalPrice']?.toDouble() ?? 0.0; // Ensure this is double
           createdAt = doc['createdAt'] != null ? doc['createdAt'].toDate().toString() : 'Unknown';
           address = "${doc['city'] ?? 'Unknown'}, ${doc['state'] ?? 'Unknown'}, ${doc['pinCode'] ?? 'Unknown'}";
           alternateNumber = doc['alternateNumber'] ?? 'Unknown';
@@ -163,18 +163,12 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
               ),
             ),
             SizedBox(height: 20),
-            _buildDetailText('Full Name', fullName ?? 'Loading...'),
-            _buildDetailText('Contact Number', contactNumber ?? 'Loading...'),
-            _buildDetailText('Alternate Number', alternateNumber ?? 'Loading...'),
-            _buildDetailText('Email Address', emailAddress ?? 'Loading...'),
-            _buildDetailText('Address', address ?? 'Loading...'),
-            _buildDetailText('Pincode', pinCode ?? 'Loading...'),
-            _buildDetailText('City', city ?? 'Loading...'),
-            _buildDetailText('State', state ?? 'Loading...'),
-            _buildDetailText('Total Price', totalPrice?.toStringAsFixed(2) ?? 'Loading...'),
-            _buildDetailText('Status', status ?? 'Loading...'),
-            _buildDetailText('Created At', createdAt ?? 'Loading...'),
+
+            // Customer Details Section
+            _buildCustomerDetails(),
             SizedBox(height: 20),
+
+            // Cart Items Table
             Text(
               'Cart Items:',
               style: TextStyle(
@@ -182,22 +176,13 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
                 fontSize: 18,
               ),
             ),
-            cartItems.isEmpty
-                ? Text('Loading...')
-                : Column(
-                    children: cartItems.map((item) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildDetailText('Medicine Name', item['medicineName']),
-                          _buildDetailText('Generic Name', item['genericName']),
-                          _buildDetailText('Price', '\$${item['price']}'),
-                          _buildDetailText('Quantity', '${item['quantity']}'),
-                          SizedBox(height: 10),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+            _buildCartItemsTable(),
+
+            SizedBox(height: 20),
+            Text(
+              'Total Price: \$${totalPrice?.toStringAsFixed(2) ?? 'Loading...'}',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -231,23 +216,41 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
     );
   }
 
+  Widget _buildCustomerDetails() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildDetailText('Full Name', fullName ?? 'Loading...'),
+        _buildDetailText('Contact Number', contactNumber ?? 'Loading...'),
+        _buildDetailText('Alternate Number', alternateNumber ?? 'Loading...'),
+        _buildDetailText('Email Address', emailAddress ?? 'Loading...'),
+        _buildDetailText('Address', address ?? 'Loading...'),
+        _buildDetailText('Pincode', pinCode ?? 'Loading...'),
+        _buildDetailText('City', city ?? 'Loading...'),
+        _buildDetailText('State', state ?? 'Loading...'),
+        _buildDetailText('Status', status ?? 'Loading...'),
+        _buildDetailText('Created At', createdAt ?? 'Loading...'),
+      ],
+    );
+  }
+
   Widget _buildDetailText(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            '$label:',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+          Flexible( // Make the label flexible
+            child: Text(
+              label,
+              style: TextStyle(fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis, // Handle overflow
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
+          Flexible( // Make the value flexible
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis, // Handle overflow
             ),
           ),
         ],
@@ -255,167 +258,85 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
     );
   }
 
- Future<void> _downloadPDF() async {
-  final pdf = pw.Document();
+  Widget _buildCartItemsTable() {
+    if (cartItems.isEmpty) {
+      return Text('No items found.');
+    }
 
-  // Load your logo image
-  final ByteData bytes = await rootBundle.load('assets/logo.png');
-  final Uint8List byteList = bytes.buffer.asUint8List();
-  final pw.MemoryImage logoImage = pw.MemoryImage(byteList);
+    return DataTable(
+      columns: const [
+        DataColumn(label: Text('S.No')),
+        DataColumn(label: Text('Medicine Description')),
+        DataColumn(label: Text('HSN')),
+        DataColumn(label: Text('QTY')),
+        DataColumn(label: Text('MRP')),
+        DataColumn(label: Text('Amount')),
+      ],
+      rows: List<DataRow>.generate(
+        cartItems.length,
+        (index) {
+          final item = cartItems[index];
+          return DataRow(
+            cells: [
+              DataCell(Text((index + 1).toString())),
+              DataCell(Text(item['medicineName'] ?? 'Unknown')),
+              DataCell(Text('HSN123')),
+              DataCell(Text(item['quantity'].toString())),
+              DataCell(Text(item['price'].toString())),
+              DataCell(Text((item['quantity'] * item['price']).toString())),
+            ],
+          );
+        },
+      ),
+    );
+  }
 
-  // Build the PDF content
-  pdf.addPage(
-    pw.Page(
-      margin: pw.EdgeInsets.all(20),
-      build: (pw.Context context) {
-        return pw.Stack(
-          children: [
-            // Background image with reduced opacity
-            pw.Positioned.fill(
-              child: pw.Opacity(
-                opacity: 0.1, // Adjust the opacity for a subtle effect
-                child: pw.Image(logoImage, fit: pw.BoxFit.cover),
+  Future<void> _downloadPDF() async {
+    final pdf = pw.Document();
+    final logoImage = pw.MemoryImage(
+      (await rootBundle.load('assets/logo.png')).buffer.asUint8List(),
+    );
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Image(logoImage, width: 100, height: 100),
+              pw.SizedBox(height: 20),
+              pw.Text('Invoice Details for Order ID: ${widget.orderId}', style: pw.TextStyle(fontSize: 24)),
+              pw.SizedBox(height: 20),
+              pw.Text('Customer Name: $fullName'),
+              pw.Text('Total Price: \$${totalPrice?.toStringAsFixed(2) ?? '0.00'}'),
+              pw.SizedBox(height: 20),
+              pw.Text('Cart Items:'),
+              pw.ListView.builder(
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = cartItems[index];
+                  return pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(item['medicineName'] ?? 'Unknown'),
+                      pw.Text('QTY: ${item['quantity']}'),
+                      pw.Text('MRP: \$${item['price']}'),
+                    ],
+                  );
+                },
               ),
-            ),
-            // Content on top of the background image
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                // **Title Section**
-                pw.Center(
-                  child: pw.Text(
-                    'MBA International Pharma',
-                    style: pw.TextStyle(
-                      fontSize: 24, // Larger font size for emphasis
-                      fontWeight: pw.FontWeight.bold,
-                      color: PdfColors.black, // Color for title
-                    ),
-                  ),
-                ),
-                pw.SizedBox(height: 10),
-                
-                // Header with Shop and Invoice details
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('Shop Name : MBA International Pharma', style: pw.TextStyle(fontSize: 12)),
-                        pw.Text('Address : XYZ Street, City', style: pw.TextStyle(fontSize: 12)),
-                        pw.Text('Phone Number : 1234567890', style: pw.TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('GSTIN No : 1234567890', style: pw.TextStyle(fontSize: 12)),
-                        pw.Text('Invoice No : ${widget.orderId}', style: pw.TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ],
-                ),
-                pw.SizedBox(height: 10),
+            ],
+          );
+        },
+      ),
+    );
 
-                // Customer billing details
-                pw.Container(
-                  decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
-                  padding: pw.EdgeInsets.all(8),
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('Bill To:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.SizedBox(height: 5),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Name : $fullName', style: pw.TextStyle(fontSize: 12)),
-                          pw.Text('Order Number : ${widget.orderId}', style: pw.TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Address : $address', style: pw.TextStyle(fontSize: 12)),
-                          pw.Text('Method Of Payment : Credit Card', style: pw.TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Phone No : $contactNumber', style: pw.TextStyle(fontSize: 12)),
-                          pw.Text('Warranty Till Date : 2024-12-31', style: pw.TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                pw.SizedBox(height: 10),
+    // Get the temporary directory to save the PDF
+    final output = await getTemporaryDirectory();
+    final file = File("${output.path}/invoice_${widget.orderId}.pdf");
+    await file.writeAsBytes(await pdf.save());
 
-                // Cart Items table (Goods Description)
-                pw.Table.fromTextArray(
-                  headers: ['S.No', 'Medicine Description', 'HSN', 'QTY', 'MRP', 'Amount'],
-                  data: List<List<String>>.generate(
-                    cartItems.length,
-                    (index) {
-                      final item = cartItems[index];
-                      return [
-                        (index + 1).toString(),
-                        item['medicineName'],
-                        'HSN123',
-                        item['quantity'].toString(),
-                        item['price'].toString(),
-                        (item['quantity'] * item['price']).toString(),
-                      ];
-                    },
-                  ),
-                  border: pw.TableBorder.all(width: 1),
-                  cellStyle: pw.TextStyle(fontSize: 12),
-                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                  headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
-                ),
-                pw.SizedBox(height: 10),
-
-                // Footer Section
-                pw.Container(
-                  decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
-                  padding: pw.EdgeInsets.all(8),
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.SizedBox(height: 10),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Total: \$${totalPrice?.toStringAsFixed(2)}', style: pw.TextStyle(fontSize: 12)),
-                         
-                        ],
-                      ),
-                      pw.Text('Reference No: 987654321', style: pw.TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  'Terms and conditions: All goods once sold are not refundable.',
-                  style: pw.TextStyle(fontSize: 10),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    ),
-  );
-
-  // Get the appropriate directory to save the PDF
-  final output = await getApplicationDocumentsDirectory();
-  final file = File("${output.path}/invoice_${widget.orderId}.pdf");
-
-  // Save the PDF
-  await file.writeAsBytes(await pdf.save());
-
-  // Open the file for the user
-  OpenFile.open(file.path);
-}
+    // Open the PDF file
+    await OpenFile.open(file.path);
+  }
 }

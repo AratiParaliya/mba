@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +126,9 @@ class _OrderScreenState extends State<OrderScreen> {
                                   bool canCancel = createdAt != null && DateTime.now().difference(createdAt).inHours < 12;
 
                                   return Card(
+                                    color: Colors.white, // Set card color to white
+                                    elevation: 4, // Add shadow
+                                    margin: const EdgeInsets.symmetric(vertical: 8), // Vertical margin for spacing
                                     child: ListTile(
                                       title: Text('Order ID: ${orderData['orderId']}'),
                                       subtitle: Text('Status: ${orderData['status']}'),
@@ -174,24 +176,23 @@ class _OrderScreenState extends State<OrderScreen> {
               // Already on Orders Page
               break;
             case 3:
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
-    );
-  } else {
-    // Handle the case where the user is null (e.g., show a login screen or error message)
-    Fluttertoast.showToast(
-      msg: "User not logged in. Please log in to view your profile.",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-    );
-  }
-  break;
-
+              final user = FirebaseAuth.instance.currentUser;
+              if (user != null) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
+                );
+              } else {
+                // Handle the case where the user is null (e.g., show a login screen or error message)
+                Fluttertoast.showToast(
+                  msg: "User not logged in. Please log in to view your profile.",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                );
+              }
+              break;
           }
         },
         items: const [
@@ -222,24 +223,26 @@ class _OrderScreenState extends State<OrderScreen> {
       builder: (context) {
         return AlertDialog(
           title: Text('Order ID: ${orderData['orderId']}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Status: ${orderData['status']}'),
-              Text('Total Price: \$${orderData['totalPrice']}'),
-              const SizedBox(height: 10),
-              Text('Delivery Address: ${orderData['address']}'),
-              const SizedBox(height: 10),
-              Text('Contact: ${orderData['contactNumber']}'),
-              const SizedBox(height: 10),
-              const Text('Cart Items:'),
-              ...cartItems.map((item) => ListTile(
-                title: Text(item['medicineName'] ?? 'Unknown'),
-                subtitle: Text(
-                  "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                ),
-              )),
-            ],
+          content: SingleChildScrollView( // Use SingleChildScrollView to prevent overflow
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Status: ${orderData['status']}'),
+                Text('Total Price: \$${orderData['totalPrice']}'),
+                const SizedBox(height: 10),
+                Text('Delivery Address: ${orderData['address']}'),
+                const SizedBox(height: 10),
+                Text('Contact: ${orderData['contactNumber']}'),
+                const SizedBox(height: 10),
+                const Text('Cart Items:'),
+                ...cartItems.map((item) => ListTile(
+                  title: Text(item['medicineName'] ?? 'Unknown'),
+                  subtitle: Text(
+                    "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                  ),
+                )),
+              ],
+            ),
           ),
           actions: [
             Row(

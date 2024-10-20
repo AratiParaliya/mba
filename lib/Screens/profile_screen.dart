@@ -196,11 +196,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             title: userData['address'] ?? 'Fill in the address',
                           ),
                           const SizedBox(height: 10),
-                          _buildProfileTile(
-                            icon: Icons.notes,
-                            iconColor: Colors.red,
-                            title: userData['notes'] ?? 'none',
-                          ),
+                        
 
                           const SizedBox(height: 10),
                           
