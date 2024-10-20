@@ -85,24 +85,61 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     return Scaffold(
       body: Stack(
         children: [
-          // Add the rest of your UI here
-          // For example, the gradient, image, etc.
+          // Blue background container with radial gradient
+          Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+              gradient: RadialGradient(
+                colors: [
+                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Colors.white, // Light center
+                ],
+                radius: 2,
+                center: Alignment(2.8, -1.0),
+                tileMode: TileMode.clamp,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 30,
+            left: 20,
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/logo.png', // Replace with your logo asset path
+                  width: 60,
+                  height: 60,
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  'MBA International Pharma',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 110, 102, 188),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Grey container with rounded corners at the top
           Column(
             children: [
-              const SizedBox(height: 100.0),
+              const SizedBox(height: 100.0), // Adjust based on the header
               Expanded(
                 child: Container(
-                  width: double.infinity,
+                  width: double.infinity, // Make it full width
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white,
-                        Color.fromARGB(255, 143, 133, 230),
+                        Colors.white, // Light color
+                        Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: [0.6, 1.0],
+                      stops: [0.3, 3.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: BorderRadius.only(
@@ -118,8 +155,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                         FutureBuilder<DocumentSnapshot>(
                           future: _fetchMedicineDetails(documentId),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             }
                             if (snapshot.hasError) {
@@ -129,12 +165,9 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                               return const Text('No data available');
                             }
 
-                            var medicineData = snapshot.data!.data()
-                                as Map<String, dynamic>;
-                            String medicineName =
-                                medicineData['medicineName'] ?? 'Unknown';
-                            String genericName =
-                                medicineData['genericName'] ?? 'Unknown';
+                            var medicineData = snapshot.data!.data() as Map<String, dynamic>;
+                            String medicineName = medicineData['medicineName'] ?? 'Unknown';
+                            String genericName = medicineData['genericName'] ?? 'Unknown';
                             String brand = medicineData['brand'] ?? 'Unknown';
                             String type = medicineData['type'] ?? 'Unknown';
                             double size = (medicineData['size'] is double)
@@ -152,15 +185,12 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildDetailRow(
-                                    'Medicine Name', medicineName),
+                                _buildDetailRow('Medicine Name', medicineName),
                                 _buildDetailRow('Generic Name', genericName),
                                 _buildDetailRow('Brand', brand),
                                 _buildDetailRow('Type', type),
-                                _buildDetailRow(
-                                    'Size', '${size.toStringAsFixed(2)}'),
-                                _buildDetailRow('Price',
-                                    '\$${price.toStringAsFixed(2)}'),
+                                _buildDetailRow('Size', '${size.toStringAsFixed(2)}'),
+                                _buildDetailRow('Price', '\$${price.toStringAsFixed(2)}'),
                                 const SizedBox(height: 20),
                                 Center(
                                   child: ElevatedButton(
@@ -170,11 +200,9 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 16, horizontal: 80),
-                                      backgroundColor:
-                                          const Color(0xFF6F48EB),
+                                      backgroundColor: const Color(0xFF6F48EB),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30),
+                                        borderRadius: BorderRadius.circular(30),
                                       ),
                                     ),
                                     child: const Text(

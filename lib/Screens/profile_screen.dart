@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mba/Screens/order_screen.dart';
 import 'cart.dart'; // Import your Cart screen
 import 'medicin_search.dart'; // Import your MedicinSearch screen
 
@@ -226,7 +227,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),
 
           // Orders screen Section
-          if (_currentIndex == 2) _buildOrdersScreen(),
+        
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -250,10 +251,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
               );
               break;
             case 2:
-              setState(() {
-                // Show orders screen without navigating away
-                _currentIndex = 2;
-              });
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const OrderScreen()),
+              );
               break;
             case 3:
               // Already on Profile Page

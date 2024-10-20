@@ -79,7 +79,7 @@ class ApprovalList extends StatelessWidget {
                     child: Column(
                       children: [
                         const Text(
-                          'Order List',
+                          'Approved Orders',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -115,7 +115,21 @@ class ApprovalList extends StatelessWidget {
                                   final cartItems =
                                       List<Map<String, dynamic>>.from(
                                           orderData['cartItems'] ?? []);
-                                  return Card(
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 3), // Shadow position
+                                        ),
+                                      ],
+                                    ),
                                     child: ListTile(
                                       title: Text(
                                           'Order ID: ${orderData['orderId']}'),
@@ -149,24 +163,47 @@ class ApprovalList extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text('Order ID: ${orderData['orderId']}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('User: ${orderData['fullName']}'),
-              Text('Total Price: \$${orderData['totalPrice']}'),
-              const SizedBox(height: 10),
-              Text('Delivery Address: ${orderData['address']}'),
-              const SizedBox(height: 10),
-              Text('Contact: ${orderData['contactNumber']}'),
-              const SizedBox(height: 10),
-              const Text('Cart Items:'),
-              ...cartItems.map((item) => ListTile(
-                    title: Text(item['medicineName'] ?? 'Unknown'),
-                    subtitle: Text(
-                      "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                    ),
-                  )),
-            ],
+          content: SingleChildScrollView( // Wrap the content with SingleChildScrollView
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('User: ${orderData['fullName']}'),
+                Text('Total Price: \$${orderData['totalPrice']}'),
+                const SizedBox(height: 10),
+                Text('Delivery Address: ${orderData['address']}'),
+                const SizedBox(height: 10),
+                Text('Contact: ${orderData['contactNumber']}'),
+                const SizedBox(height: 10),
+                const Text('Cart Items:'),
+                const SizedBox(height: 10),
+                Column(
+                  children: cartItems.map((item) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        title: Text(item['medicineName'] ?? 'Unknown'),
+                        subtitle: Text(
+                          "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
