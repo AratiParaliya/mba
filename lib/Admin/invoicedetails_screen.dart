@@ -255,96 +255,167 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
     );
   }
 
-  Future<void> _downloadPDF() async {
-    final pdf = pw.Document();
+ Future<void> _downloadPDF() async {
+  final pdf = pw.Document();
 
-    final ByteData bytes = await rootBundle.load('assets/logo.png');
-    final Uint8List byteList = bytes.buffer.asUint8List();
+  // Load your logo image
+  final ByteData bytes = await rootBundle.load('assets/logo.png');
+  final Uint8List byteList = bytes.buffer.asUint8List();
+  final pw.MemoryImage logoImage = pw.MemoryImage(byteList);
 
-    pdf.addPage(
-      pw.Page(
-        margin: pw.EdgeInsets.all(20),
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Container(
-                color: PdfColors.blue,
-                padding: pw.EdgeInsets.all(10),
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('Medicine Shop Bill', style: pw.TextStyle(color: PdfColors.white, fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                    pw.SizedBox(height: 10),
-                    pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                        pw.Text('Shop Name: MBA International Pharma', style: pw.TextStyle(color: PdfColors.white, fontSize: 12)),
-                        pw.Text('Invoice No: ${widget.orderId}', style: pw.TextStyle(color: PdfColors.white, fontSize: 12)),
-                      ],
-                    ),
-                    pw.Text('GSTIN No: 1234567890', style: pw.TextStyle(color: PdfColors.white, fontSize: 12)),
-                  ],
-                ),
+  // Build the PDF content
+  pdf.addPage(
+    pw.Page(
+      margin: pw.EdgeInsets.all(20),
+      build: (pw.Context context) {
+        return pw.Stack(
+          children: [
+            // Background image with reduced opacity
+            pw.Positioned.fill(
+              child: pw.Opacity(
+                opacity: 0.1, // Adjust the opacity for a subtle effect
+                child: pw.Image(logoImage, fit: pw.BoxFit.cover),
               ),
-              pw.Image(pw.MemoryImage(byteList), height: 100),
-              pw.SizedBox(height: 20),
-              pw.Text('Invoice Details', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-              pw.SizedBox(height: 20),
-              _buildPdfDetailText('Customer Name', fullName ?? 'Unknown'),
-              _buildPdfDetailText('Contact Number', contactNumber ?? 'Unknown'),
-              _buildPdfDetailText('Alternate Number', alternateNumber ?? 'Unknown'),
-              _buildPdfDetailText('Email', emailAddress ?? 'Unknown'),
-              _buildPdfDetailText('Address', address ?? 'Unknown'),
-              _buildPdfDetailText('City', city ?? 'Unknown'),
-              _buildPdfDetailText('State', state ?? 'Unknown'),
-              _buildPdfDetailText('Pincode', pinCode ?? 'Unknown'),
-              _buildPdfDetailText('Total Price', '\$${totalPrice?.toStringAsFixed(2) ?? 'Unknown'}'),
-              _buildPdfDetailText('Status', status ?? 'Unknown'),
-              _buildPdfDetailText('Created At', createdAt ?? 'Unknown'),
-              pw.SizedBox(height: 20),
-              pw.Text('Cart Items', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-              pw.ListView.builder(
-                itemCount: cartItems.length,
-                itemBuilder: (context, index) {
-                  final item = cartItems[index];
-                  return pw.Container(
-                    margin: pw.EdgeInsets.symmetric(vertical: 8),
-                    child: pw.Column(
+            ),
+            // Content on top of the background image
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // **Title Section**
+                pw.Center(
+                  child: pw.Text(
+                    'MBA International Pharma',
+                    style: pw.TextStyle(
+                      fontSize: 24, // Larger font size for emphasis
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.black, // Color for title
+                    ),
+                  ),
+                ),
+                pw.SizedBox(height: 10),
+                
+                // Header with Shop and Invoice details
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        _buildPdfDetailText('Medicine Name', item['medicineName'] ?? 'Unknown'),
-                        _buildPdfDetailText('Generic Name', item['genericName'] ?? 'Unknown'),
-                        _buildPdfDetailText('Price', '\$${item['price'] ?? 'Unknown'}'),
-                        _buildPdfDetailText('Quantity', '${item['quantity'] ?? 'Unknown'}'),
+                        pw.Text('Shop Name : MBA International Pharma', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Address : XYZ Street, City', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Phone Number : 1234567890', style: pw.TextStyle(fontSize: 12)),
                       ],
                     ),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('GSTIN No : 1234567890', style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Invoice No : ${widget.orderId}', style: pw.TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 10),
 
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/invoice_${widget.orderId}.pdf');
-    await file.writeAsBytes(await pdf.save());
+                // Customer billing details
+                pw.Container(
+                  decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
+                  padding: pw.EdgeInsets.all(8),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text('Bill To:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      pw.SizedBox(height: 5),
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Name : $fullName', style: pw.TextStyle(fontSize: 12)),
+                          pw.Text('Order Number : ${widget.orderId}', style: pw.TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Address : $address', style: pw.TextStyle(fontSize: 12)),
+                          pw.Text('Method Of Payment : Credit Card', style: pw.TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Phone No : $contactNumber', style: pw.TextStyle(fontSize: 12)),
+                          pw.Text('Warranty Till Date : 2024-12-31', style: pw.TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 10),
 
-    OpenFile.open(file.path);
-  }
+                // Cart Items table (Goods Description)
+                pw.Table.fromTextArray(
+                  headers: ['S.No', 'Medicine Description', 'HSN', 'QTY', 'MRP', 'Amount'],
+                  data: List<List<String>>.generate(
+                    cartItems.length,
+                    (index) {
+                      final item = cartItems[index];
+                      return [
+                        (index + 1).toString(),
+                        item['medicineName'],
+                        'HSN123',
+                        item['quantity'].toString(),
+                        item['price'].toString(),
+                        (item['quantity'] * item['price']).toString(),
+                      ];
+                    },
+                  ),
+                  border: pw.TableBorder.all(width: 1),
+                  cellStyle: pw.TextStyle(fontSize: 12),
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  headerDecoration: pw.BoxDecoration(color: PdfColors.grey300),
+                ),
+                pw.SizedBox(height: 10),
 
-  pw.Widget _buildPdfDetailText(String label, String value) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 4.0),
-      child: pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        children: [
-          pw.Text('$label:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-          pw.Text(value),
-        ],
-      ),
-    );
-  }
+                // Footer Section
+                pw.Container(
+                  decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
+                  padding: pw.EdgeInsets.all(8),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.SizedBox(height: 10),
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Total: \$${totalPrice?.toStringAsFixed(2)}', style: pw.TextStyle(fontSize: 12)),
+                         
+                        ],
+                      ),
+                      pw.Text('Reference No: 987654321', style: pw.TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 10),
+                pw.Text(
+                  'Terms and conditions: All goods once sold are not refundable.',
+                  style: pw.TextStyle(fontSize: 10),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    ),
+  );
+
+  // Get the appropriate directory to save the PDF
+  final output = await getApplicationDocumentsDirectory();
+  final file = File("${output.path}/invoice_${widget.orderId}.pdf");
+
+  // Save the PDF
+  await file.writeAsBytes(await pdf.save());
+
+  // Open the file for the user
+  OpenFile.open(file.path);
+}
 }

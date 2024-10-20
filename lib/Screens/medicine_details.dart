@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth for user management
 import 'package:mba/Screens/medicin_search.dart';
 
 class MedicineDetails extends StatefulWidget {
@@ -21,38 +22,59 @@ class MedicineDetails extends StatefulWidget {
 class _MedicineDetailsState extends State<MedicineDetails> {
   final CollectionReference medicinesCollection =
       FirebaseFirestore.instance.collection('product');
-  final CollectionReference cartCollection =
-      FirebaseFirestore.instance.collection('cart');
 
   int _quantity = 1;
+
+  // Fetch the current user's ID using FirebaseAuth
+  User? getCurrentUser() {
+    return FirebaseAuth.instance.currentUser;
+  }
 
   Future<DocumentSnapshot> _fetchMedicineDetails(String documentId) async {
     return await medicinesCollection.doc(documentId).get();
   }
 
+  // Function to add items to the cart under users/{userId}/cart
   Future<void> _addToCart(Map<String, dynamic> medicineData) async {
-    
-    await cartCollection.add({
-      'medicineName': medicineData['medicineName'],
-      'genericName': medicineData['genericName'],
-      'price': medicineData['price'],
-      'quantity': _quantity, 
-    });
+    User? user = getCurrentUser(); // Get the current authenticated user
 
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Added to Cart')),
-    );
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const MedicinSearch()),
-    );
+    if (user != null) {
+      String userId = user.uid; // Fetch the current user's ID
+
+      // Create a reference to the user's cart collection
+      CollectionReference userCartCollection =
+          FirebaseFirestore.instance.collection('users').doc(userId).collection('cart');
+
+      // Add the medicine data to the user's cart
+      await userCartCollection.add({
+        'medicineName': medicineData['medicineName'],
+        'genericName': medicineData['genericName'],
+        'price': medicineData['price'],
+        'quantity': _quantity,
+      });
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Added to Cart')),
+      );
+
+      // Redirect to the medicine search screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MedicinSearch()),
+      );
+    } else {
+      // Handle case where the user is not authenticated
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User not logged in.')),
+      );
+    }
   }
 
   void _updateQuantity(int change) {
     setState(() {
       _quantity += change;
-      if (_quantity < 1) _quantity = 1; 
+      if (_quantity < 1) _quantity = 1; // Ensure quantity doesn't go below 1
     });
   }
 
@@ -63,43 +85,8 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  Color.fromARGB(255, 110, 102, 188),
-                  Colors.white,
-                ],
-                radius: 2,
-                center: Alignment(2.8, -1.0),
-                tileMode: TileMode.clamp,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 30,
-            left: 20,
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/logo.png',
-                  width: 60,
-                  height: 60,
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'MBA International Pharma',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 110, 102, 188),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Add the rest of your UI here
+          // For example, the gradient, image, etc.
           Column(
             children: [
               const SizedBox(height: 100.0),
@@ -131,7 +118,8 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                         FutureBuilder<DocumentSnapshot>(
                           future: _fetchMedicineDetails(documentId),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             }
                             if (snapshot.hasError) {
@@ -141,9 +129,12 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                               return const Text('No data available');
                             }
 
-                            var medicineData = snapshot.data!.data() as Map<String, dynamic>;
-                            String medicineName = medicineData['medicineName'] ?? 'Unknown';
-                            String genericName = medicineData['genericName'] ?? 'Unknown';
+                            var medicineData = snapshot.data!.data()
+                                as Map<String, dynamic>;
+                            String medicineName =
+                                medicineData['medicineName'] ?? 'Unknown';
+                            String genericName =
+                                medicineData['genericName'] ?? 'Unknown';
                             String brand = medicineData['brand'] ?? 'Unknown';
                             String type = medicineData['type'] ?? 'Unknown';
                             double size = (medicineData['size'] is double)
@@ -161,14 +152,15 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildDetailRow('Medicine Name', medicineName),
+                                _buildDetailRow(
+                                    'Medicine Name', medicineName),
                                 _buildDetailRow('Generic Name', genericName),
                                 _buildDetailRow('Brand', brand),
                                 _buildDetailRow('Type', type),
-                                _buildDetailRow('Size', '${size.toStringAsFixed(2)}'),
-                                _buildDetailRow('Price', '\$${price.toStringAsFixed(2)}'),
-                                const SizedBox(height: 20),
-                               
+                                _buildDetailRow(
+                                    'Size', '${size.toStringAsFixed(2)}'),
+                                _buildDetailRow('Price',
+                                    '\$${price.toStringAsFixed(2)}'),
                                 const SizedBox(height: 20),
                                 Center(
                                   child: ElevatedButton(
@@ -178,9 +170,11 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 16, horizontal: 80),
-                                      backgroundColor: const Color(0xFF6F48EB),
+                                      backgroundColor:
+                                          const Color(0xFF6F48EB),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
+                                        borderRadius:
+                                            BorderRadius.circular(30),
                                       ),
                                     ),
                                     child: const Text(
@@ -278,7 +272,4 @@ class _MedicineDetailsState extends State<MedicineDetails> {
       ),
     );
   }
-
-  
-  }
-
+}

@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mba/Admin/invoicedetails_screen.dart'; // Make sure this path is correct
 
-class InvoiceScreen extends StatelessWidget {
+class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({super.key});
+
+  @override
+  _InvoiceScreenState createState() => _InvoiceScreenState();
+}
+
+class _InvoiceScreenState extends State<InvoiceScreen> {
+  String searchQuery = ''; // Store search input
 
   @override
   Widget build(BuildContext context) {
@@ -80,14 +87,27 @@ class InvoiceScreen extends StatelessWidget {
                         // Search bar
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.deepPurple[50],
+                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.white, // Set search bar background to white
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3), // Shadow position
+                              ),
+                            ],
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                           child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                searchQuery = value; // Update search query whenever input changes
+                              });
+                            },
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Search with date',
+                              hintText: 'Search with date (YYYY-MM-DD)',
                               icon: Icon(Icons.search, color: Colors.deepPurple),
                             ),
                           ),
@@ -137,10 +157,19 @@ class InvoiceScreen extends StatelessWidget {
                                 return Center(child: Text('No orders available.'));
                               }
 
+                              // Filter invoices based on the search query (by date)
+                              var filteredDocs = snapshot.data!.docs.where((doc) {
+                                var orderData = doc.data() as Map<String, dynamic>;
+                                var dateOfCreation = (orderData['createdAt'] as Timestamp).toDate().toString().substring(0, 10);
+                                
+                                // If search query is not empty, check if the date matches the query
+                                return searchQuery.isEmpty || dateOfCreation.contains(searchQuery);
+                              }).toList();
+
                               return ListView.builder(
-                                itemCount: snapshot.data!.docs.length,
+                                itemCount: filteredDocs.length,
                                 itemBuilder: (context, index) {
-                                  var orderData = snapshot.data!.docs[index];
+                                  var orderData = filteredDocs[index];
                                   String dateOfCreation =
                                       (orderData['createdAt'] as Timestamp).toDate().toString();
                                   String orderId = orderData.id; // Get the document ID as orderId
@@ -198,8 +227,16 @@ class InvoiceItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.deepPurple[50], // white
+        borderRadius: BorderRadius.circular(15), // Border radius set to 15
+        color: Colors.white, // Set ListView item background to white
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // Shadow position
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
