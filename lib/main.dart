@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/home': (context) => HomePage(), // This is the main screen of the app after login
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -263,30 +263,33 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
       return Text('No items found.');
     }
 
-    return DataTable(
-      columns: const [
-        DataColumn(label: Text('S.No')),
-        DataColumn(label: Text('Medicine Description')),
-        DataColumn(label: Text('HSN')),
-        DataColumn(label: Text('QTY')),
-        DataColumn(label: Text('MRP')),
-        DataColumn(label: Text('Amount')),
-      ],
-      rows: List<DataRow>.generate(
-        cartItems.length,
-        (index) {
-          final item = cartItems[index];
-          return DataRow(
-            cells: [
-              DataCell(Text((index + 1).toString())),
-              DataCell(Text(item['medicineName'] ?? 'Unknown')),
-              DataCell(Text('HSN123')),
-              DataCell(Text(item['quantity'].toString())),
-              DataCell(Text(item['price'].toString())),
-              DataCell(Text((item['quantity'] * item['price']).toString())),
-            ],
-          );
-        },
+    return SingleChildScrollView( // Added SingleChildScrollView for horizontal scrolling
+      scrollDirection: Axis.horizontal, // Set horizontal scrolling
+      child: DataTable(
+        columns: const [
+          DataColumn(label: Text('S.No')),
+          DataColumn(label: Text('Medicine Description')),
+          DataColumn(label: Text('HSN')),
+          DataColumn(label: Text('QTY')),
+          DataColumn(label: Text('MRP')),
+          DataColumn(label: Text('Amount')),
+        ],
+        rows: List<DataRow>.generate(
+          cartItems.length,
+          (index) {
+            final item = cartItems[index];
+            return DataRow(
+              cells: [
+                DataCell(Text((index + 1).toString())),
+                DataCell(Text(item['medicineName'] ?? 'Unknown')),
+                DataCell(Text('HSN123')),
+                DataCell(Text(item['quantity'].toString())),
+                DataCell(Text(item['price'].toString())),
+                DataCell(Text((item['quantity'] * item['price']).toString())),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
