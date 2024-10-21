@@ -21,7 +21,7 @@ class AddToCartScreen extends StatelessWidget {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188), // red
-                  Colors.white,
+                  Colors.white, // green
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
