@@ -5,7 +5,8 @@ class LedgerDetailsScreen extends StatelessWidget {
   final String fullName;
   final List<Map<String, dynamic>> orders;
 
-  LedgerDetailsScreen({super.key, required this.fullName, required this.orders});
+  LedgerDetailsScreen(
+      {super.key, required this.fullName, required this.orders});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class LedgerDetailsScreen extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white, // Light center
                 ],
                 radius: 2,
@@ -55,14 +56,16 @@ class LedgerDetailsScreen extends StatelessWidget {
             top: 30,
             right: 20,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white), // Back icon
+              icon: const Icon(Icons.arrow_back,
+                  color: Colors.white), // Back icon
               onPressed: () => Navigator.pop(context), // Navigate back
             ),
           ),
           // Grey container with rounded corners at the top
           Column(
             children: [
-              const SizedBox(height: 100.0), // Height for spacing below the header
+              const SizedBox(
+                  height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
                   width: double.infinity, // Full width
@@ -74,7 +77,10 @@ class LedgerDetailsScreen extends StatelessWidget {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [
+                        0.3,
+                        1.0
+                      ], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -84,7 +90,10 @@ class LedgerDetailsScreen extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 20.0, right: 16.0), // Add left margin and top padding
+                      padding: const EdgeInsets.only(
+                          left: 16.0,
+                          top: 20.0,
+                          right: 16.0), // Add left margin and top padding
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -99,31 +108,48 @@ class LedgerDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 20), // Space after the name
                           ...orders.map((orderData) {
-                            List<dynamic> cartItems = orderData['cartItems'] ?? [];
+                            List<dynamic> cartItems =
+                                orderData['cartItems'] ?? [];
                             // Format the createdAt date if it's present
-                            DateTime createdAt = (orderData['createdAt'] as Timestamp).toDate();
-                            String formattedDate = "${createdAt.day}/${createdAt.month}/${createdAt.year}"; // Change format as needed
+                            DateTime createdAt =
+                                (orderData['createdAt'] as Timestamp).toDate();
+                            String formattedDate =
+                                "${createdAt.day}/${createdAt.month}/${createdAt.year}"; // Change format as needed
                             String orderId = orderData['orderId'] ?? 'N/A';
 
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0), // Space between orders
+                              padding: const EdgeInsets.only(
+                                  bottom: 16.0), // Space between orders
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Order ID: $orderId', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                  Text('Order ID: $orderId',
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 5),
-                                  Text('Created At: $formattedDate', style: const TextStyle(fontSize: 14)),
+                                  Text('Created At: $formattedDate',
+                                      style: const TextStyle(fontSize: 14)),
                                   const SizedBox(height: 10),
-                                  Text('Total Price: \$${orderData['totalPrice'] ?? 0}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  Text(
+                                      'Total Price: \$${orderData['totalPrice'] ?? 0}',
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 10),
-                                  Text('Delivery Address: ${orderData['address'] ?? 'N/A'}'),
+                                  Text(
+                                      'Delivery Address: ${orderData['address'] ?? 'N/A'}'),
                                   const SizedBox(height: 10),
-                                  Text('Contact: ${orderData['contactNumber'] ?? 'N/A'}'),
+                                  Text(
+                                      'Contact: ${orderData['contactNumber'] ?? 'N/A'}'),
                                   const SizedBox(height: 10),
-                                  const Text('Cart Items:', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  const Text('Cart Items:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                   ...cartItems.map((item) {
                                     return ListTile(
-                                      title: Text(item['medicineName'] ?? 'Unknown'),
+                                      title: Text(
+                                          item['medicineName'] ?? 'Unknown'),
                                       subtitle: Text(
                                         "Generic Name: ${item['genericName'] ?? 'N/A'}\n"
                                         "Price: \$${item['price'] ?? 0} x ${item['quantity'] ?? 1} = \$${((item['price'] ?? 0) * (item['quantity'] ?? 1)).toStringAsFixed(2)}",
