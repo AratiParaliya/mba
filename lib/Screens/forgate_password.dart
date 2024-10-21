@@ -68,9 +68,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             gradient: RadialGradient(
               colors: [
                 Color.fromARGB(255, 110, 102, 188), //color
-                Colors.white,
+                Colors.white, //
               ],
-              radius: 2,
+              radius: 2, //radius
               center: Alignment(2.8, -1.0),
               tileMode: TileMode.clamp,
             ),
