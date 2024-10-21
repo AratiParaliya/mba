@@ -1,4 +1,5 @@
-import 'package:get/get.dart' show GetxController, IntExtension;
+import 'package:get/get.dart';
+//show GetxController, IntExtension;
 
 class CounterController extends GetxController {
   var count = 0.obs;
