@@ -42,8 +42,10 @@ class _MedicineDetailsState extends State<MedicineDetails> {
       String userId = user.uid; // Fetch the current user's ID
 
       // Create a reference to the user's cart collection
-      CollectionReference userCartCollection =
-          FirebaseFirestore.instance.collection('users').doc(userId).collection('cart');
+      CollectionReference userCartCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('cart');
 
       // Add the medicine data to the user's cart
       await userCartCollection.add({
@@ -92,7 +94,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white, // Light center
                 ],
                 radius: 2,
@@ -155,7 +157,8 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                         FutureBuilder<DocumentSnapshot>(
                           future: _fetchMedicineDetails(documentId),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             }
                             if (snapshot.hasError) {
@@ -165,9 +168,12 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                               return const Text('No data available');
                             }
 
-                            var medicineData = snapshot.data!.data() as Map<String, dynamic>;
-                            String medicineName = medicineData['medicineName'] ?? 'Unknown';
-                            String genericName = medicineData['genericName'] ?? 'Unknown';
+                            var medicineData =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            String medicineName =
+                                medicineData['medicineName'] ?? 'Unknown';
+                            String genericName =
+                                medicineData['genericName'] ?? 'Unknown';
                             String brand = medicineData['brand'] ?? 'Unknown';
                             String type = medicineData['type'] ?? 'Unknown';
                             double size = (medicineData['size'] is double)
@@ -189,8 +195,10 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                 _buildDetailRow('Generic Name', genericName),
                                 _buildDetailRow('Brand', brand),
                                 _buildDetailRow('Type', type),
-                                _buildDetailRow('Size', '${size.toStringAsFixed(2)}'),
-                                _buildDetailRow('Price', '\$${price.toStringAsFixed(2)}'),
+                                _buildDetailRow(
+                                    'Size', '${size.toStringAsFixed(2)}'),
+                                _buildDetailRow(
+                                    'Price', '\$${price.toStringAsFixed(2)}'),
                                 const SizedBox(height: 20),
                                 Center(
                                   child: ElevatedButton(
