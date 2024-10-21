@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final String _adminEmail = 'admin@gmail.com';
   final String _adminPassword = 'admin123';
 
+  // Handles login logic for both admin and user
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text.trim();
@@ -108,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               children: [
-                // Fixed top section with logo and sign up button
+                // Top section with logo and sign-up button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -136,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
 
-                // Scrollable area for form and text
+                // Sign-in form
                 Expanded(
                   child: SingleChildScrollView(
                     child: Form(
@@ -239,6 +240,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // Helper method to build reusable text fields
   Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
