@@ -71,7 +71,6 @@ class _AddMedicineState extends State<AddMedicine> {
       sizeController.clear();
       priceController.clear();
     } catch (e) {
-      // Handle any errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error adding medicine: $e')),
       );
