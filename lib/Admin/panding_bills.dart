@@ -20,7 +20,7 @@ class PandingBills extends StatelessWidget {
                   Colors.white,
                 ],
                 radius: 2, //radius
-                center: Alignment(2.8, -1.0),
+                center: Alignment(2.8, -1.0), //center
                 tileMode: TileMode.clamp,
               ),
             ),
