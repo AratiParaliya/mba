@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,8 @@ import 'package:mba/Screens/orderconfirmation_page.dart';
 class ContactDetailScreen extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems;
 
-  const ContactDetailScreen({Key? key, required this.cartItems}) : super(key: key);
+  const ContactDetailScreen({Key? key, required this.cartItems})
+      : super(key: key);
 
   @override
   State<ContactDetailScreen> createState() => _ContactDetailScreenState();
@@ -17,7 +17,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController contactNameController = TextEditingController();
-  final TextEditingController alternateNumberController = TextEditingController();
+  final TextEditingController alternateNumberController =
+      TextEditingController();
   final TextEditingController emailAddressController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController pincodeController = TextEditingController();
@@ -36,7 +37,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   Future<void> _checkForExistingOrder() async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
 
-    
     QuerySnapshot ordersSnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -47,7 +47,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       DocumentSnapshot orderDoc = ordersSnapshot.docs.last;
       final orderData = orderDoc.data() as Map<String, dynamic>;
 
-     
       fullNameController.text = orderData['fullName'] ?? '';
       contactNameController.text = orderData['contactNumber'] ?? '';
       alternateNumberController.text = orderData['alternateNumber'] ?? '';
@@ -81,7 +80,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     });
 
     try {
-      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
+      String userId =
+          FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
       String orderId = DateTime.now().millisecondsSinceEpoch.toString();
 
       final orderData = {
@@ -107,8 +107,14 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           .collection('order')
           .doc(orderId)
           .set(orderData);
-      await FirebaseFirestore.instance.collection('orders').doc(orderId).set(orderData);
-      await FirebaseFirestore.instance.collection('pending_bills').doc(orderId).set(orderData);
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(orderId)
+          .set(orderData);
+      await FirebaseFirestore.instance
+          .collection('pending_bills')
+          .doc(orderId)
+          .set(orderData);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Order saved successfully!")),
@@ -120,7 +126,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to save order. Please try again.")),
+        const SnackBar(
+            content: Text("Failed to save order. Please try again.")),
       );
     } finally {
       setState(() {
@@ -144,7 +151,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188),
+                  Color.fromARGB(255, 110, 102, 188), //color
                   Colors.white,
                 ],
                 radius: 2,
@@ -211,7 +218,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                             itemCount: widget.cartItems.length,
                             itemBuilder: (context, index) {
                               final item = widget.cartItems[index];
-                              final medicineName = item['medicineName'] ?? 'Unknown';
+                              final medicineName =
+                                  item['medicineName'] ?? 'Unknown';
                               final price = item['price'] ?? 0.0;
                               final quantity = item['quantity'] ?? 1;
                               return ListTile(
@@ -234,12 +242,18 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                           ),
                           const SizedBox(height: 20),
                           _buildSectionTitle('Contact Details'),
-                          _buildCustomTextFormField('Full Name', fullNameController),
-                          _buildCustomTextFormField('Contact Number', contactNameController),
-                          _buildCustomTextFormField('Alternate Number', alternateNumberController),
-                          _buildCustomTextFormField('Email Address', emailAddressController),
-                          _buildCustomTextFormField('Address', addressController),
-                          _buildCustomTextFormField('Pincode', pincodeController),
+                          _buildCustomTextFormField(
+                              'Full Name', fullNameController),
+                          _buildCustomTextFormField(
+                              'Contact Number', contactNameController),
+                          _buildCustomTextFormField(
+                              'Alternate Number', alternateNumberController),
+                          _buildCustomTextFormField(
+                              'Email Address', emailAddressController),
+                          _buildCustomTextFormField(
+                              'Address', addressController),
+                          _buildCustomTextFormField(
+                              'Pincode', pincodeController),
                           _buildCustomTextFormField('City', cityController),
                           _buildCustomTextFormField('State', stateController),
                           const SizedBox(height: 20),
@@ -264,34 +278,34 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   }
 
   Widget _buildSectionTitle(String title) {
-  return Container(
-    width: double.infinity,
-    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-    margin: const EdgeInsets.symmetric(vertical: 10),
-    decoration: BoxDecoration(
-      color: const Color(0xFFF8F9FD),
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.2),
-          blurRadius: 6,
-          offset: const Offset(0, 3),
-        ),
-      ],
-    ),
-    child: Text(
-      title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF6F48EB),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8F9FD),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-    ),
-  );
-}
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF6F48EB),
+        ),
+      ),
+    );
+  }
 
-
-  Widget _buildCustomTextFormField(String label, TextEditingController controller) {
+  Widget _buildCustomTextFormField(
+      String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -342,7 +356,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                   hintText: 'Enter $label',
                   filled: true,
                   fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
