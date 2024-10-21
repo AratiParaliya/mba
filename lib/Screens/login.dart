@@ -40,7 +40,8 @@ class _LoginPageState extends State<LoginPage> {
             MaterialPageRoute(builder: (context) => Dashboard()),
           );
         } else {
-          User? user = await _authService.signInWithEmailAndPassword(email, password);
+          User? user =
+              await _authService.signInWithEmailAndPassword(email, password);
           if (user != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -95,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188),
+                Color.fromARGB(255, 110, 102, 188), //color
                 Colors.white,
               ],
               radius: 2,
@@ -104,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               children: [
                 // Fixed top section with logo and sign up button
@@ -123,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Color.fromARGB(255, 110, 102, 188), 
+                        foregroundColor: Color.fromARGB(255, 110, 102, 188),
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -134,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-               
+
                 // Scrollable area for form and text
                 Expanded(
                   child: SingleChildScrollView(
@@ -143,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                           const SizedBox(height: 100),
+                          const SizedBox(height: 100),
                           const Text(
                             "Sign In",
                             style: TextStyle(
@@ -195,7 +196,8 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ForgetPassword()),
+                                  MaterialPageRoute(
+                                      builder: (context) => ForgetPassword()),
                                 );
                               },
                               child: const Text(
@@ -220,7 +222,8 @@ class _LoginPageState extends State<LoginPage> {
                             style: ElevatedButton.styleFrom(
                               shape: const StadiumBorder(),
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: Color.fromARGB(255, 110, 102, 188),
+                              backgroundColor:
+                                  Color.fromARGB(255, 110, 102, 188),
                             ),
                           ),
                         ],
