@@ -46,9 +46,13 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
       if (doc.exists) {
         setState(() {
           fullName = doc['fullName'] ?? 'Unknown';
-          totalPrice = doc['totalPrice']?.toDouble() ?? 0.0; // Ensure this is double
-          createdAt = doc['createdAt'] != null ? doc['createdAt'].toDate().toString() : 'Unknown';
-          address = "${doc['city'] ?? 'Unknown'}, ${doc['state'] ?? 'Unknown'}, ${doc['pinCode'] ?? 'Unknown'}";
+          totalPrice =
+              doc['totalPrice']?.toDouble() ?? 0.0; // Ensure this is double
+          createdAt = doc['createdAt'] != null
+              ? doc['createdAt'].toDate().toString()
+              : 'Unknown';
+          address =
+              "${doc['city'] ?? 'Unknown'}, ${doc['state'] ?? 'Unknown'}, ${doc['pinCode'] ?? 'Unknown'}";
           alternateNumber = doc['alternateNumber'] ?? 'Unknown';
           cartItems = List<Map<String, dynamic>>.from(doc['cartItems'] ?? []);
           contactNumber = doc['contactNumber'] ?? 'Unknown';
@@ -83,7 +87,7 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white, // Light center
                 ],
                 radius: 2,
@@ -240,14 +244,16 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Flexible( // Make the label flexible
+          Flexible(
+            // Make the label flexible
             child: Text(
               label,
               style: TextStyle(fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis, // Handle overflow
             ),
           ),
-          Flexible( // Make the value flexible
+          Flexible(
+            // Make the value flexible
             child: Text(
               value,
               overflow: TextOverflow.ellipsis, // Handle overflow
@@ -263,7 +269,8 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
       return Text('No items found.');
     }
 
-    return SingleChildScrollView( // Added SingleChildScrollView for horizontal scrolling
+    return SingleChildScrollView(
+      // Added SingleChildScrollView for horizontal scrolling
       scrollDirection: Axis.horizontal, // Set horizontal scrolling
       child: DataTable(
         columns: const [
@@ -308,10 +315,12 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
             children: [
               pw.Image(logoImage, width: 100, height: 100),
               pw.SizedBox(height: 20),
-              pw.Text('Invoice Details for Order ID: ${widget.orderId}', style: pw.TextStyle(fontSize: 24)),
+              pw.Text('Invoice Details for Order ID: ${widget.orderId}',
+                  style: pw.TextStyle(fontSize: 24)),
               pw.SizedBox(height: 20),
               pw.Text('Customer Name: $fullName'),
-              pw.Text('Total Price: \$${totalPrice?.toStringAsFixed(2) ?? '0.00'}'),
+              pw.Text(
+                  'Total Price: \$${totalPrice?.toStringAsFixed(2) ?? '0.00'}'),
               pw.SizedBox(height: 20),
               pw.Text('Cart Items:'),
               pw.ListView.builder(
