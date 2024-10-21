@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-
 import 'package:mba/counter/counter_controller.dart';
 
 class CounterScreen extends StatelessWidget {
@@ -33,17 +32,17 @@ class CounterScreen extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                          c.reset()
-                        ; 
+                        c.reset();
                       },
                       child: Text('Reset'),
                     ),
                     ElevatedButton(
-                      onPressed: 
-                      c.count.value>0?() {
-                        c.decrement();
-                      }:null,
-                    child: Text('Dec'),
+                      onPressed: c.count.value > 0
+                          ? () {
+                              c.decrement();
+                            }
+                          : null,
+                      child: Text('Dec'),
                     ),
                   ],
                 ),
