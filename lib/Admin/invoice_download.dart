@@ -25,7 +25,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -59,7 +59,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           Column(
             children: [
               SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
+                height:
+                    100.0, // This height should be slightly less than the blue container's height
               ),
               Expanded(
                 child: Container(
@@ -88,7 +89,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
-                            color: Colors.white, // Set search bar background to white
+                            color: Colors
+                                .white, // Set search bar background to white
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
@@ -98,17 +100,20 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                               ),
                             ],
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
                           child: TextField(
                             onChanged: (value) {
                               setState(() {
-                                searchQuery = value; // Update search query whenever input changes
+                                searchQuery =
+                                    value; // Update search query whenever input changes
                               });
                             },
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Search with date (YYYY-MM-DD)',
-                              icon: Icon(Icons.search, color: Colors.deepPurple),
+                              icon:
+                                  Icon(Icons.search, color: Colors.deepPurple),
                             ),
                           ),
                         ),
@@ -121,19 +126,22 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                             Expanded(
                               child: Center(
                                 child: Text('Date',
-                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                             Expanded(
                               child: Center(
                                 child: Text('Bill No.',
-                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                             Expanded(
                               child: Center(
                                 child: Text('Actions',
-                                    style: TextStyle(fontWeight: FontWeight.bold)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
                               ),
                             ),
                           ],
@@ -143,27 +151,41 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         // List of invoices
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance.collection('approved_orders').snapshots(),
+                            stream: FirebaseFirestore.instance
+                                .collection('approved_orders')
+                                .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator());
                               }
 
                               if (snapshot.hasError) {
-                                return Center(child: Text('Error fetching data.'));
+                                return Center(
+                                    child: Text('Error fetching data.'));
                               }
 
-                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                return Center(child: Text('No orders available.'));
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return Center(
+                                    child: Text('No orders available.'));
                               }
 
                               // Filter invoices based on the search query (by date)
-                              var filteredDocs = snapshot.data!.docs.where((doc) {
-                                var orderData = doc.data() as Map<String, dynamic>;
-                                var dateOfCreation = (orderData['createdAt'] as Timestamp).toDate().toString().substring(0, 10);
-                                
+                              var filteredDocs =
+                                  snapshot.data!.docs.where((doc) {
+                                var orderData =
+                                    doc.data() as Map<String, dynamic>;
+                                var dateOfCreation =
+                                    (orderData['createdAt'] as Timestamp)
+                                        .toDate()
+                                        .toString()
+                                        .substring(0, 10);
+
                                 // If search query is not empty, check if the date matches the query
-                                return searchQuery.isEmpty || dateOfCreation.contains(searchQuery);
+                                return searchQuery.isEmpty ||
+                                    dateOfCreation.contains(searchQuery);
                               }).toList();
 
                               return ListView.builder(
@@ -171,16 +193,21 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                                 itemBuilder: (context, index) {
                                   var orderData = filteredDocs[index];
                                   String dateOfCreation =
-                                      (orderData['createdAt'] as Timestamp).toDate().toString();
-                                  String orderId = orderData.id; // Get the document ID as orderId
+                                      (orderData['createdAt'] as Timestamp)
+                                          .toDate()
+                                          .toString();
+                                  String orderId = orderData
+                                      .id; // Get the document ID as orderId
 
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
                                     child: InvoiceItem(
                                       dateOfCreation: dateOfCreation,
                                       orderId: orderId,
                                       onViewDetails: () {
-                                        _showInvoiceDetails(context, orderId); // Navigate to details
+                                        _showInvoiceDetails(context,
+                                            orderId); // Navigate to details
                                       },
                                     ),
                                   );
