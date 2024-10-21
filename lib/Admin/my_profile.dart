@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mba/Screens/login.dart';
- // Ensure this import points to your LoginScreen file
+// Ensure this import points to your LoginScreen file
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -40,7 +39,7 @@ class _MyProfileState extends State<MyProfile> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white, // Light center
                 ],
                 radius: 2,
@@ -75,7 +74,8 @@ class _MyProfileState extends State<MyProfile> {
           Column(
             children: [
               const SizedBox(
-                height: 100.0, // This height should be slightly less than the blue container's height
+                height:
+                    100.0, // This height should be slightly less than the blue container's height
               ),
               Expanded(
                 child: Container(
@@ -151,7 +151,8 @@ class _MyProfileState extends State<MyProfile> {
                                 child: TextFormField(
                                   controller: emailController,
                                   decoration: InputDecoration(
-                                    hintText: 'mbainternationpharma0106@gmail.com',
+                                    hintText:
+                                        'mbainternationpharma0106@gmail.com',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -211,7 +212,8 @@ class _MyProfileState extends State<MyProfile> {
                                 child: TextFormField(
                                   controller: addressController,
                                   decoration: InputDecoration(
-                                    hintText: '150 feet ring road, Balaji Hall Rajkot-360004',
+                                    hintText:
+                                        '150 feet ring road, Balaji Hall Rajkot-360004',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -252,7 +254,7 @@ class _MyProfileState extends State<MyProfile> {
       await FirebaseAuth.instance.signOut();
       // Navigate to the Login Screen
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) =>  LoginPage()),
+        MaterialPageRoute(builder: (context) => LoginPage()),
         (Route<dynamic> route) => false,
       );
       ScaffoldMessenger.of(context).showSnackBar(
