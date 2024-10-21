@@ -17,7 +17,7 @@ class PandingBills extends StatelessWidget {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188),
-                  Colors.white, // Light center
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -126,7 +126,8 @@ class PandingBills extends StatelessWidget {
                                           color: Colors.grey.withOpacity(0.5),
                                           spreadRadius: 2,
                                           blurRadius: 5,
-                                          offset: const Offset(0, 3), // Shadow position
+                                          offset: const Offset(
+                                              0, 3), // Shadow position
                                         ),
                                       ],
                                     ),
@@ -173,7 +174,8 @@ class PandingBills extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text('Order ID: ${orderData['orderId']}'),
-          content: SingleChildScrollView( // Wrap the content with SingleChildScrollView
+          content: SingleChildScrollView(
+            // Wrap the content with SingleChildScrollView
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -199,7 +201,8 @@ class PandingBills extends StatelessWidget {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 2,
                             blurRadius: 5,
-                            offset: const Offset(0, 3), // changes position of shadow
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
                           ),
                         ],
                       ),
