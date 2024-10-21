@@ -26,7 +26,7 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white,
                 ],
                 radius: 2,
@@ -60,7 +60,8 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
           // Main content
           Column(
             children: [
-              const SizedBox(height: 100.0), // Height for spacing below the header
+              const SizedBox(
+                  height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
                   width: double.infinity, // Full width
@@ -72,7 +73,10 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [
+                        0.3,
+                        1.0
+                      ], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -111,14 +115,15 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                             child: TextField(
                               onChanged: (value) {
                                 setState(() {
-                                  _searchQuery =
-                                      value.toLowerCase(); // Update search query
+                                  _searchQuery = value
+                                      .toLowerCase(); // Update search query
                                 });
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search by Order ID or User Name',
                                 hintStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 143, 133, 230)), // Set the hint text color
+                                    color: Color.fromARGB(255, 143, 133,
+                                        230)), // Set the hint text color
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                   borderSide: BorderSide.none, // Remove border
@@ -131,7 +136,8 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                         const SizedBox(height: 20),
                         Expanded(
                           child: Container(
-                            color: Colors.white, // Set the background color to white
+                            color: Colors
+                                .white, // Set the background color to white
                             child: StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collectionGroup('orders')
@@ -159,70 +165,90 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                                       .toString()
                                       .toLowerCase();
                                   final userName =
-                                      orderData['fullName']?.toLowerCase() ?? '';
+                                      orderData['fullName']?.toLowerCase() ??
+                                          '';
                                   return orderId.contains(_searchQuery) ||
                                       userName.contains(_searchQuery);
                                 }).toList();
 
-                              return ListView.builder(
-  itemCount: filteredOrders.length,
-  itemBuilder: (context, index) {
-    final orderData = filteredOrders[index].data() as Map<String, dynamic>;
-    final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
-    final orderId = orderData['orderId'];
-    final userId = orderData['userId'];
+                                return ListView.builder(
+                                  itemCount: filteredOrders.length,
+                                  itemBuilder: (context, index) {
+                                    final orderData = filteredOrders[index]
+                                        .data() as Map<String, dynamic>;
+                                    final cartItems =
+                                        List<Map<String, dynamic>>.from(
+                                            orderData['cartItems'] ?? []);
+                                    final orderId = orderData['orderId'];
+                                    final userId = orderData['userId'];
 
-    // Check if the order has been approved or declined
-    final isApproved = _approvedOrders.contains(orderId);
-    final isDeclined = _declinedOrders.contains(orderId);
-    final status = orderData['status'];
+                                    // Check if the order has been approved or declined
+                                    final isApproved =
+                                        _approvedOrders.contains(orderId);
+                                    final isDeclined =
+                                        _declinedOrders.contains(orderId);
+                                    final status = orderData['status'];
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: Colors.white, // Set the background color to white
-        borderRadius: BorderRadius.circular(12.0), // Rounded corners
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 8,
-            offset: const Offset(0, 2), // Change offset as desired
-          ),
-        ],
-      ),
-      child: Card(
-        elevation: 0, // Set elevation to 0 since shadow is applied in the container
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0), // Match the container radius
-        ),
-        child: ListTile(
-          title: Text('Order ID: $orderId'),
-          subtitle: Text(
-              'User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.check, color: Colors.green),
-                onPressed: (status == 'approved' || isDeclined)
-                    ? null
-                    : () => _approveOrder(orderData, userId),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close, color: Colors.red),
-                onPressed: (status == 'declined' || isApproved)
-                    ? null
-                    : () => _declineOrder(userId, orderId),
-              ),
-            ],
-          ),
-          onTap: () => _showOrderDetails(context, orderData, cartItems),
-        ),
-      ),
-    );
-  },
-);
-
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 16.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors
+                                            .white, // Set the background color to white
+                                        borderRadius: BorderRadius.circular(
+                                            12.0), // Rounded corners
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            blurRadius: 8,
+                                            offset: const Offset(0,
+                                                2), // Change offset as desired
+                                          ),
+                                        ],
+                                      ),
+                                      child: Card(
+                                        elevation:
+                                            0, // Set elevation to 0 since shadow is applied in the container
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              12.0), // Match the container radius
+                                        ),
+                                        child: ListTile(
+                                          title: Text('Order ID: $orderId'),
+                                          subtitle: Text(
+                                              'User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.check,
+                                                    color: Colors.green),
+                                                onPressed:
+                                                    (status == 'approved' ||
+                                                            isDeclined)
+                                                        ? null
+                                                        : () => _approveOrder(
+                                                            orderData, userId),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.close,
+                                                    color: Colors.red),
+                                                onPressed:
+                                                    (status == 'declined' ||
+                                                            isApproved)
+                                                        ? null
+                                                        : () => _declineOrder(
+                                                            userId, orderId),
+                                              ),
+                                            ],
+                                          ),
+                                          onTap: () => _showOrderDetails(
+                                              context, orderData, cartItems),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                             ),
                           ),
