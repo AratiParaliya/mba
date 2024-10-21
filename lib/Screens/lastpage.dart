@@ -8,15 +8,14 @@ class Lastpage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-        
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), 
-                  Colors.white, 
+                  Color.fromARGB(255, 110, 102, 188), // red
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -30,7 +29,7 @@ class Lastpage extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', 
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
@@ -46,27 +45,26 @@ class Lastpage extends StatelessWidget {
               ],
             ),
           ),
-          
           Column(
             children: [
               SizedBox(
-                height: 100.0, 
+                height: 100.0,
               ),
               Expanded(
                 child: Stack(
                   children: [
                     Container(
-                      width: double.infinity, 
+                      width: double.infinity,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                           begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Colors.white,
-                        Color.fromARGB(255, 143, 133, 230),
-                      ],
-                      stops: [0.4, 1.0], 
-                      tileMode: TileMode.clamp,
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: [
+                            Colors.white,
+                            Color.fromARGB(255, 143, 133, 230),
+                          ],
+                          stops: [0.4, 1.0],
+                          tileMode: TileMode.clamp,
                         ),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(60),
@@ -74,23 +72,21 @@ class Lastpage extends StatelessWidget {
                         ),
                       ),
                     ),
-                   
                     Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/Confirm.png', 
-                            width: 300, 
+                            'assets/Confirm.png',
+                            width: 300,
                             height: 300,
                           ),
-                        
                           const Text(
                             'Thank you !',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 100, 12, 5), 
+                              color: Color.fromARGB(255, 100, 12, 5),
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -99,7 +95,7 @@ class Lastpage extends StatelessWidget {
                             'For any further proceedings, \nwe will be in touch with you directly.',
                             style: TextStyle(
                               fontSize: 18,
-                              color: Color.fromARGB(255, 100, 12, 5), 
+                              color: Color.fromARGB(255, 100, 12, 5),
                             ),
                             textAlign: TextAlign.center,
                           ),
