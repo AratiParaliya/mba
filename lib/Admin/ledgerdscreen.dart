@@ -18,7 +18,7 @@ class LedgerScreen extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), //color
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white,
                 ],
                 radius: 2,
