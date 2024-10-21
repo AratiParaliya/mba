@@ -33,7 +33,7 @@ class LedgerScreen extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
