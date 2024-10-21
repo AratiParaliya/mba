@@ -73,7 +73,7 @@ class _DashboardState extends State<Dashboard> {
                 child: Container(
                   width: double.infinity, // Make it full width
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.white, // Make it full
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(60),
                       topRight: Radius.circular(60),
