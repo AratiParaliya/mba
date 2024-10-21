@@ -45,7 +45,8 @@ class LedgerDetailsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 110, 102, 188),
+                    color: Color.fromARGB(
+                        255, 110, 102, 188), //color: Color.fromARGB
                   ),
                 ),
               ],
