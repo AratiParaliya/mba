@@ -73,7 +73,7 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.white,
-                        Color.fromARGB(255, 143, 133, 230),
+                        Color.fromARGB(255, 143, 133, 230), //255
                       ],
                       stops: [0.6, 1.0],
                       tileMode: TileMode.clamp,
