@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188),
+                Color.fromARGB(255, 110, 102, 188), //color
                 Colors.white,
               ],
               radius: 2,
@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Image.asset(
-                      'assets/logo.png',
+                      'assets/logo.png', //
                       height: 60,
                     ),
                     ElevatedButton(
