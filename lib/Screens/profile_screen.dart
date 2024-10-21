@@ -18,7 +18,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   int _currentIndex = 3; // Assuming this is the index for UserProfilePage
 
   Future<Map<String, dynamic>> _getUserData() async {
-    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
         .collection('users')
         .doc(widget.user.uid)
         .get();
@@ -37,7 +38,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   void _editProfile() async {
     final userData = await _getUserData();
 
-    final usernameController = TextEditingController(text: userData['username']);
+    final usernameController =
+        TextEditingController(text: userData['username']);
     final phoneController = TextEditingController(text: userData['phone']);
     final addressController = TextEditingController(text: userData['address']);
 
@@ -102,7 +104,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white, // Light center
                 ],
                 radius: 2,
@@ -148,19 +150,21 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 return Column(
                   children: [
                     // Profile header section
-                   
-                    const SizedBox(height: 20), // Add space between header and profile information
+
+                    const SizedBox(
+                        height:
+                            20), // Add space between header and profile information
                     // Profile information tiles
                     Expanded(
                       child: ListView(
                         padding: const EdgeInsets.all(16.0),
                         children: [
-                         
                           const SizedBox(height: 80),
                           const CircleAvatar(
                             radius: 40,
                             backgroundColor: Colors.teal,
-                            child: Icon(Icons.person, size: 50, color: Colors.white),
+                            child: Icon(Icons.person,
+                                size: 50, color: Colors.white),
                           ),
                           const SizedBox(height: 10),
                           Center(
@@ -173,11 +177,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                           TextButton(
+                          TextButton(
                             onPressed: _editProfile, // Edit profile button
                             child: const Text('Edit Profile'),
                           ),
-                            const SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           _buildProfileTile(
                             icon: Icons.phone,
                             iconColor: Colors.amber,
@@ -196,15 +200,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             title: userData['address'] ?? 'Fill in the address',
                           ),
                           const SizedBox(height: 10),
-                        
 
                           const SizedBox(height: 10),
-                          
+
                           // Log out tile
                           GestureDetector(
                             onTap: () async {
                               await FirebaseAuth.instance.signOut();
-                              Navigator.of(context).pushReplacementNamed('/login'); // Update navigation
+                              Navigator.of(context).pushReplacementNamed(
+                                  '/login'); // Update navigation
                             },
                             child: _buildProfileTile(
                               icon: Icons.logout,
@@ -212,7 +216,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               title: 'Log out',
                             ),
                           ),
-                          
                         ],
                       ),
                     ),
@@ -223,7 +226,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),
 
           // Orders screen Section
-        
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -263,11 +265,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.add_shopping_cart_rounded,
+                color: Colors.grey), // Gray icon
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.border_outer_outlined, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.border_outer_outlined,
+                color: Colors.grey), // Gray icon
             label: 'Orders',
           ),
           BottomNavigationBarItem(
