@@ -14,7 +14,7 @@ class Lastpage extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), // red
+                  Color.fromARGB(255, 110, 102, 188),
                   Colors.white, // green
                 ],
                 radius: 2,
