@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:mba/Screens/medicin_search.dart';
 
@@ -15,15 +14,14 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     return Scaffold(
       body: Stack(
         children: [
-         
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), 
-                  Colors.white, 
+                  Color.fromARGB(255, 110, 102, 188), // red
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -53,11 +51,10 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
               ],
             ),
           ),
-         
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 100.0), 
+              const SizedBox(height: 100.0),
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -67,7 +64,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white, 
+                        Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
                       stops: [0.3, 1.0],
@@ -106,11 +103,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                         const SizedBox(height: 30),
                         ElevatedButton(
                           onPressed: () {
-                            
-                           Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => MedicinSearch()),
-          );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MedicinSearch()),
+                            );
                           },
                           child: const Text("Back to Home"),
                         ),
