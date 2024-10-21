@@ -16,7 +16,7 @@ class ApprovalList extends StatelessWidget {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188),
+                  Color.fromARGB(255, 110, 102, 188), //color
                   Colors.white,
                 ],
                 radius: 2,
@@ -126,7 +126,8 @@ class ApprovalList extends StatelessWidget {
                                           color: Colors.grey.withOpacity(0.5),
                                           spreadRadius: 2,
                                           blurRadius: 5,
-                                          offset: const Offset(0, 3), // Shadow position
+                                          offset: const Offset(
+                                              0, 3), // Shadow position
                                         ),
                                       ],
                                     ),
@@ -163,7 +164,8 @@ class ApprovalList extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text('Order ID: ${orderData['orderId']}'),
-          content: SingleChildScrollView( // Wrap the content with SingleChildScrollView
+          content: SingleChildScrollView(
+            // Wrap the content with SingleChildScrollView
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -189,7 +191,8 @@ class ApprovalList extends StatelessWidget {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 2,
                             blurRadius: 5,
-                            offset: const Offset(0, 3), // changes position of shadow
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
                           ),
                         ],
                       ),
