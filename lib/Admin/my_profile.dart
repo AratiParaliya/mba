@@ -40,7 +40,7 @@ class _MyProfileState extends State<MyProfile> {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188),
-                  Colors.white, // Light center
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
