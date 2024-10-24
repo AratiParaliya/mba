@@ -211,7 +211,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       builder: (context) => UserProfilePage(user: user)),
                 );
               } else {
-                // Handle the case where the user is null (e.g., show a login screen or error message)
+            
                 Fluttertoast.showToast(
                   msg:
                       "User not logged in. Please log in to view your profile.",
