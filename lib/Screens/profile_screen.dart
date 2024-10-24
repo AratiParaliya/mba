@@ -6,7 +6,7 @@ import 'cart.dart';
 import 'medicin_search.dart'; 
 
 class UserProfilePage extends StatefulWidget {
-  final User user; // Firebase User object
+  final User user; 
 
   UserProfilePage({required this.user});
 
@@ -15,7 +15,7 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  int _currentIndex = 3; // Assuming this is the index for UserProfilePage
+  int _currentIndex = 3; 
 
   Future<Map<String, dynamic>> _getUserData() async {
     DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
