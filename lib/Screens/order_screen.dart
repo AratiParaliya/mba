@@ -200,7 +200,7 @@ class _OrderScreenState extends State<OrderScreen> {
               );
               break;
             case 2:
-              // Already on Orders Page
+             
               break;
             case 3:
               final user = FirebaseAuth.instance.currentUser;
