@@ -63,30 +63,9 @@ class _LedgerScreenState extends State<LedgerScreen> {
               ],
             ),
           ),
-          // Container for the list
           Column(
             children: [
               const SizedBox(height: 100.0), // Adjust height as needed
-              // Search bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search by full name',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value.toLowerCase();
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 16.0),
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.only(top: 16.0), // Add top margin for space
@@ -108,93 +87,120 @@ class _LedgerScreenState extends State<LedgerScreen> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('orders')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-
-                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return const Center(child: Text('No orders found'));
-                        }
-
-                        final orders = snapshot.data!.docs;
-
-                        // Use a Set to track unique full names
-                        Set<String> uniqueNames = {};
-                        Map<String, List<Map<String, dynamic>>> groupedOrders = {};
-
-                        // Loop through the orders to filter unique names and group orders by fullName
-                        for (var order in orders) {
-                          final fullName = order['fullName'].toLowerCase(); // Convert to lowercase for search
-                          final orderData = order.data() as Map<String, dynamic>;
-
-                          // If the full name matches the search query or the query is empty
-                          if (fullName.contains(_searchQuery)) {
-                            if (!uniqueNames.contains(fullName)) {
-                              uniqueNames.add(fullName);
-                              groupedOrders[fullName] = [orderData]; // Initialize a new list for this name
-                            } else {
-                              groupedOrders[fullName]!.add(orderData); // Add to the existing list for this name
-                            }
-                          }
-                        }
-
-                        if (uniqueNames.isEmpty) {
-                          return const Center(child: Text('No matching results'));
-                        }
-
-                        return ListView.builder(
-                          itemCount: uniqueNames.length,
-                          itemBuilder: (context, index) {
-                            final fullName = uniqueNames.elementAt(index);
-
-                            return Container(
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 15,
-                                horizontal: 16,
-                              ), // Adjust margin as needed
-                              decoration: BoxDecoration(
-                                color: Colors.white, // White background
-                                borderRadius: BorderRadius.circular(10), // Rounded corners
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5), // Shadow color
-                                    spreadRadius: 2, // Spread radius
-                                    blurRadius: 5, // Blur radius
-                                    offset: const Offset(0, 3), // Changes position of shadow
-                                  ),
-                                ],
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      children: [
+                        // Search bar inside the container
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Search by full name',
+                              prefixIcon: const Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
                               ),
-                              child: ListTile(
-                                title: Text(
-                                  'Name: $fullName',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                onTap: () {
-                                  // Navigate to LedgerDetailsScreen
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LedgerDetailsScreen(
-                                        fullName: fullName,
-                                        orders: groupedOrders[fullName]!,
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery = value.toLowerCase();
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16.0),
+                        // ListView inside the same container as the search bar
+                        Expanded(
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('orders')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+
+                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                return const Center(child: Text('No orders found'));
+                              }
+
+                              final orders = snapshot.data!.docs;
+
+                              // Use a Set to track unique full names
+                              Set<String> uniqueNames = {};
+                              Map<String, List<Map<String, dynamic>>> groupedOrders = {};
+
+                              // Loop through the orders to filter unique names and group orders by fullName
+                              for (var order in orders) {
+                                final fullName = order['fullName'].toLowerCase(); // Convert to lowercase for search
+                                final orderData = order.data() as Map<String, dynamic>;
+
+                                // If the full name matches the search query or the query is empty
+                                if (fullName.contains(_searchQuery)) {
+                                  if (!uniqueNames.contains(fullName)) {
+                                    uniqueNames.add(fullName);
+                                    groupedOrders[fullName] = [orderData]; // Initialize a new list for this name
+                                  } else {
+                                    groupedOrders[fullName]!.add(orderData); // Add to the existing list for this name
+                                  }
+                                }
+                              }
+
+                              if (uniqueNames.isEmpty) {
+                                return const Center(child: Text('No matching results'));
+                              }
+
+                              return ListView.builder(
+                                itemCount: uniqueNames.length,
+                                itemBuilder: (context, index) {
+                                  final fullName = uniqueNames.elementAt(index);
+
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 15,
+                                      horizontal: 16,
+                                    ), // Adjust margin as needed
+                                    decoration: BoxDecoration(
+                                      color: Colors.white, // White background
+                                      borderRadius: BorderRadius.circular(10), // Rounded corners
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5), // Shadow color
+                                          spreadRadius: 2, // Spread radius
+                                          blurRadius: 5, // Blur radius
+                                          offset: const Offset(0, 3), // Changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: ListTile(
+                                      title: Text(
+                                        'Name: $fullName',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
+                                      onTap: () {
+                                        // Navigate to LedgerDetailsScreen
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => LedgerDetailsScreen(
+                                              fullName: fullName,
+                                              orders: groupedOrders[fullName]!,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   );
                                 },
-                              ),
-                            );
-                          },
-                        );
-                      },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
