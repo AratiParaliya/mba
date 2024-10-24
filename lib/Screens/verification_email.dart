@@ -165,10 +165,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             onChanged: (value) {
                               if (value.length == 1 && index < 5) {
                                 FocusScope.of(context)
-                                    .nextFocus(); // Move to next field
+                                    .nextFocus();
                               } else if (value.isEmpty && index > 0) {
                                 FocusScope.of(context)
-                                    .previousFocus(); // Move to previous field on delete
+                                    .previousFocus(); 
                               }
                             },
                           ),
