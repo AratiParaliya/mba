@@ -280,7 +280,7 @@ class InvoiceItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.remove_red_eye, color: Colors.deepPurple),
+                  icon: Icon(Icons.remove_red_eye, color: const Color.fromARGB(255, 56, 34, 83)),
                   onPressed: onViewDetails, // View details on click
                 ),
               ],

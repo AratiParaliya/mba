@@ -194,7 +194,7 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
               },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                backgroundColor: Colors.purple,
+                backgroundColor: const Color.fromARGB(255, 48, 29, 95),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mba/Screens/login.dart';
+import 'package:mba/Screens/medicin_search.dart';
 import 'package:mba/Screens/signup.dart';
 // Make sure you have this package
 
@@ -40,10 +41,10 @@ class AuthenticationWrapper extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasData) {
           // User is logged in
-          return HomePage();
+          return MedicinSearch();
         } else {
           // User is not logged in
-          return LoginPage();
+          return HomePage();
         }
       },
     );
