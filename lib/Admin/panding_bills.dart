@@ -255,12 +255,12 @@ class PandingBills extends StatelessWidget {
   }
 
   void _deleteOrder(String orderId) {
-    // Reference to the pending bill document to delete
+   
     final pendingBillRef = FirebaseFirestore.instance
         .collection('pending_bills')
         .doc(orderId); // Correct collection name
 
-    // Delete the order from the pending bill
+ 
     pendingBillRef.delete().then((_) {
       // Show a confirmation message
       print('Order deleted successfully.');
