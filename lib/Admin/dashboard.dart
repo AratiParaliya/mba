@@ -150,11 +150,11 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  // Handle card tap and navigate based on the title
+  
   void _onCardTap(String title) {
     Widget destinationScreen;
 
-    // Define the navigation based on the card title
+  
     switch (title) {
       case 'Add Product':
         destinationScreen = FetchMedicines();
