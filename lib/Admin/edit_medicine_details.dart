@@ -50,12 +50,12 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
         setState(() {
           isLoading = false;
         });
-        print('Document does not exist'); // Debugging
+        print('Document does not exist');
       }
     } catch (e) {
-      print('Error fetching product data: $e'); // Debugging
+      print('Error fetching product data: $e'); 
       setState(() {
-        isLoading = false; // Stop loading on error
+        isLoading = false; 
       });
     }
   }

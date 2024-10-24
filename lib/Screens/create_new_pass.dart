@@ -62,7 +62,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188), //color
+                Color.fromARGB(255, 110, 102, 188), 
                 Colors.white,
               ],
               radius: 2,

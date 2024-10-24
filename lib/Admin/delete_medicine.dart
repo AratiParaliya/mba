@@ -114,13 +114,13 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                             },
                           ),
                         ),
-                        // Add Medicine Button
+                     
                         Padding(
                           padding: const EdgeInsets.only(
-                              top: 16.0), // Add some top padding
+                              top: 16.0), 
                           child: ElevatedButton(
                             onPressed: () {
-                              // Navigate to Add Medicine screen
+                             
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
