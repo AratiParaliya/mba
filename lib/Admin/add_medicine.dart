@@ -154,7 +154,7 @@ class _AddMedicineState extends State<AddMedicine> {
               Expanded(
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20,),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -234,7 +234,7 @@ class _AddMedicineState extends State<AddMedicine> {
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10,),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F4FF),
         borderRadius: BorderRadius.circular(12),
@@ -284,7 +284,7 @@ class _AddMedicineState extends State<AddMedicine> {
           Expanded(
             flex: 4,
             child: Container(
-              padding: const EdgeInsets.all(1),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),

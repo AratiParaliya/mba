@@ -43,7 +43,7 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
           brandController.text = data['brand'] ?? '';
           typeController.text = data['type'] ?? '';
           sizeController.text = data['size'] ?? '';
-          priceController.text = data['price'].toString() ?? '';
+          priceController.text = data['price'] != null ? data['price'].toString() : '';
           isLoading = false;
         });
       } else {
@@ -209,7 +209,6 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          // Label (left side)
           Expanded(
             flex: 3,
             child: Container(
@@ -230,11 +229,10 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
             ),
           ),
           const SizedBox(width: 10),
-          // TextField (right side)
           Expanded(
             flex: 4,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),

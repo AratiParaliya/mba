@@ -127,10 +127,9 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                                     builder: (context) => const AddMedicine()),
                               );
                             },
-                            child: const Text('Add Medicine'),
+                            child: const Text('Add Medicine',style: TextStyle(color: Colors.white),),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                  255, 125, 113, 235), // Button color
+                              backgroundColor: const Color.fromARGB(255, 57, 38, 128), // Button color
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 30, vertical: 15),
                               shape: RoundedRectangleBorder(
@@ -156,11 +155,6 @@ class _FetchMedicinesState extends State<FetchMedicines> {
   Widget _buildMedicineItem(QueryDocumentSnapshot medicineDoc) {
     final medicineData = medicineDoc.data() as Map<String, dynamic>;
 
-    // Debugging: Print the medicine data and its keys
-    print("Medicine Data: $medicineData");
-    print(
-        "Keys: ${medicineData.keys}"); // Log the keys to check available fields
-
     String medicineName = medicineData['medicineName'] ?? 'Unknown Medicine';
     String genericName = medicineData['genericName'] ?? 'Unknown Generic Name';
     double price = (medicineData['price'] is double)
@@ -169,10 +163,19 @@ class _FetchMedicinesState extends State<FetchMedicines> {
             ? (medicineData['price'] as int).toDouble()
             : 0.0;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Rounded corners for the card
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), // Adds margin to the container
+      decoration: BoxDecoration(
+        color: Colors.white, // Set background color to white
+        borderRadius: BorderRadius.circular(20), // Rounded corners for the container
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2), // Shadow color
+            spreadRadius: 1, // Spread radius
+            blurRadius: 8, // Blur radius
+            offset: const Offset(0, 5), // Changes position of the shadow
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -215,8 +218,7 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => EditMedicineDetails(
-                          productId: medicineDoc
-                              .id, // Pass the document ID (medicine ID) to the edit screen
+                          productId: medicineDoc.id, // Pass the document ID (medicine ID) to the edit screen
                         ),
                       ),
                     );

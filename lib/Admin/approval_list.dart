@@ -50,8 +50,7 @@ class ApprovalList extends StatelessWidget {
           // Main content
           Column(
             children: [
-              const SizedBox(
-                  height: 100.0), // Height for spacing below the header
+              const SizedBox(height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
                   width: double.infinity, // Full width
@@ -63,10 +62,7 @@ class ApprovalList extends StatelessWidget {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [
-                        0.3,
-                        1.0
-                      ], // Adjust stops to control color spread
+                      stops: const [0.3, 1.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -93,16 +89,12 @@ class ApprovalList extends StatelessWidget {
                                 .collectionGroup('approved_orders')
                                 .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
                               }
 
-                              if (!snapshot.hasData ||
-                                  snapshot.data!.docs.isEmpty) {
-                                return const Center(
-                                    child: Text('No orders found.'));
+                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                return const Center(child: Text('No orders found.'));
                               }
 
                               final orders = snapshot.data!.docs;
@@ -110,14 +102,10 @@ class ApprovalList extends StatelessWidget {
                               return ListView.builder(
                                 itemCount: orders.length,
                                 itemBuilder: (context, index) {
-                                  final orderData = orders[index].data()
-                                      as Map<String, dynamic>;
-                                  final cartItems =
-                                      List<Map<String, dynamic>>.from(
-                                          orderData['cartItems'] ?? []);
+                                  final orderData = orders[index].data() as Map<String, dynamic>;
+                                  final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
                                   return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 16.0),
+                                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(15),
@@ -131,12 +119,9 @@ class ApprovalList extends StatelessWidget {
                                       ],
                                     ),
                                     child: ListTile(
-                                      title: Text(
-                                          'Order ID: ${orderData['orderId']}'),
-                                      subtitle: Text(
-                                          'User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
-                                      onTap: () => _showOrderDetails(
-                                          context, orderData, cartItems),
+                                      title: Text('Order ID: ${orderData['orderId']}'),
+                                      subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                      onTap: () => _showOrderDetails(context, orderData, cartItems),
                                     ),
                                   );
                                 },
@@ -156,14 +141,13 @@ class ApprovalList extends StatelessWidget {
     );
   }
 
-  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData,
-      List<Map<String, dynamic>> cartItems) {
+  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Order ID: ${orderData['orderId']}'),
-          content: SingleChildScrollView( // Wrap the content with SingleChildScrollView
+          content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -184,14 +168,7 @@ class ApprovalList extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3), // changes position of shadow
-                          ),
-                        ],
+                        // Removed the boxShadow here
                       ),
                       child: ListTile(
                         title: Text(item['medicineName'] ?? 'Unknown'),
