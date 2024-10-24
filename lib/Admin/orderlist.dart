@@ -341,7 +341,7 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
           .doc(orderId)
           .update({'status': 'declined'});
 
-      // Remove from approved_orders collection if it exists there
+     
       await FirebaseFirestore.instance
           .collection('approved_orders')
           .doc(orderId)

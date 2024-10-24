@@ -21,7 +21,7 @@ class _MyProfileState extends State<MyProfile> {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
+         
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
