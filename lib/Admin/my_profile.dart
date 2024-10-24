@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mba/Screens/login.dart';
-// Ensure this import points to your LoginScreen file
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -11,21 +10,11 @@ class MyProfile extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfile> {
-  // Controllers for form fields
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController contactController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-
-  @override
-  void dispose() {
-    // Dispose controllers to avoid memory leaks
-    nameController.dispose();
-    emailController.dispose();
-    contactController.dispose();
-    addressController.dispose();
-    super.dispose();
-  }
+  // Static data to display
+  final String name = 'Ankit Vekriya';
+  final String email = 'mbainternationpharma0106@gmail.com';
+  final String contact = '+91 8980202076';
+  final String address = '150 feet ring road, Balaji Hall Rajkot-360004';
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +28,8 @@ class _MyProfileState extends State<MyProfile> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188),
-                  Colors.white,
+                  Color.fromARGB(255, 110, 102, 188), // Darker purple
+                  Colors.white, // Light center
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -74,21 +63,20 @@ class _MyProfileState extends State<MyProfile> {
           Column(
             children: [
               const SizedBox(
-                height:
-                    100.0, // This height should be slightly less than the blue container's height
+                height: 100.0, // Adjust this value as needed
               ),
               Expanded(
                 child: Container(
                   width: double.infinity, // Make it full width
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: [0.6, 1.0], // Adjust stops to control color spread
+                      stops: [0.3, 3.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -96,150 +84,7 @@ class _MyProfileState extends State<MyProfile> {
                       topRight: Radius.circular(60),
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Form(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Name field with label and input in a row
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 70, // Fixed width for labels
-                                child: Text(
-                                  'Name:',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: nameController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Ankit Vekriya',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Email field with label and input in a row
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 70, // Fixed width for labels
-                                child: Text(
-                                  'Email:',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: emailController,
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        'mbainternationpharma0106@gmail.com',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Contact Number field with label and input in a row
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 70, // Fixed width for labels
-                                child: Text(
-                                  'Contact:',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: contactController,
-                                  decoration: InputDecoration(
-                                    hintText: '+91 8980202076',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Address field with label and input in a row
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 70, // Fixed width for labels
-                                child: Text(
-                                  'Address:',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: addressController,
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        '150 feet ring road, Balaji Hall Rajkot-360004',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 30),
-
-                          // Logout Button
-                          TextButton(
-                            onPressed: () => _logout(),
-                            child: const Text(
-                              'Logout',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: _buildProfileContent(),
                 ),
               ),
             ],
@@ -249,10 +94,113 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
+  Widget _buildProfileContent() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.grey.shade300,
+            child: Icon(
+              Icons.person,
+              size: 50,
+              color: Colors.grey.shade800,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            name,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 110, 102, 188),
+            ),
+          ),
+          const SizedBox(height: 4),
+          
+          const SizedBox(height: 20),
+          _buildProfileField(
+            icon: Icons.phone,
+            label: contact,
+          ),
+          const SizedBox(height: 16),
+          _buildProfileField(
+            icon: Icons.email,
+            label: email,
+          ),
+          const SizedBox(height: 16),
+          _buildProfileField(
+            icon: Icons.location_on,
+            label: address,
+          ),
+          const SizedBox(height: 32),
+          TextButton(
+            onPressed: _logout,
+            child: const Text(
+              'Logout',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileField({
+    required IconData icon,
+    required String label,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _logout() async {
     try {
       await FirebaseAuth.instance.signOut();
-      // Navigate to the Login Screen
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => LoginPage()),
         (Route<dynamic> route) => false,
