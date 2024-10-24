@@ -279,7 +279,7 @@ class _AddMedicineState extends State<AddMedicine> {
             ),
           ),
           const SizedBox(width: 10),
-          // TextField (right side)
+       
           Expanded(
             flex: 4,
             child: Container(
