@@ -301,14 +301,28 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Widget _buildTextField({
-    required TextEditingController controller,
-    required String labelText,
-    required String hintText,
-    bool obscureText = false,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
+  required TextEditingController controller,
+  required String labelText,
+  required String hintText,
+  bool obscureText = false,
+  TextInputType keyboardType = TextInputType.text,
+  String? Function(String?)? validator,
+}) {
+  return Container(
+    // Container to hold the text field with box shadow
+    decoration: BoxDecoration(
+      color: Colors.white, // Background color of the text field
+      borderRadius: BorderRadius.circular(15), // Border radius for the container
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.3), // Shadow color
+          spreadRadius: 2, // Spread radius
+          blurRadius: 5, // Blur radius
+          offset: const Offset(0, 3), // Changes position of shadow
+        ),
+      ],
+    ),
+    child: TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
@@ -316,15 +330,23 @@ class _SignupPageState extends State<SignupPage> {
         labelText: labelText,
         hintText: hintText,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: Colors.grey),
+          borderRadius: BorderRadius.circular(15), // Rounded corners for TextField
+          borderSide: BorderSide.none, // No border
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none, // No border
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none, // No border
         ),
         filled: true,
-        fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        fillColor: Colors.transparent, // Transparent background
+        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       ),
       validator: validator,
-    );
-  }
+    ),
+  );
+}
 }
