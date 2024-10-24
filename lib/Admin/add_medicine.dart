@@ -41,7 +41,7 @@ class _AddMedicineState extends State<AddMedicine> {
 
       // Prepare medicine data
       final medicineData = {
-        'productId': newProductId, // Add the generated product ID
+        'productId': newProductId,
         'medicineName': medicineNameController.text.trim(),
         'genericName': genericNameController.text.trim(),
         'brand': brandController.text.trim(),
@@ -71,7 +71,6 @@ class _AddMedicineState extends State<AddMedicine> {
       sizeController.clear();
       priceController.clear();
     } catch (e) {
-      // Handle any errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error adding medicine: $e')),
       );

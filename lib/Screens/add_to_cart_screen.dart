@@ -2,24 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:mba/Screens/cart.dart';
 import 'package:mba/Screens/contactdetail_screen.dart';
 
-
 class AddToCartScreen extends StatelessWidget {
-  const AddToCartScreen({super.key, required medicineId, required medicineName, required medicinePrice});
+  const AddToCartScreen(
+      {super.key,
+      required medicineId,
+      required medicineName,
+      required medicinePrice});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188), 
-                  Colors.white, 
+                  Color.fromARGB(255, 110, 102, 188), // red
+                  Colors.white, // green
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -33,7 +35,7 @@ class AddToCartScreen extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', 
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
@@ -49,11 +51,10 @@ class AddToCartScreen extends StatelessWidget {
               ],
             ),
           ),
-         
           Column(
             children: [
               const SizedBox(
-                height: 100.0, 
+                height: 100.0,
               ),
               Expanded(
                 child: Container(
@@ -67,7 +68,7 @@ class AddToCartScreen extends StatelessWidget {
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.4, 1.0], 
+                      stops: [0.4, 1.0],
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: BorderRadius.only(
@@ -88,9 +89,7 @@ class AddToCartScreen extends StatelessWidget {
                             color: Color(0xFF6F48EB),
                           ),
                         ),
-                       
                         const SizedBox(height: 20),
-
                         _buildSectionTitle('Product Details'),
                         _buildDetailRow('Medicine Name', 'Paracetamol 500mg'),
                         _buildDetailRow('Generic Name', 'Paracetamol'),
@@ -99,21 +98,24 @@ class AddToCartScreen extends StatelessWidget {
                         _buildDetailRow('Size', '500mg'),
                         _buildDetailRow('Price', '\$10.00'),
                         const SizedBox(height: 30),
-
                         Row(
                           children: [
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Cart(cartItems: [],)),);
-                                  
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Cart(
+                                              cartItems: [],
+                                            )),
+                                  );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor:  Color.fromARGB(255, 113, 101, 228), // Purple color
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  backgroundColor: Color.fromARGB(
+                                      255, 113, 101, 228), // Purple color
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -131,21 +133,26 @@ class AddToCartScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 20),
-                      
                         Row(
                           children: [
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ContactDetailScreen(cartItems: [], )),);
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ContactDetailScreen(
+                                              cartItems: [],
+                                            )),
+                                  );
                                   // Handle Buy Now functionality
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  backgroundColor:  Color.fromARGB(255, 113, 101, 228), // Purple color
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  backgroundColor: Color.fromARGB(
+                                      255, 113, 101, 228), // Purple color
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -175,7 +182,6 @@ class AddToCartScreen extends StatelessWidget {
     );
   }
 
-  
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,

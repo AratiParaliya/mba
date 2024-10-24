@@ -29,7 +29,7 @@ class _FetchMedicinesState extends State<FetchMedicines> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188),
+                  Color.fromARGB(255, 110, 102, 188), //color
                   Colors.white,
                 ],
                 radius: 2,
@@ -73,7 +73,7 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.white,
-                        Color.fromARGB(255, 143, 133, 230),
+                        Color.fromARGB(255, 143, 133, 230), //255
                       ],
                       stops: [0.6, 1.0],
                       tileMode: TileMode.clamp,

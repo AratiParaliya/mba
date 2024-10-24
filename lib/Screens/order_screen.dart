@@ -18,7 +18,8 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
+    final String userId =
+        FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
 
     return Scaffold(
       body: Stack(
@@ -31,7 +32,7 @@ class _OrderScreenState extends State<OrderScreen> {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188), // Darker purple
-                  Colors.white, // Light center
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
@@ -64,7 +65,8 @@ class _OrderScreenState extends State<OrderScreen> {
           // Main content
           Column(
             children: [
-              const SizedBox(height: 100.0), // Height for spacing below the header
+              const SizedBox(
+                  height: 100.0), // Height for spacing below the header
               Expanded(
                 child: Container(
                   width: double.infinity, // Full width
@@ -76,7 +78,10 @@ class _OrderScreenState extends State<OrderScreen> {
                         Colors.white, // Light color
                         Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
-                      stops: const [0.3, 1.0], // Adjust stops to control color spread
+                      stops: const [
+                        0.3,
+                        1.0
+                      ], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
@@ -105,12 +110,16 @@ class _OrderScreenState extends State<OrderScreen> {
                                 .collection('order')
                                 .snapshots(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
 
-                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                return const Center(child: Text('No orders found.'));
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return const Center(
+                                    child: Text('No orders found.'));
                               }
 
                               final orders = snapshot.data!.docs;
@@ -118,24 +127,42 @@ class _OrderScreenState extends State<OrderScreen> {
                               return ListView.builder(
                                 itemCount: orders.length,
                                 itemBuilder: (context, index) {
-                                  final orderData = orders[index].data() as Map<String, dynamic>;
-                                  final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
-                                  final createdAt = (orderData['createdAt'] as Timestamp?)?.toDate();
+                                  final orderData = orders[index].data()
+                                      as Map<String, dynamic>;
+                                  final cartItems =
+                                      List<Map<String, dynamic>>.from(
+                                          orderData['cartItems'] ?? []);
+                                  final createdAt =
+                                      (orderData['createdAt'] as Timestamp?)
+                                          ?.toDate();
 
                                   // Check if the order is within the cancelable timeframe (12 hours)
-                                  bool canCancel = createdAt != null && DateTime.now().difference(createdAt).inHours < 12;
+                                  bool canCancel = createdAt != null &&
+                                      DateTime.now()
+                                              .difference(createdAt)
+                                              .inHours <
+                                          12;
 
                                   return Card(
-                                    color: Colors.white, // Set card color to white
+                                    color:
+                                        Colors.white, // Set card color to white
                                     elevation: 4, // Add shadow
-                                    margin: const EdgeInsets.symmetric(vertical: 8), // Vertical margin for spacing
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical:
+                                            8), // Vertical margin for spacing
                                     child: ListTile(
-                                      title: Text('Order ID: ${orderData['orderId']}'),
-                                      subtitle: Text('Status: ${orderData['status']}'),
-                                      trailing: orderData['status'] == 'approved'
-                                          ? const Icon(Icons.check, color: Colors.green)
-                                          : const Icon(Icons.close, color: Colors.red),
-                                      onTap: () => _showOrderDetails(context, orderData, cartItems, canCancel),
+                                      title: Text(
+                                          'Order ID: ${orderData['orderId']}'),
+                                      subtitle: Text(
+                                          'Status: ${orderData['status']}'),
+                                      trailing:
+                                          orderData['status'] == 'approved'
+                                              ? const Icon(Icons.check,
+                                                  color: Colors.green)
+                                              : const Icon(Icons.close,
+                                                  color: Colors.red),
+                                      onTap: () => _showOrderDetails(context,
+                                          orderData, cartItems, canCancel),
                                     ),
                                   );
                                 },
@@ -180,12 +207,14 @@ class _OrderScreenState extends State<OrderScreen> {
               if (user != null) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
+                  MaterialPageRoute(
+                      builder: (context) => UserProfilePage(user: user)),
                 );
               } else {
                 // Handle the case where the user is null (e.g., show a login screen or error message)
                 Fluttertoast.showToast(
-                  msg: "User not logged in. Please log in to view your profile.",
+                  msg:
+                      "User not logged in. Please log in to view your profile.",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   backgroundColor: Colors.red,
@@ -201,11 +230,13 @@ class _OrderScreenState extends State<OrderScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_shopping_cart_rounded, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.add_shopping_cart_rounded,
+                color: Colors.grey), // Gray icon
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.border_outer_outlined, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.border_outer_outlined,
+                color: Colors.grey), // Gray icon
             label: 'Orders',
           ),
           BottomNavigationBarItem(
@@ -217,13 +248,15 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems, bool canCancel) {
+  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData,
+      List<Map<String, dynamic>> cartItems, bool canCancel) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Order ID: ${orderData['orderId']}'),
-          content: SingleChildScrollView( // Use SingleChildScrollView to prevent overflow
+          content: SingleChildScrollView(
+            // Use SingleChildScrollView to prevent overflow
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -236,11 +269,11 @@ class _OrderScreenState extends State<OrderScreen> {
                 const SizedBox(height: 10),
                 const Text('Cart Items:'),
                 ...cartItems.map((item) => ListTile(
-                  title: Text(item['medicineName'] ?? 'Unknown'),
-                  subtitle: Text(
-                    "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                  ),
-                )),
+                      title: Text(item['medicineName'] ?? 'Unknown'),
+                      subtitle: Text(
+                        "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
+                      ),
+                    )),
               ],
             ),
           ),
@@ -251,11 +284,13 @@ class _OrderScreenState extends State<OrderScreen> {
                 if (canCancel) // Only show cancel button if within 12 hours
                   ElevatedButton(
                     onPressed: () {
-                      _cancelOrder(orderData['orderId'], orderData); // Pass order data for cancellation
+                      _cancelOrder(orderData['orderId'],
+                          orderData); // Pass order data for cancellation
                       Navigator.pop(context); // Close the dialog
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.red, // Text color
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.red, // Text color
                     ),
                     child: const Text('Cancel Order'),
                   ),
@@ -271,7 +306,8 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  Future<void> _cancelOrder(String orderId, Map<String, dynamic> orderData) async {
+  Future<void> _cancelOrder(
+      String orderId, Map<String, dynamic> orderData) async {
     final userId = FirebaseAuth.instance.currentUser?.uid ?? 'UNKNOWN_USER_ID';
 
     // Delete the order from the 'orders' collection

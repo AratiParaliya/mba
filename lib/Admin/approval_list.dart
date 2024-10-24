@@ -162,19 +162,10 @@ class ApprovalList extends StatelessWidget {
                 const SizedBox(height: 10),
                 Column(
                   children: cartItems.map((item) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-                        // Removed the boxShadow here
-                      ),
-                      child: ListTile(
-                        title: Text(item['medicineName'] ?? 'Unknown'),
-                        subtitle: Text(
-                          "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
-                        ),
+                    return ListTile(
+                      title: Text(item['medicineName'] ?? 'Unknown'),
+                      subtitle: Text(
+                        "Price: \$${item['price']} x ${item['quantity']} = \$${(item['price'] * item['quantity']).toStringAsFixed(2)}",
                       ),
                     );
                   }).toList(),

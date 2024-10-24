@@ -12,16 +12,16 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final _authService = AuthService(); 
-  final _formKey = GlobalKey<FormState>(); 
+  final _authService = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
-  
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController(); 
+  final TextEditingController _addressController = TextEditingController();
 
   void _handleSignup() async {
     if (_formKey.currentState!.validate()) {
@@ -30,26 +30,26 @@ class _SignupPageState extends State<SignupPage> {
       String password = _passwordController.text.trim();
       String phone = _phoneController.text.trim();
       String address = _addressController.text.trim();
-      String userId = await _generateUserId(); 
+      String userId = await _generateUserId();
 
       try {
-        
         User? user = await _authService.createUserWithEmailAndPassword(
           email,
           password,
         );
 
         if (user != null) {
-          
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-            'userId': userId, 
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'userId': userId,
             'username': username,
             'email': email,
             'phone': phone,
             'address': address,
           });
 
-          
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Sign-up successful!'),
@@ -58,9 +58,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
           );
 
-          
           Future.delayed(Duration(seconds: 2), () {
-           
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => LoginPage()),
@@ -68,7 +66,6 @@ class _SignupPageState extends State<SignupPage> {
           });
         }
       } on FirebaseAuthException catch (e) {
-       
         String errorMessage;
         switch (e.code) {
           case 'email-already-in-use':
@@ -91,7 +88,6 @@ class _SignupPageState extends State<SignupPage> {
           ),
         );
       } catch (e) {
-       
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("An error occurred. Please try again."),
@@ -102,12 +98,11 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
-  
   Future<String> _generateUserId() async {
-   
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('users').get();
-    int userCount = querySnapshot.docs.length; 
-    String newUserId = 'U${(userCount + 1).toString().padLeft(3, '0')}'; 
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('users').get();
+    int userCount = querySnapshot.docs.length;
+    String newUserId = 'U${(userCount + 1).toString().padLeft(3, '0')}';
     return newUserId;
   }
 
@@ -122,7 +117,7 @@ class _SignupPageState extends State<SignupPage> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188),
+                Color.fromARGB(255, 110, 102, 188), //color
                 Colors.white,
               ],
               radius: 2,
@@ -131,19 +126,18 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-          child: SingleChildScrollView( 
+          child: SingleChildScrollView(
             child: Form(
-              key: _formKey,  
+              key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Image.asset(
-                        'assets/logo.png', 
+                        'assets/logo.png',
                         width: 50,
                       ),
                     ],
@@ -161,14 +155,15 @@ class _SignupPageState extends State<SignupPage> {
                       SizedBox(height: 20),
                       Text(
                         "Enter Your Details to proceed further",
-                        style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 39, 38, 38)),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Color.fromARGB(255, 39, 38, 38)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 30),
                   Column(
                     children: <Widget>[
-                      
                       _buildTextField(
                         controller: _usernameController,
                         labelText: 'Username',
@@ -181,7 +176,6 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                     
                       _buildTextField(
                         controller: _emailController,
                         labelText: 'Email',
@@ -197,7 +191,6 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      
                       _buildTextField(
                         controller: _passwordController,
                         labelText: 'Password',
@@ -214,7 +207,6 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      
                       _buildTextField(
                         controller: _confirmPasswordController,
                         labelText: 'Confirm Password',
@@ -228,7 +220,6 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      
                       _buildTextField(
                         controller: _phoneController,
                         labelText: 'Phone Number',
@@ -245,7 +236,6 @@ class _SignupPageState extends State<SignupPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      
                       _buildTextField(
                         controller: _addressController,
                         labelText: 'Address',
@@ -261,9 +251,9 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   const SizedBox(height: 30),
                   SizedBox(
-                    width: double.infinity,  
+                    width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _handleSignup, 
+                      onPressed: _handleSignup,
                       child: const Text(
                         "Sign up",
                         style: TextStyle(
@@ -285,10 +275,10 @@ class _SignupPageState extends State<SignupPage> {
                       const Text("Already have an account?"),
                       TextButton(
                         onPressed: () {
-                         
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
                           );
                         },
                         child: const Text(
@@ -309,6 +299,7 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
+
   Widget _buildTextField({
     required TextEditingController controller,
     required String labelText,
@@ -330,7 +321,8 @@ class _SignupPageState extends State<SignupPage> {
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       ),
       validator: validator,
     );

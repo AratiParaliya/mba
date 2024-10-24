@@ -13,7 +13,8 @@ class CreatePasswordScreen extends StatefulWidget {
 
 class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
@@ -61,7 +62,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188),
+                Color.fromARGB(255, 110, 102, 188), //color
                 Colors.white,
               ],
               radius: 2,
@@ -149,7 +150,9 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                 filled: true,
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                    _isPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                   ),
                                   onPressed: () {
                                     setState(() {
@@ -188,11 +191,14 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                 filled: true,
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                    _isConfirmPasswordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                      _isConfirmPasswordVisible =
+                                          !_isConfirmPasswordVisible;
                                     });
                                   },
                                 ),

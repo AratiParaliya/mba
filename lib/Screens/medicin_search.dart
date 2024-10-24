@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,25 +16,23 @@ class MedicinSearch extends StatefulWidget {
 class _MedicinSearchState extends State<MedicinSearch> {
   final TextEditingController _searchController = TextEditingController();
   String searchQuery = '';
-  List<Map<String, dynamic>> cartItems = []; 
-  int _currentIndex = 0; 
+  List<Map<String, dynamic>> cartItems = [];
+  int _currentIndex = 0;
 
-  
   void _updateSearchQuery(String query) {
     setState(() {
       searchQuery = query.toLowerCase();
     });
   }
 
- 
-  void _addToCart(String documentId, String medicineName, String genericName, double price) async {
+  void _addToCart(String documentId, String medicineName, String genericName,
+      double price) async {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
       String uid = user.uid;
 
       try {
-        
         await FirebaseFirestore.instance
             .collection('users')
             .doc(uid)
@@ -66,7 +63,8 @@ class _MedicinSearchState extends State<MedicinSearch> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please log in to add items to your cart.')),
+        const SnackBar(
+            content: Text('Please log in to add items to your cart.')),
       );
     }
   }
@@ -96,16 +94,17 @@ class _MedicinSearchState extends State<MedicinSearch> {
         );
         break;
       case 3:
-        
         User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => UserProfilePage(user: user)),
+            MaterialPageRoute(
+                builder: (context) => UserProfilePage(user: user)),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please log in to view your profile.')),
+            const SnackBar(
+                content: Text('Please log in to view your profile.')),
           );
         }
         break;
@@ -118,14 +117,13 @@ class _MedicinSearchState extends State<MedicinSearch> {
       body: SafeArea(
         child: Stack(
           children: [
-           
             Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
                 gradient: RadialGradient(
                   colors: [
-                    Color.fromARGB(255, 110, 102, 188),
+                    Color.fromARGB(255, 110, 102, 188), //color
                     Colors.white,
                   ],
                   radius: 2,
@@ -134,7 +132,6 @@ class _MedicinSearchState extends State<MedicinSearch> {
                 ),
               ),
             ),
-           
             Positioned(
               top: 30,
               left: 20,
@@ -157,10 +154,9 @@ class _MedicinSearchState extends State<MedicinSearch> {
                 ],
               ),
             ),
-            
             Column(
               children: [
-                const SizedBox(height: 100.0), 
+                const SizedBox(height: 100.0),
                 Expanded(
                   child: Container(
                     width: double.infinity,
@@ -188,7 +184,6 @@ class _MedicinSearchState extends State<MedicinSearch> {
                 ),
               ],
             ),
-           
             Positioned(
               bottom: 0,
               left: 0,
@@ -227,7 +222,6 @@ class _MedicinSearchState extends State<MedicinSearch> {
   Widget _buildSearchPage() {
     return Column(
       children: [
-        
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
@@ -253,10 +247,10 @@ class _MedicinSearchState extends State<MedicinSearch> {
           ),
         ),
         const SizedBox(height: 20),
-       
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('product').snapshots(),
+            stream:
+                FirebaseFirestore.instance.collection('product').snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -266,7 +260,8 @@ class _MedicinSearchState extends State<MedicinSearch> {
                 return const Center(child: Text('No products found.'));
               } else {
                 final medicines = snapshot.data!.docs.where((doc) {
-                  String medicineName = (doc['medicineName'] ?? '').toString().toLowerCase();
+                  String medicineName =
+                      (doc['medicineName'] ?? '').toString().toLowerCase();
                   return medicineName.contains(searchQuery);
                 }).toList();
 
@@ -275,12 +270,18 @@ class _MedicinSearchState extends State<MedicinSearch> {
                   itemCount: medicines.length,
                   itemBuilder: (context, index) {
                     final medicine = medicines[index];
-                    String medicineName = (medicine['medicineName'] ?? 'Unknown Medicine').toString();
-                    String genericName = (medicine['genericName'] ?? 'Unknown Generic Name').toString();
+                    String medicineName =
+                        (medicine['medicineName'] ?? 'Unknown Medicine')
+                            .toString();
+                    String genericName =
+                        (medicine['genericName'] ?? 'Unknown Generic Name')
+                            .toString();
 
                     double price = (medicine['price'] is double)
                         ? medicine['price']
-                        : (medicine['price'] is int) ? (medicine['price'] as int).toDouble() : 0.0;
+                        : (medicine['price'] is int)
+                            ? (medicine['price'] as int).toDouble()
+                            : 0.0;
 
                     return GestureDetector(
                       onTap: () {
@@ -329,11 +330,13 @@ class _MedicinSearchState extends State<MedicinSearch> {
                               const SizedBox(height: 5),
                               Text(
                                 genericName,
-                                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.grey),
                               ),
                               const SizedBox(height: 10),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     '\$${price.toStringAsFixed(2)}',
@@ -344,16 +347,18 @@ class _MedicinSearchState extends State<MedicinSearch> {
                                   ),
                                   Center(
                                     child: SizedBox(
-                                      width: 60, 
+                                      width: 60,
                                       height: 40,
                                       child: IconButton(
                                         icon: const Icon(
                                           Icons.add_shopping_cart,
-                                          color: Color.fromARGB(255, 110, 102, 188),
+                                          color: Color.fromARGB(
+                                              255, 110, 102, 188),
                                           size: 30,
                                         ),
                                         onPressed: () {
-                                          _addToCart(medicine.id, medicineName, genericName, price);
+                                          _addToCart(medicine.id, medicineName,
+                                              genericName, price);
                                         },
                                       ),
                                     ),

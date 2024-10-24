@@ -16,7 +16,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   String? _generatedOTP;
 
   void _sendOTPEmail(String email) async {
-    _generatedOTP = (Random().nextInt(900000) + 100000).toString(); // Generate 6-digit OTP
+    _generatedOTP =
+        (Random().nextInt(900000) + 100000).toString(); // Generate 6-digit OTP
 
     final smtpServer = gmail('paraliyaarati@gmail.com', 'znga fulx aacy pzjq');
 
@@ -46,7 +47,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     } catch (e) {
       print("SMTP Error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: Could not send OTP. Please try again later.")),
+        SnackBar(
+            content:
+                Text("Error: Could not send OTP. Please try again later.")),
       );
     }
   }
@@ -64,10 +67,10 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188),
-                Colors.white,
+                Color.fromARGB(255, 110, 102, 188), //color
+                Colors.white, //
               ],
-              radius: 2,
+              radius: 2, //radius
               center: Alignment(2.8, -1.0),
               tileMode: TileMode.clamp,
             ),
@@ -77,7 +80,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 30.0, vertical: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -161,7 +165,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                               _sendOTPEmail(email);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Please enter a valid email address.")),
+                                SnackBar(
+                                    content: Text(
+                                        "Please enter a valid email address.")),
                               );
                             }
                           },

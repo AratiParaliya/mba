@@ -13,7 +13,8 @@ class VerificationScreen extends StatefulWidget {
 
 class _VerificationScreenState extends State<VerificationScreen> {
   // Create individual controllers for each digit
-  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> _otpControllers =
+      List.generate(6, (index) => TextEditingController());
 
   bool isKeyboardVisible = false;
 
@@ -29,13 +30,17 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   void _verifyOTP() {
     // Combine all the 6 digits into one string
-    String enteredOTP = _otpControllers.map((controller) => controller.text).join();
+    String enteredOTP =
+        _otpControllers.map((controller) => controller.text).join();
 
     if (enteredOTP == widget.generatedOTP) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CreatePasswordScreen(email: widget.email, username: '',),
+          builder: (context) => CreatePasswordScreen(
+            email: widget.email,
+            username: '',
+          ),
         ),
       );
     } else {
@@ -56,7 +61,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
           decoration: const BoxDecoration(
             gradient: RadialGradient(
               colors: [
-                Color.fromARGB(255, 110, 102, 188),
+                Color.fromARGB(255, 110, 102, 188), //color
                 Colors.white,
               ],
               radius: 2,
@@ -149,7 +154,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24),
-                            maxLength: 1,  // Only 1 digit per field
+                            maxLength: 1, // Only 1 digit per field
                             decoration: InputDecoration(
                               counterText: '',
                               border: OutlineInputBorder(
@@ -159,9 +164,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             ),
                             onChanged: (value) {
                               if (value.length == 1 && index < 5) {
-                                FocusScope.of(context).nextFocus(); // Move to next field
+                                FocusScope.of(context)
+                                    .nextFocus(); // Move to next field
                               } else if (value.isEmpty && index > 0) {
-                                FocusScope.of(context).previousFocus(); // Move to previous field on delete
+                                FocusScope.of(context)
+                                    .previousFocus(); // Move to previous field on delete
                               }
                             },
                           ),

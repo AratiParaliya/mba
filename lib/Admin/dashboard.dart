@@ -30,7 +30,7 @@ class _DashboardState extends State<Dashboard> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 110, 102, 188),
+                  Color.fromARGB(255, 110, 102, 188), //color
                   Colors.white,
                 ],
                 radius: 2,
@@ -73,7 +73,7 @@ class _DashboardState extends State<Dashboard> {
                 child: Container(
                   width: double.infinity, // Make it full width
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: Colors.white, // Make it full
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(60),
                       topRight: Radius.circular(60),

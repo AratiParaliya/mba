@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,6 @@ class _CartState extends State<Cart> {
     _loadCartItems();
   }
 
-  
   Future<void> _loadCartItems() async {
     if (user != null) {
       String uid = user!.uid;
@@ -68,7 +66,7 @@ class _CartState extends State<Cart> {
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color.fromARGB(255, 130, 122, 202),
+                  Color.fromARGB(255, 130, 122, 202), //255,
                   Colors.white,
                 ],
                 radius: 2,
@@ -132,7 +130,8 @@ class _CartState extends State<Cart> {
                               : ListView.builder(
                                   itemCount: cartItems.length,
                                   itemBuilder: (context, index) {
-                                    return _buildCartItem(cartItems[index], index);
+                                    return _buildCartItem(
+                                        cartItems[index], index);
                                   },
                                 ),
                         ),
@@ -168,7 +167,6 @@ class _CartState extends State<Cart> {
               );
               break;
             case 1:
-             
               break;
             case 2:
               Navigator.push(
@@ -187,7 +185,6 @@ class _CartState extends State<Cart> {
                   ),
                 );
               } else {
-                
                 print("User is not logged in.");
               }
               break;
@@ -233,7 +230,8 @@ class _CartState extends State<Cart> {
                 children: [
                   Text(
                     medicineName,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "Price: \$${price.toStringAsFixed(2)} x $quantity = \$${(price * quantity).toStringAsFixed(2)}",
@@ -244,7 +242,8 @@ class _CartState extends State<Cart> {
             ),
             _buildQuantityController(cartItem, index),
             IconButton(
-              icon: const Icon(Icons.delete_outline, color: Color.fromARGB(255, 110, 102, 188)),
+              icon: const Icon(Icons.delete_outline,
+                  color: Color.fromARGB(255, 110, 102, 188)),
               onPressed: () {
                 setState(() {
                   _removeItemFromCart(cartItem['documentId']);
@@ -262,12 +261,14 @@ class _CartState extends State<Cart> {
     return Row(
       children: [
         IconButton(
-          icon: const Icon(Icons.remove_circle_outline, color: Color(0xFF8A7FDB)),
+          icon:
+              const Icon(Icons.remove_circle_outline, color: Color(0xFF8A7FDB)),
           onPressed: () {
             setState(() {
               if (cartItem['quantity'] != null && cartItem['quantity'] > 1) {
                 cartItem['quantity']--;
-                _updateCartItemQuantity(cartItem['documentId'], cartItem['quantity']);
+                _updateCartItemQuantity(
+                    cartItem['documentId'], cartItem['quantity']);
               } else {
                 _removeItemFromCart(cartItem['documentId']);
                 cartItems.removeAt(index);
@@ -284,7 +285,8 @@ class _CartState extends State<Cart> {
           onPressed: () {
             setState(() {
               cartItem['quantity'] = (cartItem['quantity'] ?? 0) + 1;
-              _updateCartItemQuantity(cartItem['documentId'], cartItem['quantity']);
+              _updateCartItemQuantity(
+                  cartItem['documentId'], cartItem['quantity']);
             });
           },
         ),
@@ -348,7 +350,6 @@ class _CartState extends State<Cart> {
     );
   }
 
-  
   Future<void> _removeItemFromCart(String documentId) async {
     if (user != null) {
       await FirebaseFirestore.instance
@@ -361,7 +362,8 @@ class _CartState extends State<Cart> {
   }
 
   // Update item quantity in Firestore
-  Future<void> _updateCartItemQuantity(String documentId, int newQuantity) async {
+  Future<void> _updateCartItemQuantity(
+      String documentId, int newQuantity) async {
     if (user != null) {
       await FirebaseFirestore.instance
           .collection('users')
