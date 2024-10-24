@@ -226,12 +226,12 @@ class _OrderScreenState extends State<OrderScreen> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.grey), // Gray icon
+            icon: Icon(Icons.home, color: Colors.grey), 
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_shopping_cart_rounded,
-                color: Colors.grey), // Gray icon
+                color: Colors.grey), 
             label: 'Cart',
           ),
           BottomNavigationBarItem(
