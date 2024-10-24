@@ -115,15 +115,13 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                             child: TextField(
                               onChanged: (value) {
                                 setState(() {
-                                  _searchQuery = value
-                                      .toLowerCase(); // Update search query
+                                  _searchQuery = value.toLowerCase(); // Update search query
                                 });
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search by Order ID or User Name',
                                 hintStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 143, 133,
-                                        230)), // Set the hint text color
+                                    color: Color.fromARGB(255, 143, 133, 230)), // Set the hint text color
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                   borderSide: BorderSide.none, // Remove border
@@ -136,114 +134,84 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                         const SizedBox(height: 20),
                         Expanded(
                           child: Container(
-                            color: Colors
-                                .white, // Set the background color to white
+                            color: Colors.white, // Set the background color to white
                             child: StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collectionGroup('orders')
                                   .snapshots(),
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
                                 }
 
-                                if (!snapshot.hasData ||
-                                    snapshot.data!.docs.isEmpty) {
-                                  return const Center(
-                                      child: Text('No orders found.'));
+                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                  return const Center(child: Text('No orders found.'));
                                 }
 
                                 final orders = snapshot.data!.docs;
 
                                 // Filter orders based on the search query
                                 final filteredOrders = orders.where((order) {
-                                  final orderData =
-                                      order.data() as Map<String, dynamic>;
-                                  final orderId = orderData['orderId']
-                                      .toString()
-                                      .toLowerCase();
-                                  final userName =
-                                      orderData['fullName']?.toLowerCase() ??
-                                          '';
-                                  return orderId.contains(_searchQuery) ||
-                                      userName.contains(_searchQuery);
+                                  final orderData = order.data() as Map<String, dynamic>;
+                                  final orderId = orderData['orderId'].toString().toLowerCase();
+                                  final userName = orderData['fullName']?.toLowerCase() ?? '';
+                                  return orderId.contains(_searchQuery) || userName.contains(_searchQuery);
                                 }).toList();
 
                                 return ListView.builder(
                                   itemCount: filteredOrders.length,
                                   itemBuilder: (context, index) {
-                                    final orderData = filteredOrders[index]
-                                        .data() as Map<String, dynamic>;
-                                    final cartItems =
-                                        List<Map<String, dynamic>>.from(
-                                            orderData['cartItems'] ?? []);
+                                    final orderData = filteredOrders[index].data() as Map<String, dynamic>;
+                                    final cartItems = List<Map<String, dynamic>>.from(orderData['cartItems'] ?? []);
                                     final orderId = orderData['orderId'];
                                     final userId = orderData['userId'];
 
                                     // Check if the order has been approved or declined
-                                    final isApproved =
-                                        _approvedOrders.contains(orderId);
-                                    final isDeclined =
-                                        _declinedOrders.contains(orderId);
+                                    final isApproved = _approvedOrders.contains(orderId);
+                                    final isDeclined = _declinedOrders.contains(orderId);
                                     final status = orderData['status'];
 
                                     return Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 16.0),
+                                      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                                       decoration: BoxDecoration(
-                                        color: Colors
-                                            .white, // Set the background color to white
-                                        borderRadius: BorderRadius.circular(
-                                            12.0), // Rounded corners
+                                        color: Colors.white, // Set the background color to white
+                                        borderRadius: BorderRadius.circular(12.0), // Rounded corners
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.black26,
                                             blurRadius: 8,
-                                            offset: const Offset(0,
-                                                2), // Change offset as desired
+                                            offset: const Offset(0, 2), // Change offset as desired
                                           ),
                                         ],
                                       ),
                                       child: Card(
-                                        elevation:
-                                            0, // Set elevation to 0 since shadow is applied in the container
+                                        elevation: 0, // Set elevation to 0 since shadow is applied in the container
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              12.0), // Match the container radius
+                                          borderRadius: BorderRadius.circular(12.0), // Match the container radius
                                         ),
                                         child: ListTile(
                                           title: Text('Order ID: $orderId'),
-                                          subtitle: Text(
-                                              'User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(Icons.check,
-                                                    color: Colors.green),
-                                                onPressed:
-                                                    (status == 'approved' ||
-                                                            isDeclined)
-                                                        ? null
-                                                        : () => _approveOrder(
-                                                            orderData, userId),
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(Icons.close,
-                                                    color: Colors.red),
-                                                onPressed:
-                                                    (status == 'declined' ||
-                                                            isApproved)
-                                                        ? null
-                                                        : () => _declineOrder(
-                                                            userId, orderId),
-                                              ),
-                                            ],
-                                          ),
-                                          onTap: () => _showOrderDetails(
-                                              context, orderData, cartItems),
+                                          subtitle: Text('User: ${orderData['fullName']} | Total: \$${orderData['totalPrice']}'),
+                                          trailing: isApproved || isDeclined
+                                              ? null // Hide trailing icons if approved or declined
+                                              : Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(Icons.check, color: Colors.green),
+                                                      onPressed: (status == 'approved' || isDeclined)
+                                                          ? null
+                                                          : () => _approveOrder(orderData, userId),
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Icon(Icons.close, color: Colors.red),
+                                                      onPressed: (status == 'declined' || isApproved)
+                                                          ? null
+                                                          : () => _declineOrder(userId, orderId),
+                                                    ),
+                                                  ],
+                                                ),
+                                          onTap: () => _showOrderDetails(context, orderData, cartItems),
                                         ),
                                       ),
                                     );
@@ -265,8 +233,7 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
     );
   }
 
-  Future<void> _approveOrder(
-      Map<String, dynamic> orderData, String userId) async {
+  Future<void> _approveOrder(Map<String, dynamic> orderData, String userId) async {
     try {
       // Check if the order has already been approved
       if (orderData['status'] == 'approved') {
@@ -341,7 +308,6 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
           .doc(orderId)
           .update({'status': 'declined'});
 
-     
       await FirebaseFirestore.instance
           .collection('approved_orders')
           .doc(orderId)
@@ -372,8 +338,7 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
     }
   }
 
-  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData,
-      List<Map<String, dynamic>> cartItems) {
+  void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData, List<Map<String, dynamic>> cartItems) {
     showDialog(
       context: context,
       builder: (context) {
