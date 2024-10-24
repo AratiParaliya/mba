@@ -3,8 +3,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:mba/Admin/ledgerdetail_screen.dart'; // Import the new screen
 
-class LedgerScreen extends StatelessWidget {
+class LedgerScreen extends StatefulWidget {
   const LedgerScreen({super.key});
+
+  @override
+  _LedgerScreenState createState() => _LedgerScreenState();
+}
+
+class _LedgerScreenState extends State<LedgerScreen> {
+  TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,14 +66,30 @@ class LedgerScreen extends StatelessWidget {
           // Container for the list
           Column(
             children: [
-              SizedBox(
-                height:
-                    100.0, // This height should be slightly less than the blue container's height
+              const SizedBox(height: 100.0), // Adjust height as needed
+              // Search bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search by full name',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value.toLowerCase();
+                    });
+                  },
+                ),
               ),
+              const SizedBox(height: 16.0),
               Expanded(
                 child: Container(
-                  margin: const EdgeInsets.only(
-                      top: 16.0), // Add top margin for space
+                  margin: const EdgeInsets.only(top: 16.0), // Add top margin for space
                   width: double.infinity, // Make it full width
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -67,7 +97,7 @@ class LedgerScreen extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.white, // Light color
-                        Color.fromARGB(255, 143, 133, 230), // Darker purple
+                        const Color.fromARGB(255, 143, 133, 230), // Darker purple
                       ],
                       stops: [0.3, 3.0], // Adjust stops to control color spread
                       tileMode: TileMode.clamp,
@@ -78,46 +108,44 @@ class LedgerScreen extends StatelessWidget {
                     ),
                   ),
                   child: Padding(
-                    // Use Padding to create space above the ListView
-                    padding: const EdgeInsets.only(
-                        top: 16.0), // Adjust the top padding as needed
+                    padding: const EdgeInsets.only(top: 16.0),
                     child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
                           .collection('orders')
                           .snapshots(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
                         }
 
                         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return Center(child: Text('No orders found'));
+                          return const Center(child: Text('No orders found'));
                         }
 
                         final orders = snapshot.data!.docs;
 
                         // Use a Set to track unique full names
                         Set<String> uniqueNames = {};
-                        Map<String, List<Map<String, dynamic>>> groupedOrders =
-                            {};
+                        Map<String, List<Map<String, dynamic>>> groupedOrders = {};
 
                         // Loop through the orders to filter unique names and group orders by fullName
                         for (var order in orders) {
-                          final fullName = order['fullName'];
-                          final orderData =
-                              order.data() as Map<String, dynamic>;
+                          final fullName = order['fullName'].toLowerCase(); // Convert to lowercase for search
+                          final orderData = order.data() as Map<String, dynamic>;
 
-                          // If the full name is not already in the set, add it to both the set and the unique orders list
-                          if (!uniqueNames.contains(fullName)) {
-                            uniqueNames.add(fullName);
-                            groupedOrders[fullName] = [
-                              orderData
-                            ]; // Initialize a new list for this name
-                          } else {
-                            groupedOrders[fullName]!.add(
-                                orderData); // Add to the existing list for this name
+                          // If the full name matches the search query or the query is empty
+                          if (fullName.contains(_searchQuery)) {
+                            if (!uniqueNames.contains(fullName)) {
+                              uniqueNames.add(fullName);
+                              groupedOrders[fullName] = [orderData]; // Initialize a new list for this name
+                            } else {
+                              groupedOrders[fullName]!.add(orderData); // Add to the existing list for this name
+                            }
                           }
+                        }
+
+                        if (uniqueNames.isEmpty) {
+                          return const Center(child: Text('No matching results'));
                         }
 
                         return ListView.builder(
@@ -127,30 +155,29 @@ class LedgerScreen extends StatelessWidget {
 
                             return Container(
                               margin: const EdgeInsets.symmetric(
-                                  vertical: 15,
-                                  horizontal: 16), // Adjust margin as needed
+                                vertical: 15,
+                                horizontal: 16,
+                              ), // Adjust margin as needed
                               decoration: BoxDecoration(
                                 color: Colors.white, // White background
-                                borderRadius: BorderRadius.circular(
-                                    10), // Rounded corners
+                                borderRadius: BorderRadius.circular(10), // Rounded corners
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey
-                                        .withOpacity(0.5), // Shadow color
+                                    color: Colors.grey.withOpacity(0.5), // Shadow color
                                     spreadRadius: 2, // Spread radius
                                     blurRadius: 5, // Blur radius
-                                    offset: const Offset(
-                                        0, 3), // Changes position of shadow
+                                    offset: const Offset(0, 3), // Changes position of shadow
                                   ),
                                 ],
                               ),
                               child: ListTile(
-                                title: Text('Name: $fullName',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight:
-                                            FontWeight.bold) // Dark text color
-                                    ),
+                                title: Text(
+                                  'Name: $fullName',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 onTap: () {
                                   // Navigate to LedgerDetailsScreen
                                   Navigator.push(
