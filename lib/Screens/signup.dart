@@ -310,6 +310,7 @@ class _SignupPageState extends State<SignupPage> {
 }) {
   return Container(
     // Container to hold the text field with box shadow
+    
     decoration: BoxDecoration(
       color: Colors.white, // Background color of the text field
       borderRadius: BorderRadius.circular(15), // Border radius for the container
