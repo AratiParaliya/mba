@@ -240,12 +240,12 @@ class PandingBills extends StatelessWidget {
             TextButton(
               onPressed: () {
                 _deleteOrder(orderId);
-                Navigator.pop(context); // Close the confirmation dialog
+                Navigator.pop(context); 
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
             TextButton(
-              onPressed: () => Navigator.pop(context), // Close the dialog
+              onPressed: () => Navigator.pop(context), 
               child: const Text('Cancel'),
             ),
           ],
