@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final String _adminEmail = 'admin@gmail.com';
   final String _adminPassword = 'admin123';
 
-  // Handles login logic for both admin and user
+
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text.trim();
