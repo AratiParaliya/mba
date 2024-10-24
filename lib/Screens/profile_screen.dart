@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mba/Screens/order_screen.dart';
-import 'cart.dart'; // Import your Cart screen
-import 'medicin_search.dart'; // Import your MedicinSearch screen
+import 'cart.dart';
+import 'medicin_search.dart'; 
 
 class UserProfilePage extends StatefulWidget {
   final User user; // Firebase User object
