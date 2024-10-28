@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 import 'package:mba/counter/counter_controller.dart';
 
+// ignore: must_be_immutable
 class CounterScreen extends StatelessWidget {
   CounterScreen({super.key});
   CounterController c = Get.put(CounterController());
