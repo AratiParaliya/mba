@@ -26,7 +26,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
   }
 
   void _addToCart(String documentId, String medicineName, String genericName,
-      double price) async {
+      double amount) async {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
@@ -41,7 +41,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
             .set({
           'medicineName': medicineName,
           'genericName': genericName,
-          'price': price,
+          'amount': amount,
           'quantity': 1,
         });
         setState(() {
@@ -49,7 +49,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
             'documentId': documentId,
             'medicineName': medicineName,
             'genericName': genericName,
-            'price': price,
+            'amount': amount,
           });
         });
 
@@ -274,13 +274,13 @@ class _MedicinSearchState extends State<MedicinSearch> {
                         (medicine['medicineName'] ?? 'Unknown Medicine')
                             .toString();
                     String genericName =
-                        (medicine['genericName'] ?? 'Unknown Generic Name')
+                        (medicine['batch'] ?? 'Unknown Generic Name')
                             .toString();
 
-                    double price = (medicine['price'] is double)
-                        ? medicine['price']
-                        : (medicine['price'] is int)
-                            ? (medicine['price'] as int).toDouble()
+                    double amount = (medicine['amount'] is double)
+                        ? medicine['amount']
+                        : (medicine['amount'] is int)
+                            ? (medicine['amount'] as int).toDouble()
                             : 0.0;
 
                     return GestureDetector(
@@ -292,7 +292,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
                               documentId: medicine.id,
                               medicineName: medicineName,
                               genericName: genericName,
-                              price: price,
+                              amount: amount,
                               addToCart: () {},
                             ),
                           ),
@@ -339,7 +339,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '\$${price.toStringAsFixed(2)}',
+                                    '\$${amount.toStringAsFixed(2)}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,
@@ -358,7 +358,7 @@ class _MedicinSearchState extends State<MedicinSearch> {
                                         ),
                                         onPressed: () {
                                           _addToCart(medicine.id, medicineName,
-                                              genericName, price);
+                                              genericName, amount);
                                         },
                                       ),
                                     ),

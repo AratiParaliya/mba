@@ -6,7 +6,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mba/Screens/login.dart';
 import 'package:mba/Screens/medicin_search.dart';
 import 'package:mba/Screens/signup.dart';
-// Make sure you have this package
+
 
 
 

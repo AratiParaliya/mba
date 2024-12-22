@@ -303,39 +303,53 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
 
   Future<void> _downloadPDF() async {
     final pdf = pw.Document();
+
     final logoImage = pw.MemoryImage(
       (await rootBundle.load('assets/logo.png')).buffer.asUint8List(),
     );
 
     pdf.addPage(
       pw.Page(
+        pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Image(logoImage, width: 100, height: 100),
-              pw.SizedBox(height: 20),
-              pw.Text('Invoice Details for Order ID: ${widget.orderId}',
-                  style: pw.TextStyle(fontSize: 24)),
-              pw.SizedBox(height: 20),
-              pw.Text('Customer Name: $fullName'),
-              pw.Text(
-                  'Total Price: \$${totalPrice?.toStringAsFixed(2) ?? '0.00'}'),
-              pw.SizedBox(height: 20),
-              pw.Text('Cart Items:'),
-              pw.ListView.builder(
-                itemCount: cartItems.length,
-                itemBuilder: (context, index) {
-                  final item = cartItems[index];
-                  return pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text(item['medicineName'] ?? 'Unknown'),
-                      pw.Text('QTY: ${item['quantity']}'),
-                      pw.Text('MRP: \$${item['price']}'),
+                      pw.Text('MADHAV DRUG AGENCY'),
+                      pw.Text('Address Line 1'),
+                      pw.Text('City, State - Pincode'),
                     ],
-                  );
-                },
+                  ),
+                  pw.Image(logoImage, width: 50, height: 50),
+                ],
+              ),
+              pw.Divider(),
+              pw.Text(
+                'Invoice Details',
+                style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+              ),
+              pw.Divider(),
+              pw.Table.fromTextArray(
+                headers: ["S.No", "Medicine", "HSN", "Qty", "MRP", "Amount"],
+                data: cartItems
+                    .asMap()
+                    .entries
+                    .map(
+                      (entry) => [
+                        entry.key + 1,
+                        entry.value['medicineName'] ?? 'Unknown',
+                        'HSN123',
+                        entry.value['quantity'],
+                        entry.value['price'],
+                        (entry.value['quantity'] * entry.value['price']),
+                      ],
+                    )
+                    .toList(),
               ),
             ],
           );
@@ -343,12 +357,10 @@ class _InvoiceDetailsScreenState extends State<InvoiceDetailsScreen> {
       ),
     );
 
-    // Get the temporary directory to save the PDF
     final output = await getTemporaryDirectory();
     final file = File("${output.path}/invoice_${widget.orderId}.pdf");
     await file.writeAsBytes(await pdf.save());
 
-    // Open the PDF file
     await OpenFile.open(file.path);
   }
 }

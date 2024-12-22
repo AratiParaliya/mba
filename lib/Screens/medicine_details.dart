@@ -11,7 +11,7 @@ class MedicineDetails extends StatefulWidget {
     required this.documentId,
     required String genericName,
     required String medicineName,
-    required double price,
+    required double amount,
     required void Function() addToCart,
   });
 
@@ -51,7 +51,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
       await userCartCollection.add({
         'medicineName': medicineData['medicineName'],
         'genericName': medicineData['genericName'],
-        'price': medicineData['price'],
+        'amount': medicineData['amount'],
         'quantity': _quantity,
       });
 
@@ -182,10 +182,10 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                     ? (medicineData['size'] as int).toDouble()
                                     : 0.0;
 
-                            double price = (medicineData['price'] is double)
-                                ? medicineData['price']
-                                : (medicineData['price'] is int)
-                                    ? (medicineData['price'] as int).toDouble()
+                            double amount = (medicineData['amount'] is double)
+                                ? medicineData['amount']
+                                : (medicineData['amount'] is int)
+                                    ? (medicineData['amount'] as int).toDouble()
                                     : 0.0;
 
                             return Column(
@@ -198,7 +198,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                                 _buildDetailRow(
                                     'Size', '${size.toStringAsFixed(2)}'),
                                 _buildDetailRow(
-                                    'Price', '\$${price.toStringAsFixed(2)}'),
+                                    'amount', '\$${amount.toStringAsFixed(2)}'),
                                 const SizedBox(height: 20),
                                 Center(
                                   child: ElevatedButton(

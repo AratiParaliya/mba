@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EditMedicineDetails extends StatefulWidget {
-  final String productId; // Accept product ID as a parameter
+  final String productId;
 
   const EditMedicineDetails({super.key, required this.productId});
 
@@ -11,23 +11,31 @@ class EditMedicineDetails extends StatefulWidget {
 }
 
 class _EditMedicineDetailsState extends State<EditMedicineDetails> {
-  // Controllers for TextFields
-  final TextEditingController medicineNameController = TextEditingController();
-  final TextEditingController genericNameController = TextEditingController();
-  final TextEditingController brandController = TextEditingController();
-  final TextEditingController typeController = TextEditingController();
-  final TextEditingController sizeController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
+  // Variables to hold product details
+  String medicineName = '';
+  String hsn = '';
+  String pack = '';
+  String mfg = '';
+  String qty = '';
+  String fq = '';
+  String mrp = '';
+  String batch = '';
+  String exp = '';
+  String rate = '';
+  String disc = '';
+  String sch = '';
+  String gst = '';
+  String taxable = '';
+  String amount = '';
 
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchProductData(); // Fetch product data on initialization
+    fetchProductData();
   }
 
-  // Fetch data from Firestore using the product ID
   Future<void> fetchProductData() async {
     try {
       DocumentSnapshot document = await FirebaseFirestore.instance
@@ -38,12 +46,21 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
       if (document.exists) {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
         setState(() {
-          medicineNameController.text = data['medicineName'] ?? '';
-          genericNameController.text = data['genericName'] ?? '';
-          brandController.text = data['brand'] ?? '';
-          typeController.text = data['type'] ?? '';
-          sizeController.text = data['size'] ?? '';
-          priceController.text = data['price'] != null ? data['price'].toString() : '';
+          medicineName = data['medicineName'] ?? 'N/A';
+          hsn = data['hsn']?.toString() ?? 'N/A';
+          pack = data['pack'] ?? 'N/A';
+          mfg = data['mfg'] ?? 'N/A';
+          qty = data['qty']?.toString() ?? 'N/A';
+          fq = data['fq']?.toString() ?? 'N/A';
+          mrp = data['mrp']?.toString() ?? 'N/A';
+          batch = data['batch'] ?? 'N/A';
+          exp = data['exp'] ?? 'N/A';
+          rate = data['rate']?.toString() ?? 'N/A';
+          disc = data['disc']?.toString() ?? 'N/A';
+          sch = data['sch']?.toString() ?? 'N/A';
+          gst = data['gst']?.toString() ?? 'N/A';
+          taxable = data['taxable']?.toString() ?? 'N/A';
+          amount = data['amount']?.toString() ?? 'N/A';
           isLoading = false;
         });
       } else {
@@ -53,9 +70,9 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
         print('Document does not exist');
       }
     } catch (e) {
-      print('Error fetching product data: $e'); 
+      print('Error fetching product data: $e');
       setState(() {
-        isLoading = false; 
+        isLoading = false;
       });
     }
   }
@@ -65,7 +82,6 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
     return Scaffold(
       body: Stack(
         children: [
-          // Blue background container
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
@@ -73,11 +89,10 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
               gradient: RadialGradient(
                 colors: [
                   Color.fromARGB(255, 110, 102, 188),
-                  Colors.white, // Light center
+                  Colors.white,
                 ],
                 radius: 2,
                 center: Alignment(2.8, -1.0),
-                tileMode: TileMode.clamp,
               ),
             ),
           ),
@@ -87,7 +102,7 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
             child: Row(
               children: [
                 Image.asset(
-                  'assets/logo.png', // Replace with your logo asset path
+                  'assets/logo.png',
                   width: 60,
                   height: 60,
                 ),
@@ -105,11 +120,10 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
           ),
           Column(
             children: [
-              const SizedBox(
-                  height: 100.0), // Adjust height to fit below the logo
+              const SizedBox(height: 100.0),
               Expanded(
                 child: Container(
-                  width: double.infinity, // Make it full width
+                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -119,8 +133,6 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
                         Colors.white,
                         Color.fromARGB(255, 143, 133, 230),
                       ],
-                      stops: [0.3, 1.0], // Adjust stops to control color spread
-                      tileMode: TileMode.clamp,
                     ),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(60),
@@ -131,53 +143,49 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
                       ? const Center(child: CircularProgressIndicator())
                       : SingleChildScrollView(
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 20),
-                              _buildSectionTitle('Product Details'),
-                              _buildTextField('Medicine Name',
-                                  medicineNameController, 'Paracetamol 500mg'),
-                              _buildTextField('Generic Name',
-                                  genericNameController, 'Paracetamol'),
-                              _buildTextField('Brand', brandController,
-                                  'XYZ Pharmaceuticals'),
-                              _buildTextField('Type', typeController, 'Tablet'),
-                              _buildTextField(
-                                  'Size', sizeController, 'Enter size'),
-                              _buildTextField(
-                                  'Price', priceController, 'Enter price'),
-                              const SizedBox(height: 30),
-                              // Save button to update the product
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        // Handle update logic
-                                        updateProductDetails();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16),
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 113, 101, 228),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Update Product',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                              _buildDetailItem('Medicine Name', medicineName),
+                              _buildDetailItem('HSN', hsn),
+                              _buildDetailItem('Pack', pack),
+                              _buildDetailItem('MFG', mfg),
+                              _buildDetailItem('Quantity', qty),
+                              _buildDetailItem('FQ', fq),
+                              _buildDetailItem('MRP', mrp),
+                              _buildDetailItem('Batch', batch),
+                              _buildDetailItem('Expiry', exp),
+                              _buildDetailItem('Rate', rate),
+                              _buildDetailItem('Discount', disc),
+                              _buildDetailItem('Scheme', sch),
+                              _buildDetailItem('GST (%)', gst),
+                              _buildDetailItem('Taxable Amount', taxable),
+                              _buildDetailItem('Total Amount', amount),
+                              const SizedBox(height: 20),
+                              Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16,horizontal: 100),
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 113, 101, 228),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
-                                ],
+                                  child: const Text(
+                                    'Back',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              const SizedBox(height: 20),
                             ],
                           ),
                         ),
@@ -190,105 +198,52 @@ class _EditMedicineDetailsState extends State<EditMedicineDetails> {
     );
   }
 
-  // Helper method to build a section title
-  Widget _buildSectionTitle(String title) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0F4FF),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Text(
-        title,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-          color: Color(0xFF6F48EB),
+  Widget _buildDetailItem(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Row(
+      children: [
+        // Label with border
+        Expanded(
+          flex: 3,
+          child: Container(
+            padding: const EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Color.fromARGB(255, 110, 102, 188), width: 1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 110, 102, 188),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
-      ),
-    );
-  }
-
-  // Helper method to build each TextField for user input
-  Widget _buildTextField(
-      String label, TextEditingController controller, String hintText) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF6F48EB),
-                ),
+        const SizedBox(width: 8), // Space between label and value
+        // Value with border
+        Expanded(
+          flex: 5,
+          child: Container(
+            padding: const EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey, width: 1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black,
               ),
             ),
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 4,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: hintText,
-                ),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF6F48EB),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> updateProductDetails() async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('product')
-          .doc(widget.productId)
-          .update({
-        'medicineName': medicineNameController.text,
-        'genericName': genericNameController.text,
-        'brand': brandController.text,
-        'type': typeController.text,
-        'size': sizeController.text,
-        'price': double.parse(priceController.text),
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product updated successfully')),
-      );
-
-      Navigator.pop(context); // Go back to the previous screen
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating product: $e')),
-      );
-    }
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

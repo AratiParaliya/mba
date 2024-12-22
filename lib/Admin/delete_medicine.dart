@@ -124,7 +124,7 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const AddMedicine()),
+                                    builder: (context) =>  AddMedicine()),
                               );
                             },
                             child: const Text('Add Medicine',style: TextStyle(color: Colors.white),),
@@ -156,11 +156,11 @@ class _FetchMedicinesState extends State<FetchMedicines> {
     final medicineData = medicineDoc.data() as Map<String, dynamic>;
 
     String medicineName = medicineData['medicineName'] ?? 'Unknown Medicine';
-    String genericName = medicineData['genericName'] ?? 'Unknown Generic Name';
-    double price = (medicineData['price'] is double)
-        ? medicineData['price']
-        : (medicineData['price'] is int)
-            ? (medicineData['price'] as int).toDouble()
+    String batch = medicineData['batch'] ?? 'Unknown Generic Name';
+    double amount = (medicineData['amount'] is double)
+        ? medicineData['amount']
+        : (medicineData['amount'] is int)
+            ? (medicineData['amount'] as int).toDouble()
             : 0.0;
 
     return Container(
@@ -196,12 +196,12 @@ class _FetchMedicinesState extends State<FetchMedicines> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  genericName, // Display generic name
+                  batch, // Display generic name
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '\$${price.toStringAsFixed(2)}', // Display price
+                  '$amount', // Display amount
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ],
